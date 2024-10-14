@@ -19,8 +19,7 @@ if "MISTRAL_API_KEY" not in os.environ:
 
 # Constants
 MISTRAL_MODEL = "mistral-small-latest"  # Use the specified Mistral model
-ELEVEN_LABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'
-ELEVEN_LABS_VOICE_ID = 'jBpfuIE2acCO8z3wKNLl'
+
 
 # Initialize Mistral client
 api_key = os.environ["MISTRAL_API_KEY"]
