@@ -1,139 +1,106 @@
-import speech_recognition as sr
-from pydub import AudioSegment
-from pydub.playback import play
-from gtts import gTTS
-import time
 import os
 import requests
+import speech_recognition as sr
+import time
+from playsound import playsound
+from pydub import AudioSegment
+from pydub.playback import play
+from io import BytesIO
+from mistralai import Mistral
+from dotenv import load_dotenv  # Import dotenv
 
-# Load environment variables for API keys
-from dotenv import load_dotenv
+# Load environment variables from .env file
 load_dotenv()
 
-# Define wake-up and goodbye words
-WAKE_WORD = "hey"
-GOODBYE_WORD = "goodbye"
+# Check if the API key is loaded
+if "MISTRAL_API_KEY" not in os.environ:
+    print("MISTRAL_API_KEY is not set. Please check your .env file.")
+    exit(1)
 
-# Load API keys from environment variables
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+# Constants
+MISTRAL_MODEL = "mistral-small-latest"  # Use the specified Mistral model
+ELEVEN_LABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'
+ELEVEN_LABS_VOICE_ID = 'jBpfuIE2acCO8z3wKNLl'
 
-# Define the Groq API endpoint
-GROQ_API_URL = "https://api.groq.com/v1/completions"
+# Initialize Mistral client
+api_key = os.environ["MISTRAL_API_KEY"]
+client = Mistral(api_key=api_key)
 
 def recognize_speech():
-    """
-    Continuously listens for the wake word.
-    When the wake word is detected, returns the recognized speech.
-    """
+    """Capture audio from the microphone and convert it to text."""
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening for wake word...")
-        while True:
-            audio = recognizer.listen(source)
-            try:
-                text = recognizer.recognize_google(audio).lower()
-                print(f"Recognized: {text}")
-                if WAKE_WORD in text:
-                    print("Wake word detected!")
-                    return text
-            except Exception as e:
-                print(f"Error: {str(e)}")
-                continue
+        print("Listening...")
+        try:
+            audio = recognizer.listen(source, timeout=5)  # Add a timeout to prevent hanging
+            print("Audio captured.")
+            text = recognizer.recognize_google(audio)
+            print(f"Recognized: {text}")
+            return text
+        except sr.UnknownValueError:
+            print("Could not understand audio")
+            return None
+        except sr.RequestError as e:
+            print(f"Could not request results; {e}")
+            return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
 
+def send_to_Mistral(user_input):
+    """Send recognized speech to Mistral AI and get the chatbot response."""
+    chat_response = client.chat.complete(
+        model=MISTRAL_MODEL,
+        messages=[
+            {
+                "role": "user",
+                "content": user_input,
+            },
+        ]
+    )
+    return chat_response.choices[0].message.content
 
-def send_to_groq(user_input):
-    """
-    Sends user input to the Groq API and returns the generated response.
-    """
+def eleven_labs_tts(text):
+    """Convert text to speech using Eleven Labs API and get the audio URL."""
+    api_url = f"https://api.elevenlabs.io/v1/text-to-speech/{ELEVEN_LABS_VOICE_ID}"
     headers = {
-        'Authorization': f'Bearer {GROQ_API_KEY}',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'xi-api-key': ELEVEN_LABS_API_KEY
     }
+    payload = {"text": text}
+    response = requests.post(api_url, json=payload, headers=headers)
     
-    payload = {
-        "model": "llama-3.1-8b-instant",  # Adjust model version if needed
-        "messages": [
-            {"role": "system", "content": "You are Immy, an AI teddy bear designed to interact with children. Respond in a friendly, simple, and engaging manner."},
-            {"role": "user", "content": user_input}
-        ],
-        "temperature": 0.7,  # Adjust as needed
-        "max_tokens": 150  # Adjust as needed
-    }
+    if response.status_code == 200:
+        audio_url = response.json().get("audio_url")
+        return audio_url
+    else:
+        print("Error generating speech")
+        return None
 
-    try:
-        # Make the API request
-        response = requests.post(GROQ_API_URL, json=payload, headers=headers)
-        response.raise_for_status()  # Check for HTTP errors
-        
-        # Parse the response from the API
-        response_data = response.json()
-        return response_data['choices'][0]['message']['content']
-    
-    except requests.exceptions.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")
-    except Exception as e:
-        print(f"Error occurred: {str(e)}")
-    
-    return "Sorry, I couldn't process that request."
-
-
-def tts_pydub(text):
-    """
-    Converts the given text to speech using gTTS and plays the audio using pydub.
-    """
-    try:
-        # Use gTTS to convert the text to speech
-        tts = gTTS(text=text, lang='en')
-        # Save the audio to a temporary file
-        tts.save("response.mp3")
-
-        # Use pydub to load and play the saved audio
-        audio = AudioSegment.from_mp3("response.mp3")
+def play_audio_from_url(audio_url):
+    """Download and play the audio from the audio URL."""
+    audio_response = requests.get(audio_url)
+    if audio_response.status_code == 200:
+        audio_file = BytesIO(audio_response.content)
+        audio = AudioSegment.from_file(audio_file)
         play(audio)
-
-    except Exception as e:
-        print(f"Error during TTS: {str(e)}")
-
+    else:
+        print("Failed to download audio")
 
 def main():
-    """
-    Main function to run the AI Teddy Bear.
-    Listens for wake-up word, processes commands, and responds with TTS.
-    """
-    print("Immy the AI Teddy Bear is ready! Say 'Hey Immy' to wake up.")
+    """Main loop for the Teddy Bear AI interaction."""
+    print("Immy the AI Teddy Bear is ready to talk!")
     
     while True:
-        # Listen for the wake-up word
-        wake_input = recognize_speech()
-        
-        if WAKE_WORD in wake_input:
-            print("Immy is now active!")
-            while True:
-                recognizer = sr.Recognizer()
-                with sr.Microphone() as source:
-                    print("Listening for commands...")
-                    audio = recognizer.listen(source)
-                    try:
-                        # Recognize the user's speech
-                        user_input = recognizer.recognize_google(audio).lower()
-                        
-                        if GOODBYE_WORD in user_input:
-                            # Stop the conversation if the goodbye word is detected
-                            print("Goodbye detected. Stopping the interaction.")
-                            tts_pydub("Goodbye!")
-                            break
-                        else:
-                            # Get a response from the Groq API and play it as speech
-                            groq_response = send_to_groq(user_input)
-                            if groq_response:
-                                print(f"Immy: {groq_response}")
-                                tts_pydub(groq_response)
-                    except Exception as e:
-                        print(f"Error: {str(e)}")
-                        continue
-                
-        # Small delay before restarting the loop
-        time.sleep(1)
+        user_input = recognize_speech()
+        if user_input:
+            response_text = send_to_Mistral(user_input)
+            if response_text:
+                print(f"Immy: {response_text}")
+                audio_url = eleven_labs_tts(response_text)
+                if audio_url:
+                    play_audio_from_url(audio_url)
+        time.sleep(1)  # Add a small delay to avoid rapid firing
 
 if __name__ == "__main__":
     main()

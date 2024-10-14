@@ -3,6 +3,7 @@ from pydub import AudioSegment
 from pydub.playback import play
 import io
 
+
 def test_microphone():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
@@ -21,6 +22,7 @@ def test_microphone():
             # Optional: Print recognized text from Google Speech Recognition API
             text = recognizer.recognize_google(audio)
             print(f"Recognized speech: {text}")
+            
         except Exception as e:
             print(f"Error: {str(e)}")
 
