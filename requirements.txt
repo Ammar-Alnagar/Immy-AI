@@ -1,0 +1,6 @@
+requests==2.31.0
+SpeechRecognition==3.8.1
+python-dotenv==1.0.0
+pygame==2.5.2
+elevenlabs==0.2.16
+groq==1.2.0  # Assuming it's a Groq Python SDK, adjust the version as needed

@@ -100,22 +100,6 @@
         "documentation": {}
     },
     {
-        "label": "Groq",
-        "importPath": "groq",
-        "description": "groq",
-        "isExtraImport": true,
-        "detail": "groq",
-        "documentation": {}
-    },
-    {
-        "label": "Groq",
-        "importPath": "groq",
-        "description": "groq",
-        "isExtraImport": true,
-        "detail": "groq",
-        "documentation": {}
-    },
-    {
         "label": "load_dotenv",
         "importPath": "dotenv",
         "description": "dotenv",
@@ -141,6 +125,23 @@
         "documentation": {}
     },
     {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "Groq",
+        "importPath": "groq",
+        "description": "groq",
+        "isExtraImport": true,
+        "detail": "groq",
+        "documentation": {}
+    },
+    {
         "label": "text_to_speech_stream",
         "kind": 2,
         "importPath": "Main",
@@ -154,16 +155,16 @@
         "kind": 2,
         "importPath": "Main",
         "description": "Main",
-        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        start_time = time.time()\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            end_time = time.time()\n            print(f\"Recognized: {text}\")",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
         "detail": "Main",
         "documentation": {}
     },
     {
-        "label": "send_to_groq",
+        "label": "send_to_LLMinBox",
         "kind": 2,
         "importPath": "Main",
         "description": "Main",
-        "peekOfCode": "def send_to_groq(user_input):\n    # Define the system prompt to guide the model's behavior\n    system_prompt = (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n    )\n    start_time = time.time()\n    # Send the prompt and user message to Groq API\n    chat_response = groq_client.chat.completions.create(",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    url = LLMINABOX_API_URL\n    headers = {\n        'Content-Type': 'application/json',\n    }\n    payload = {\"text\": user_input}\n    try:\n        response = requests.post(url, json=payload, headers=headers)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")",
         "detail": "Main",
         "documentation": {}
     },
@@ -177,29 +178,11 @@
         "documentation": {}
     },
     {
-        "label": "wait_for_wake_word",
-        "kind": 2,
-        "importPath": "Main",
-        "description": "Main",
-        "peekOfCode": "def wait_for_wake_word():\n    print(\"Waiting for wake word 'Hi teddy'...\")\n    while True:\n        user_input = recognize_speech()\n        if user_input and \"hi teddy\" in user_input:\n            return True\n# Main loop to keep the application running\ndef main():\n    while True:\n        if wait_for_wake_word():",
-        "detail": "Main",
-        "documentation": {}
-    },
-    {
         "label": "main",
         "kind": 2,
         "importPath": "Main",
         "description": "Main",
-        "peekOfCode": "def main():\n    while True:\n        if wait_for_wake_word():\n            print(\"Wake word detected! Starting conversation...\")\n            response_text = \"Hello! I'm Immy, your magical teddy bear friend. What would you like to talk about?\"\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\n            while True:\n                user_input = recognize_speech()\n                if user_input:",
-        "detail": "Main",
-        "documentation": {}
-    },
-    {
-        "label": "GROQ_API_KEY",
-        "kind": 5,
-        "importPath": "Main",
-        "description": "Main",
-        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Groq client\ngroq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion",
+        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_LLMinBox(user_input)\n            print(\"LLMinaBox response:\", response_text)\n            if not response_text.startswith(\"Error:\"):\n                audio_stream = text_to_speech_stream(response_text)\n                play_audio(audio_stream)\n            else:",
         "detail": "Main",
         "documentation": {}
     },
@@ -208,16 +191,16 @@
         "kind": 5,
         "importPath": "Main",
         "description": "Main",
-        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Groq client\ngroq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice",
         "detail": "Main",
         "documentation": {}
     },
     {
-        "label": "groq_client",
+        "label": "LLMINABOX_API_URL",
         "kind": 5,
         "importPath": "Main",
         "description": "Main",
-        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",",
+        "peekOfCode": "LLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",",
         "detail": "Main",
         "documentation": {}
     },
@@ -309,6 +292,15 @@
         "description": "local2",
         "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",",
         "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_LLMinBox",
+        "kind": 2,
+        "importPath": "apitest",
+        "description": "apitest",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    url = \"https://llm.criticalfutureglobal.com/api/chat/c9b49588-6fb9-493e-a86a-028964b307df\"\n    headers = {\n        'Content-Type': 'application/json',\n    }\n    payload = {\"text\": user_input}\n    try:\n        response = requests.post(url, json=payload, headers=headers)\n        if response.status_code == 200:\n            return response.json().get('response', 'No response key in the JSON response')",
+        "detail": "apitest",
         "documentation": {}
     }
 ]
