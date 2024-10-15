@@ -25,12 +25,13 @@ eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
 # Function to convert text to speech and return as audio stream
 def text_to_speech_stream(text: str) -> IO[bytes]:
+    start_time = time.time()
     # Perform the text-to-speech conversion
     response = eleven_labs_client.text_to_speech.convert(
-        voice_id="pNInz6obpgDQGcFmaJgB",  # Adam pre-made voice
+        voice_id="jBpfuIE2acCO8z3wKNLl",  # Adam pre-made voice
         output_format="mp3_22050_32",
         text=text,
-        model_id="eleven_multilingual_v2",
+        model_id="eleven_turbo_v2_5",
         voice_settings=VoiceSettings(
             stability=0.0,
             similarity_boost=1.0,
@@ -50,6 +51,9 @@ def text_to_speech_stream(text: str) -> IO[bytes]:
     # Reset stream position to the beginning
     audio_stream.seek(0)
 
+    end_time = time.time()
+    print(f"Text-to-speech conversion took {end_time - start_time:.2f} seconds")
+
     # Return the stream for further use
     return audio_stream
 
@@ -58,10 +62,13 @@ def recognize_speech():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
+        start_time = time.time()
         audio = recognizer.listen(source)
         try:
             text = recognizer.recognize_google(audio)
+            end_time = time.time()
             print(f"Recognized: {text}")
+            print(f"Speech recognition took {end_time - start_time:.2f} seconds")
             return text
         except Exception as e:
             print(f"Error: {str(e)}")
@@ -76,6 +83,7 @@ def send_to_groq(user_input):
         "When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination."
     )
 
+    start_time = time.time()
     # Send the prompt and user message to Groq API
     chat_response = groq_client.chat.completions.create(
         model="llama-3.1-70b-versatile",  # Use your preferred model
@@ -84,6 +92,8 @@ def send_to_groq(user_input):
             {"role": "user", "content": user_input}
         ],
     )
+    end_time = time.time()
+    print(f"Groq API response took {end_time - start_time:.2f} seconds")
 
     # Return the response from Groq
     return chat_response.choices[0].message.content
