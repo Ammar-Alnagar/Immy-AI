@@ -1,0 +1,451 @@
+[
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "speech_recognition",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "speech_recognition",
+        "description": "speech_recognition",
+        "detail": "speech_recognition",
+        "documentation": {}
+    },
+    {
+        "label": "IO",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "IO",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "IO",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "io",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "io",
+        "description": "io",
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
+        "isExtraImport": true,
+        "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
+        "isExtraImport": true,
+        "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
+        "isExtraImport": true,
+        "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "pygame",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pygame",
+        "description": "pygame",
+        "detail": "pygame",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "AudioSegment",
+        "importPath": "pydub",
+        "description": "pydub",
+        "isExtraImport": true,
+        "detail": "pydub",
+        "documentation": {}
+    },
+    {
+        "label": "play",
+        "importPath": "pydub.playback",
+        "description": "pydub.playback",
+        "isExtraImport": true,
+        "detail": "pydub.playback",
+        "documentation": {}
+    },
+    {
+        "label": "Mistral",
+        "importPath": "mistralai",
+        "description": "mistralai",
+        "isExtraImport": true,
+        "detail": "mistralai",
+        "documentation": {}
+    },
+    {
+        "label": "Groq",
+        "importPath": "groq",
+        "description": "groq",
+        "isExtraImport": true,
+        "detail": "groq",
+        "documentation": {}
+    },
+    {
+        "label": "text_to_speech_stream",
+        "kind": 2,
+        "importPath": "Main",
+        "description": "Main",
+        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_multilingual_v2\",\n        voice_settings=VoiceSettings(\n            stability=0.0,\n            similarity_boost=1.0,",
+        "detail": "Main",
+        "documentation": {}
+    },
+    {
+        "label": "recognize_speech",
+        "kind": 2,
+        "importPath": "Main",
+        "description": "Main",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "Main",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_LLMinBox",
+        "kind": 2,
+        "importPath": "Main",
+        "description": "Main",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    url = \"https://llm.criticalfutureglobal.com/api/chat/c9b49588-6fb9-493e-a86a-028964b307df\"\n    headers = {\n        'Content-Type': 'application/json',\n    }\n    payload = {\"text\": user_input}\n    try:\n        response = requests.post(url, json=payload, headers=headers)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")",
+        "detail": "Main",
+        "documentation": {}
+    },
+    {
+        "label": "play_audio",
+        "kind": 2,
+        "importPath": "Main",
+        "description": "Main",
+        "peekOfCode": "def play_audio(audio_stream):\n    # Initialize pygame mixer\n    pygame.mixer.init()\n    # Load the audio stream into pygame\n    pygame.mixer.music.load(audio_stream)\n    # Play the audio\n    pygame.mixer.music.play()\n    # Wait for the audio to finish playing\n    while pygame.mixer.music.get_busy():\n        time.sleep(0.1)",
+        "detail": "Main",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "Main",
+        "description": "Main",
+        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_LLMinBox(user_input)\n            print(\"LLMinaBox response:\", response_text)\n            if not response_text.startswith(\"Error:\"):\n                audio_stream = text_to_speech_stream(response_text)\n                play_audio(audio_stream)\n            else:",
+        "detail": "Main",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "Main",
+        "description": "Main",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,",
+        "detail": "Main",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "Main",
+        "description": "Main",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_multilingual_v2\",\n        voice_settings=VoiceSettings(",
+        "detail": "Main",
+        "documentation": {}
+    },
+    {
+        "label": "test_microphone",
+        "kind": 2,
+        "importPath": "mictest",
+        "description": "mictest",
+        "peekOfCode": "def test_microphone():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Testing microphone... Please speak.\")\n        audio = recognizer.listen(source)  # Capture the audio\n        try:\n            print(\"Recording complete. Playing it back...\")\n            # Save the audio as a temporary WAV file\n            with open(\"test_audio.wav\", \"wb\") as f:\n                f.write(audio.get_wav_data())",
+        "detail": "mictest",
+        "documentation": {}
+    },
+    {
+        "label": "text_to_speech_stream",
+        "kind": 2,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_multilingual_v2\",\n        voice_settings=VoiceSettings(\n            stability=0.0,\n            similarity_boost=1.0,",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "recognize_speech",
+        "kind": 2,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_Mistral",
+        "kind": 2,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "def send_to_Mistral(user_input):\n    # Define the system prompt to guide the model's behavior\n    prompt = {\n    \"role\": \"system\",\n    \"content\": (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n    )\n}",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "play_audio",
+        "kind": 2,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "def play_audio(audio_stream):\n    # Initialize pygame mixer\n    pygame.mixer.init()\n    # Load the audio stream into pygame\n    pygame.mixer.music.load(audio_stream)\n    # Play the audio\n    pygame.mixer.music.play()\n    # Wait for the audio to finish playing\n    while pygame.mixer.music.get_busy():\n        time.sleep(0.1)",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_Mistral(user_input)\n            print(\"Mistral response:\", response_text)\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\nif __name__ == \"__main__\":\n    main()",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "MISTRAL_API_KEY",
+        "kind": 5,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "MISTRAL_API_KEY = os.getenv(\"MISTRAL_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Mistral client\nmistral_client = Mistral(api_key=MISTRAL_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Mistral client\nmistral_client = Mistral(api_key=MISTRAL_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "mistral_client",
+        "kind": 5,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "mistral_client = Mistral(api_key=MISTRAL_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "local",
+        "description": "local",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_multilingual_v2\",\n        voice_settings=VoiceSettings(",
+        "detail": "local",
+        "documentation": {}
+    },
+    {
+        "label": "text_to_speech_stream",
+        "kind": 2,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_multilingual_v2\",\n        voice_settings=VoiceSettings(\n            stability=0.0,\n            similarity_boost=1.0,",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "recognize_speech",
+        "kind": 2,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_groq",
+        "kind": 2,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "def send_to_groq(user_input):\n    # Define the system prompt to guide the model's behavior\n    system_prompt = (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n    )\n    # Send the prompt and user message to Groq API\n    chat_response = groq_client.chat.completions.create(\n        model=\"llama-3.1-70b-versatile\",  # Use your preferred model",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "play_audio",
+        "kind": 2,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "def play_audio(audio_stream):\n    # Initialize pygame mixer\n    pygame.mixer.init()\n    # Load the audio stream into pygame\n    pygame.mixer.music.load(audio_stream)\n    # Play the audio\n    pygame.mixer.music.play()\n    # Wait for the audio to finish playing\n    while pygame.mixer.music.get_busy():\n        time.sleep(0.1)",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_groq(user_input)\n            print(\"Groq response:\", response_text)\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\nif __name__ == \"__main__\":\n    main()",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "GROQ_API_KEY",
+        "kind": 5,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Groq client\ngroq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Groq client\ngroq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "groq_client",
+        "kind": 5,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"pNInz6obpgDQGcFmaJgB\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_multilingual_v2\",\n        voice_settings=VoiceSettings(",
+        "detail": "local2",
+        "documentation": {}
+    }
+]

@@ -6,15 +6,19 @@ from typing import IO
 from io import BytesIO
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
+from groq import Groq
 from dotenv import load_dotenv
 import pygame
-import json
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Retrieve the API keys from environment variables
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+
+# Initialize Groq client
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 # Initialize Eleven Labs client
 eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
@@ -63,30 +67,26 @@ def recognize_speech():
             print(f"Error: {str(e)}")
             return None
 
-# Function to send text to LLMinaBox API and get the response
-def send_to_LLMinBox(user_input):
-    url = "https://llm.criticalfutureglobal.com/api/chat/c9b49588-6fb9-493e-a86a-028964b307df"
-    headers = {
-        'Content-Type': 'application/json',
-    }
-    payload = {"text": user_input}
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()  # Raise an exception for bad status codes
-        
-        print(f"Response status code: {response.status_code}")
-        print(f"Response content: {response.text}")
-        
-        # Try to parse the JSON response
-        try:
-            json_response = response.json()
-            return json_response.get('response', 'No response field in JSON')
-        except json.JSONDecodeError as json_err:
-            print(f"Failed to decode JSON: {json_err}")
-            return f"Error: Invalid JSON response from LLMinaBox. Raw response: {response.text[:100]}..."
-    except requests.exceptions.RequestException as req_err:
-        print(f"Request to LLMinaBox failed: {req_err}")
-        return f"Error: Failed to connect to LLMinaBox. {str(req_err)}"
+# Function to send text to Groq API and get the response
+def send_to_groq(user_input):
+    # Define the system prompt to guide the model's behavior
+    system_prompt = (
+        "You are Immy, a magical AI-powered teddy bear who loves to chat with children. "
+        "You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. "
+        "When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination."
+    )
+
+    # Send the prompt and user message to Groq API
+    chat_response = groq_client.chat.completions.create(
+        model="llama-3.1-70b-versatile",  # Use your preferred model
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_input}
+        ],
+    )
+
+    # Return the response from Groq
+    return chat_response.choices[0].message.content
 
 # Function to play audio from a BytesIO stream
 def play_audio(audio_stream):
@@ -108,13 +108,10 @@ def main():
     while True:
         user_input = recognize_speech()
         if user_input:
-            response_text = send_to_LLMinBox(user_input)
-            print("LLMinaBox response:", response_text)
-            if not response_text.startswith("Error:"):
-                audio_stream = text_to_speech_stream(response_text)
-                play_audio(audio_stream)
-            else:
-                print("Skipping text-to-speech due to error in LLMinaBox response")
+            response_text = send_to_groq(user_input)
+            print("Groq response:", response_text)
+            audio_stream = text_to_speech_stream(response_text)
+            play_audio(audio_stream)
 
 if __name__ == "__main__":
     main()
