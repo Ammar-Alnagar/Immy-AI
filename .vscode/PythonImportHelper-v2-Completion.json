@@ -164,7 +164,7 @@
         "kind": 2,
         "importPath": "Main",
         "description": "Main",
-        "peekOfCode": "def send_to_LLMinBox(user_input):\n    url = LLMINABOX_API_URL\n    headers = {\n        'Content-Type': 'application/json',\n    }\n    payload = {\"text\": user_input}\n    try:\n        response = requests.post(url, json=payload, headers=headers)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    payload = {\"question\": user_input}\n    try:\n        response = requests.post(LLMINABOX_API_URL, json=payload)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")\n        # Try to parse the JSON response\n        json_response = response.json()\n        # Extract the text from the response\n        response_text = json_response.get('text', 'No text field in JSON')",
         "detail": "Main",
         "documentation": {}
     },
@@ -182,7 +182,7 @@
         "kind": 2,
         "importPath": "Main",
         "description": "Main",
-        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_LLMinBox(user_input)\n            print(\"LLMinaBox response:\", response_text)\n            if not response_text.startswith(\"Error:\"):\n                audio_stream = text_to_speech_stream(response_text)\n                play_audio(audio_stream)\n            else:",
+        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_LLMinBox(user_input)\n            print(\"LLMinaBox response:\", response_text)\n            if not response_text.startswith(\"Error:\"):\n                # Send the response_text directly to ElevenLabs for TTS\n                audio_stream = text_to_speech_stream(response_text)\n                play_audio(audio_stream)",
         "detail": "Main",
         "documentation": {}
     },
@@ -295,11 +295,29 @@
         "documentation": {}
     },
     {
-        "label": "send_to_LLMinBox",
+        "label": "query",
         "kind": 2,
         "importPath": "apitest",
         "description": "apitest",
-        "peekOfCode": "def send_to_LLMinBox(user_input):\n    url = \"https://llm.criticalfutureglobal.com/api/chat/c9b49588-6fb9-493e-a86a-028964b307df\"\n    headers = {\n        'Content-Type': 'application/json',\n    }\n    payload = {\"text\": user_input}\n    try:\n        response = requests.post(url, json=payload, headers=headers)\n        if response.status_code == 200:\n            return response.json().get('response', 'No response key in the JSON response')",
+        "peekOfCode": "def query(payload):\n    response = requests.post(API_URL, json=payload)\n    return response.json()\noutput = query({\n    \"question\": \"Hey, how are you?\",\n})\nprint(output)",
+        "detail": "apitest",
+        "documentation": {}
+    },
+    {
+        "label": "API_URL",
+        "kind": 5,
+        "importPath": "apitest",
+        "description": "apitest",
+        "peekOfCode": "API_URL = \"https://llm.criticalfutureglobal.com/api/v1/prediction/c9b49588-6fb9-493e-a86a-028964b307df\"\ndef query(payload):\n    response = requests.post(API_URL, json=payload)\n    return response.json()\noutput = query({\n    \"question\": \"Hey, how are you?\",\n})\nprint(output)",
+        "detail": "apitest",
+        "documentation": {}
+    },
+    {
+        "label": "output",
+        "kind": 5,
+        "importPath": "apitest",
+        "description": "apitest",
+        "peekOfCode": "output = query({\n    \"question\": \"Hey, how are you?\",\n})\nprint(output)",
         "detail": "apitest",
         "documentation": {}
     }

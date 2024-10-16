@@ -67,25 +67,19 @@ def recognize_speech():
 
 # Function to send text to LLMinaBox API and get the response
 def send_to_LLMinBox(user_input):
-    url = LLMINABOX_API_URL
-    headers = {
-        'Content-Type': 'application/json',
-    }
-    payload = {"text": user_input}
+    payload = {"question": user_input}
     try:
-        response = requests.post(url, json=payload, headers=headers)
+        response = requests.post(LLMINABOX_API_URL, json=payload)
         response.raise_for_status()  # Raise an exception for bad status codes
-        
+
         print(f"Response status code: {response.status_code}")
-        print(f"Response content: {response.text}")
         
         # Try to parse the JSON response
-        try:
-            json_response = response.json()
-            return json_response.get('response', 'No response field in JSON')
-        except json.JSONDecodeError as json_err:
-            print(f"Failed to decode JSON: {json_err}")
-            return f"Error: Invalid JSON response from LLMinaBox. Raw response: {response.text[:100]}..."
+        json_response = response.json()
+        
+        # Extract the text from the response
+        response_text = json_response.get('text', 'No text field in JSON')
+        return response_text
     except requests.exceptions.RequestException as req_err:
         print(f"Request to LLMinaBox failed: {req_err}")
         return f"Error: Failed to connect to LLMinaBox. {str(req_err)}"
@@ -113,6 +107,7 @@ def main():
             response_text = send_to_LLMinBox(user_input)
             print("LLMinaBox response:", response_text)
             if not response_text.startswith("Error:"):
+                # Send the response_text directly to ElevenLabs for TTS
                 audio_stream = text_to_speech_stream(response_text)
                 play_audio(audio_stream)
             else:
