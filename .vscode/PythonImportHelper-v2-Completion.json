@@ -52,6 +52,22 @@
         "documentation": {}
     },
     {
+        "label": "IO",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
         "label": "BytesIO",
         "importPath": "io",
         "description": "io",
@@ -84,6 +100,14 @@
         "documentation": {}
     },
     {
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
+        "isExtraImport": true,
+        "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
         "label": "ElevenLabs",
         "importPath": "elevenlabs.client",
         "description": "elevenlabs.client",
@@ -97,6 +121,22 @@
         "description": "elevenlabs.client",
         "isExtraImport": true,
         "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
         "documentation": {}
     },
     {
@@ -353,6 +393,78 @@
         "description": "apitest",
         "peekOfCode": "output = query({\n    \"question\": \"Hey, how are you?\",\n})\nprint(output)",
         "detail": "apitest",
+        "documentation": {}
+    },
+    {
+        "label": "text_to_speech_stream",
+        "kind": 2,
+        "importPath": "nobutton",
+        "description": "nobutton",
+        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",\n        voice_settings=VoiceSettings(\n            stability=0.0,",
+        "detail": "nobutton",
+        "documentation": {}
+    },
+    {
+        "label": "recognize_speech",
+        "kind": 2,
+        "importPath": "nobutton",
+        "description": "nobutton",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "nobutton",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_LLMinBox",
+        "kind": 2,
+        "importPath": "nobutton",
+        "description": "nobutton",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    payload = {\"question\": user_input}\n    try:\n        response = requests.post(LLMINABOX_API_URL, json=payload)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")\n        # Try to parse the JSON response\n        json_response = response.json()\n        # Extract the text from the response\n        response_text = json_response.get('text', 'No text field in JSON')",
+        "detail": "nobutton",
+        "documentation": {}
+    },
+    {
+        "label": "play_audio",
+        "kind": 2,
+        "importPath": "nobutton",
+        "description": "nobutton",
+        "peekOfCode": "def play_audio(audio_stream):\n    # Initialize pygame mixer\n    pygame.mixer.init()\n    # Load the audio stream into pygame\n    pygame.mixer.music.load(audio_stream)\n    # Play the audio\n    pygame.mixer.music.play()\n    # Wait for the audio to finish playing\n    while pygame.mixer.music.get_busy():\n        time.sleep(0.1)",
+        "detail": "nobutton",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "nobutton",
+        "description": "nobutton",
+        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_LLMinBox(user_input)\n            print(\"LLMinaBox response:\", response_text)\n            if not response_text.startswith(\"Error:\"):\n                # Send the response_text directly to ElevenLabs for TTS\n                audio_stream = text_to_speech_stream(response_text)\n                play_audio(audio_stream)",
+        "detail": "nobutton",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "nobutton",
+        "description": "nobutton",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice",
+        "detail": "nobutton",
+        "documentation": {}
+    },
+    {
+        "label": "LLMINABOX_API_URL",
+        "kind": 5,
+        "importPath": "nobutton",
+        "description": "nobutton",
+        "peekOfCode": "LLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",",
+        "detail": "nobutton",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "nobutton",
+        "description": "nobutton",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",",
+        "detail": "nobutton",
         "documentation": {}
     }
 ]

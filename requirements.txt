@@ -1,6 +1,1 @@
-requests
-SpeechRecognition
-python-dotenv
-pygame
-elevenlabs
-groq 
+requests SpeechRecognition python-dotenv pygame elevenlabs groq 
