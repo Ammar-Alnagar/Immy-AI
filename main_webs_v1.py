@@ -19,7 +19,7 @@ load_dotenv()
 
 # Retrieve the API keys from environment variables
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-LLMINABOX_WS_URL = os.getenv("LLMINABOX_WS_URL")  # WebSocket URL for LLMinaBox
+LLMINABOX_WS_URL = os.getenv("LLMINABOX_WS_URL")
 
 # Initialize Eleven Labs client
 eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
@@ -29,7 +29,6 @@ class AudioProcessor:
         self.recognizer = sr.Recognizer()
         
     async def text_to_speech_stream(self, text: str) -> IO[bytes]:
-        # Convert to speech using async pattern
         response = await asyncio.to_thread(
             eleven_labs_client.text_to_speech.convert,
             voice_id="jBpfuIE2acCO8z3wKNLl",
@@ -52,14 +51,10 @@ class AudioProcessor:
         return audio_stream
 
     async def play_audio(self, audio_stream):
-        # Initialize pygame mixer in the main thread
         await asyncio.to_thread(pygame.mixer.init)
-        
-        # Load and play audio
         await asyncio.to_thread(pygame.mixer.music.load, audio_stream)
         await asyncio.to_thread(pygame.mixer.music.play)
         
-        # Wait for audio to finish
         while pygame.mixer.music.get_busy():
             await asyncio.sleep(0.1)
 
@@ -70,22 +65,49 @@ class WebSocketClient:
         self.websocket = None
         self.audio_processor = AudioProcessor()
         self.is_connected = False
+        self.reconnect_delay = 1  # Start with 1 second delay
+        self.max_reconnect_delay = 30  # Maximum delay between reconnection attempts
+        self.should_reconnect = True
 
-    async def connect(self):
-        try:
-            self.websocket = await websockets.connect(self.url)
-            self.is_connected = True
-            self.gui.update_connection_status("Connected to LLMinaBox")
-            return True
-        except Exception as e:
-            self.gui.update_connection_status(f"Connection failed: {str(e)}")
-            return False
+    async def connect_with_retry(self):
+        while self.should_reconnect:
+            try:
+                if not self.is_connected:
+                    self.gui.update_status("Connecting to LLMinaBox...")
+                    self.websocket = await websockets.connect(self.url)
+                    self.is_connected = True
+                    self.reconnect_delay = 1  # Reset delay on successful connection
+                    self.gui.update_status("Connected to LLMinaBox")
+                    self.gui.enable_recording()
+                    
+                    # Start heartbeat
+                    asyncio.create_task(self.heartbeat())
+                    
+                    # Wait for connection to close
+                    await self.websocket.wait_closed()
+                    
+                    # Connection closed, update status
+                    self.is_connected = False
+                    self.gui.update_status("Connection lost. Reconnecting...")
+                    self.gui.disable_recording()
+                    
+            except Exception as e:
+                self.is_connected = False
+                self.gui.update_status(f"Connection failed. Retrying in {self.reconnect_delay}s...")
+                self.gui.disable_recording()
+                
+                await asyncio.sleep(self.reconnect_delay)
+                
+                # Exponential backoff with maximum delay
+                self.reconnect_delay = min(self.reconnect_delay * 2, self.max_reconnect_delay)
 
-    async def disconnect(self):
-        if self.websocket:
-            await self.websocket.close()
-            self.is_connected = False
-            self.gui.update_connection_status("Disconnected")
+    async def heartbeat(self):
+        while self.is_connected:
+            try:
+                await self.websocket.ping()
+                await asyncio.sleep(30)  # Send heartbeat every 30 seconds
+            except:
+                break
 
     async def send_message(self, message):
         if not self.is_connected:
@@ -93,23 +115,23 @@ class WebSocketClient:
             return
 
         try:
-            # Send message to LLMinaBox
             await self.websocket.send(json.dumps({"question": message}))
-            
-            # Wait for response
             response = await self.websocket.recv()
             response_data = json.loads(response)
             
-            # Process response
             response_text = response_data.get('text', 'No response received')
             self.gui.update_status(f"Response: {response_text}")
             
-            # Convert to speech and play
             audio_stream = await self.audio_processor.text_to_speech_stream(response_text)
             await self.audio_processor.play_audio(audio_stream)
             
         except Exception as e:
             self.gui.update_status(f"Error: {str(e)}")
+
+    async def cleanup(self):
+        self.should_reconnect = False
+        if self.websocket:
+            await self.websocket.close()
 
 class GUI:
     def __init__(self):
@@ -119,24 +141,13 @@ class GUI:
         self.client = WebSocketClient(LLMINABOX_WS_URL, self)
         self.recognizer = sr.Recognizer()
         self.is_recording = False
+        
+        # Start WebSocket connection in a separate thread
+        self.start_websocket_thread()
 
     def setup_ui(self):
-        # Status labels
-        self.connection_label = tk.Label(self.window, text="Disconnected")
-        self.connection_label.pack(pady=5)
-        
-        self.status_label = tk.Label(self.window, text="Ready")
-        self.status_label.pack(pady=5)
-
-        # Buttons
-        self.connect_button = tk.Button(
-            self.window,
-            text="Connect",
-            command=self.toggle_connection,
-            padx=20,
-            pady=10
-        )
-        self.connect_button.pack(pady=5)
+        self.status_label = tk.Label(self.window, text="Initializing...", wraplength=300)
+        self.status_label.pack(pady=10)
 
         self.record_button = tk.Button(
             self.window,
@@ -146,26 +157,24 @@ class GUI:
             padx=20,
             pady=10
         )
-        self.record_button.pack(pady=5)
+        self.record_button.pack(pady=10)
 
-    def update_connection_status(self, status):
-        self.connection_label.config(text=status)
-        if "Connected" in status:
-            self.record_button.config(state=tk.NORMAL)
-        else:
-            self.record_button.config(state=tk.DISABLED)
+    def start_websocket_thread(self):
+        def run_async_loop():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(self.client.connect_with_retry())
+
+        threading.Thread(target=run_async_loop, daemon=True).start()
 
     def update_status(self, status):
         self.status_label.config(text=status)
 
-    def toggle_connection(self):
-        if not self.client.is_connected:
-            asyncio.run(self.client.connect())
-            if self.client.is_connected:
-                self.connect_button.config(text="Disconnect")
-        else:
-            asyncio.run(self.client.disconnect())
-            self.connect_button.config(text="Connect")
+    def enable_recording(self):
+        self.record_button.config(state=tk.NORMAL)
+
+    def disable_recording(self):
+        self.record_button.config(state=tk.DISABLED)
 
     def toggle_recording(self):
         if not self.is_recording:
@@ -177,9 +186,7 @@ class GUI:
         self.is_recording = True
         self.record_button.config(text="Stop Recording")
         self.update_status("Listening...")
-        
-        # Start recording in a separate thread
-        threading.Thread(target=self.record_audio).start()
+        threading.Thread(target=self.record_audio, daemon=True).start()
 
     def stop_recording(self):
         self.is_recording = False
@@ -202,13 +209,18 @@ class GUI:
             self.stop_recording()
 
     def run(self):
+        # Handle window closing
+        def on_closing():
+            asyncio.run(self.client.cleanup())
+            self.window.destroy()
+            
+        self.window.protocol("WM_DELETE_WINDOW", on_closing)
         self.window.mainloop()
 
 def main():
+    pygame.init()
     gui = GUI()
     gui.run()
 
 if __name__ == "__main__":
-    # Initialize pygame
-    pygame.init()
     main()

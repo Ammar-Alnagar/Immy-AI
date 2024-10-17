@@ -60,6 +60,22 @@
         "documentation": {}
     },
     {
+        "label": "IO",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
         "label": "BytesIO",
         "importPath": "io",
         "description": "io",
@@ -108,6 +124,22 @@
         "documentation": {}
     },
     {
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
+        "isExtraImport": true,
+        "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
         "label": "ElevenLabs",
         "importPath": "elevenlabs.client",
         "description": "elevenlabs.client",
@@ -129,6 +161,14 @@
         "description": "elevenlabs.client",
         "isExtraImport": true,
         "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
         "documentation": {}
     },
     {
@@ -190,11 +230,55 @@
         "documentation": {}
     },
     {
+        "label": "messagebox",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
         "label": "Groq",
         "importPath": "groq",
         "description": "groq",
         "isExtraImport": true,
         "detail": "groq",
+        "documentation": {}
+    },
+    {
+        "label": "asyncio",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "asyncio",
+        "description": "asyncio",
+        "detail": "asyncio",
+        "documentation": {}
+    },
+    {
+        "label": "websockets",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "websockets",
+        "description": "websockets",
+        "detail": "websockets",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
         "documentation": {}
     },
     {
@@ -465,6 +549,69 @@
         "description": "nobutton",
         "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",",
         "detail": "nobutton",
+        "documentation": {}
+    },
+    {
+        "label": "AudioProcessor",
+        "kind": 6,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "class AudioProcessor:\n    def __init__(self):\n        self.recognizer = sr.Recognizer()\n    async def text_to_speech_stream(self, text: str) -> IO[bytes]:\n        response = await asyncio.to_thread(\n            eleven_labs_client.text_to_speech.convert,\n            voice_id=\"jBpfuIE2acCO8z3wKNLl\",\n            output_format=\"mp3_22050_32\",\n            text=text,\n            model_id=\"eleven_turbo_v2_5\",",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "WebSocketClient",
+        "kind": 6,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "class WebSocketClient:\n    def __init__(self, url, gui):\n        self.url = url\n        self.gui = gui\n        self.websocket = None\n        self.audio_processor = AudioProcessor()\n        self.is_connected = False\n        self.reconnect_delay = 1  # Start with 1 second delay\n        self.max_reconnect_delay = 30  # Maximum delay between reconnection attempts\n        self.should_reconnect = True",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "GUI",
+        "kind": 6,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "class GUI:\n    def __init__(self):\n        self.window = tk.Tk()\n        self.window.title(\"LLMinaBox Speech Recognition\")\n        self.setup_ui()\n        self.client = WebSocketClient(LLMINABOX_WS_URL, self)\n        self.recognizer = sr.Recognizer()\n        self.is_recording = False\n        # Start WebSocket connection in a separate thread\n        self.start_websocket_thread()",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "def main():\n    pygame.init()\n    gui = GUI()\n    gui.run()\nif __name__ == \"__main__\":\n    main()",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_WS_URL = os.getenv(\"LLMINABOX_WS_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioProcessor:\n    def __init__(self):\n        self.recognizer = sr.Recognizer()\n    async def text_to_speech_stream(self, text: str) -> IO[bytes]:\n        response = await asyncio.to_thread(\n            eleven_labs_client.text_to_speech.convert,",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "LLMINABOX_WS_URL",
+        "kind": 5,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "LLMINABOX_WS_URL = os.getenv(\"LLMINABOX_WS_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioProcessor:\n    def __init__(self):\n        self.recognizer = sr.Recognizer()\n    async def text_to_speech_stream(self, text: str) -> IO[bytes]:\n        response = await asyncio.to_thread(\n            eleven_labs_client.text_to_speech.convert,\n            voice_id=\"jBpfuIE2acCO8z3wKNLl\",",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioProcessor:\n    def __init__(self):\n        self.recognizer = sr.Recognizer()\n    async def text_to_speech_stream(self, text: str) -> IO[bytes]:\n        response = await asyncio.to_thread(\n            eleven_labs_client.text_to_speech.convert,\n            voice_id=\"jBpfuIE2acCO8z3wKNLl\",\n            output_format=\"mp3_22050_32\",\n            text=text,",
+        "detail": "main_webs_v1",
         "documentation": {}
     }
 ]
