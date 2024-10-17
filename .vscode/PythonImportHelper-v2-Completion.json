@@ -125,6 +125,31 @@
         "documentation": {}
     },
     {
+        "label": "tkinter",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "messagebox",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "messagebox",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
         "label": "Groq",
         "importPath": "groq",
         "description": "groq",
@@ -169,11 +194,20 @@
         "documentation": {}
     },
     {
-        "label": "main",
+        "label": "start_recording",
         "kind": 2,
         "importPath": "Main",
         "description": "Main",
-        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_LLMinBox(user_input)\n            print(\"LLMinaBox response:\", response_text)\n            if not response_text.startswith(\"Error:\"):\n                # Send the response_text directly to ElevenLabs for TTS\n                audio_stream = text_to_speech_stream(response_text)\n                play_audio(audio_stream)",
+        "peekOfCode": "def start_recording():\n    user_input = recognize_speech()\n    if user_input:\n        response_text = send_to_LLMinBox(user_input)\n        print(\"LLMinaBox response:\", response_text)\n        if not response_text.startswith(\"Error:\"):\n            # Send the response_text directly to ElevenLabs for TTS\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\n        else:",
+        "detail": "Main",
+        "documentation": {}
+    },
+    {
+        "label": "create_gui",
+        "kind": 2,
+        "importPath": "Main",
+        "description": "Main",
+        "peekOfCode": "def create_gui():\n    window = tk.Tk()\n    window.title(\"Speech Recognition App\")\n    # Create and place the button on the window\n    record_button = tk.Button(window, text=\"Start Recording\", command=start_recording, padx=20, pady=10)\n    record_button.pack(pady=20)\n    # Start the Tkinter main loop\n    window.mainloop()\nif __name__ == \"__main__\":\n    create_gui()",
         "detail": "Main",
         "documentation": {}
     },
@@ -241,11 +275,20 @@
         "documentation": {}
     },
     {
-        "label": "main",
+        "label": "start_recording",
         "kind": 2,
         "importPath": "local2",
         "description": "local2",
-        "peekOfCode": "def main():\n    while True:\n        user_input = recognize_speech()\n        if user_input:\n            response_text = send_to_groq(user_input)\n            print(\"Groq response:\", response_text)\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\nif __name__ == \"__main__\":\n    main()",
+        "peekOfCode": "def start_recording():\n    user_input = recognize_speech()\n    if user_input:\n        response_text = send_to_groq(user_input)\n        print(\"Groq response:\", response_text)\n        if response_text:\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\n        else:\n            print(\"No response from Groq.\")",
+        "detail": "local2",
+        "documentation": {}
+    },
+    {
+        "label": "create_gui",
+        "kind": 2,
+        "importPath": "local2",
+        "description": "local2",
+        "peekOfCode": "def create_gui():\n    window = tk.Tk()\n    window.title(\"Speech Recognition with Groq & Eleven Labs\")\n    # Create and place the button on the window\n    record_button = tk.Button(window, text=\"Start Recording\", command=start_recording, padx=20, pady=10)\n    record_button.pack(pady=20)\n    # Start the Tkinter main loop\n    window.mainloop()\nif __name__ == \"__main__\":\n    create_gui()",
         "detail": "local2",
         "documentation": {}
     },

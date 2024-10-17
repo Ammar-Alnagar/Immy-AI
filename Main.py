@@ -8,7 +8,8 @@ from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from dotenv import load_dotenv
 import pygame
-
+import tkinter as tk
+from tkinter import messagebox
 
 # Load environment variables from .env file
 load_dotenv()
@@ -99,19 +100,31 @@ def play_audio(audio_stream):
     while pygame.mixer.music.get_busy():
         time.sleep(0.1)
 
-# Main loop to keep the application running
-def main():
-    while True:
-        user_input = recognize_speech()
-        if user_input:
-            response_text = send_to_LLMinBox(user_input)
-            print("LLMinaBox response:", response_text)
-            if not response_text.startswith("Error:"):
-                # Send the response_text directly to ElevenLabs for TTS
-                audio_stream = text_to_speech_stream(response_text)
-                play_audio(audio_stream)
-            else:
-                print("Skipping text-to-speech due to error in LLMinaBox response")
+# Function triggered by the Tkinter button to start the process
+def start_recording():
+    user_input = recognize_speech()
+    if user_input:
+        response_text = send_to_LLMinBox(user_input)
+        print("LLMinaBox response:", response_text)
+        if not response_text.startswith("Error:"):
+            # Send the response_text directly to ElevenLabs for TTS
+            audio_stream = text_to_speech_stream(response_text)
+            play_audio(audio_stream)
+        else:
+            print("Skipping text-to-speech due to error in LLMinaBox response")
+            messagebox.showerror("Error", "LLMinaBox response error")
+
+# Create the Tkinter UI
+def create_gui():
+    window = tk.Tk()
+    window.title("Speech Recognition App")
+
+    # Create and place the button on the window
+    record_button = tk.Button(window, text="Start Recording", command=start_recording, padx=20, pady=10)
+    record_button.pack(pady=20)
+
+    # Start the Tkinter main loop
+    window.mainloop()
 
 if __name__ == "__main__":
-    main()
+    create_gui()
