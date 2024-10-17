@@ -8,7 +8,7 @@ from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from dotenv import load_dotenv
 import pygame
-import json
+
 
 # Load environment variables from .env file
 load_dotenv()
