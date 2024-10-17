@@ -1,0 +1,255 @@
+import os
+import time
+import asyncio
+import websockets
+import json
+import requests
+import speech_recognition as sr
+from typing import IO
+from io import BytesIO
+from elevenlabs import VoiceSettings
+from elevenlabs.client import ElevenLabs
+from groq import Groq
+from dotenv import load_dotenv
+import pygame
+import tkinter as tk
+from tkinter import messagebox
+import threading
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Retrieve the API keys from environment variables
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+
+# Initialize clients
+groq_client = Groq(api_key=GROQ_API_KEY)
+eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
+
+class AudioServer:
+    def __init__(self):
+        self.clients = set()
+        self.recognizer = sr.Recognizer()
+        self.is_recording = False
+        
+    async def register(self, websocket):
+        self.clients.add(websocket)
+        try:
+            await self.handle_client(websocket)
+        finally:
+            self.clients.remove(websocket)
+
+    async def handle_client(self, websocket):
+        async for message in websocket:
+            data = json.loads(message)
+            if data['type'] == 'start_recording':
+                await self.start_recording_process(websocket)
+            elif data['type'] == 'stop_recording':
+                self.is_recording = False
+
+    async def start_recording_process(self, websocket):
+        self.is_recording = True
+        
+        # Start recording in a separate thread
+        def record_audio():
+            with sr.Microphone() as source:
+                print("Listening...")
+                try:
+                    audio = self.recognizer.listen(source)
+                    text = self.recognizer.recognize_google(audio)
+                    asyncio.run(self.process_speech(websocket, text))
+                except Exception as e:
+                    print(f"Error: {str(e)}")
+                    asyncio.run(websocket.send(json.dumps({
+                        'type': 'error',
+                        'message': str(e)
+                    })))
+
+        threading.Thread(target=record_audio).start()
+
+    async def process_speech(self, websocket, text):
+        # Send recognized text to client
+        await websocket.send(json.dumps({
+            'type': 'recognized_text',
+            'text': text
+        }))
+
+        # Get response from Groq
+        response_text = await self.send_to_groq(text)
+        await websocket.send(json.dumps({
+            'type': 'groq_response',
+            'text': response_text
+        }))
+
+        # Convert to speech and stream audio
+        audio_stream = await self.text_to_speech_stream(response_text)
+        await self.stream_audio(websocket, audio_stream)
+
+    async def send_to_groq(self, user_input):
+        system_prompt = (
+            "You are Immy, a magical AI-powered teddy bear who loves to chat with children. "
+            "You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. "
+            "When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination."
+        )
+
+        chat_response = await asyncio.to_thread(
+            groq_client.chat.completions.create,
+            model="llama-3.1-70b-versatile",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_input}
+            ]
+        )
+        return chat_response.choices[0].message.content
+
+    async def text_to_speech_stream(self, text):
+        response = await asyncio.to_thread(
+            eleven_labs_client.text_to_speech.convert,
+            voice_id="jBpfuIE2acCO8z3wKNLl",
+            output_format="mp3_22050_32",
+            text=text,
+            model_id="eleven_turbo_v2_5",
+            voice_settings=VoiceSettings(
+                stability=0.0,
+                similarity_boost=1.0,
+                style=0.0,
+                use_speaker_boost=True,
+            )
+        )
+        
+        audio_stream = BytesIO()
+        for chunk in response:
+            if chunk:
+                audio_stream.write(chunk)
+        audio_stream.seek(0)
+        return audio_stream
+
+    async def stream_audio(self, websocket, audio_stream):
+        # Stream audio in chunks
+        chunk_size = 4096
+        while True:
+            chunk = audio_stream.read(chunk_size)
+            if not chunk:
+                break
+            await websocket.send(json.dumps({
+                'type': 'audio_chunk',
+                'data': chunk.hex()  # Convert bytes to hex string for JSON
+            }))
+        
+        await websocket.send(json.dumps({
+            'type': 'audio_complete'
+        }))
+
+class WebInterface:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("Speech Recognition with WebSocket")
+        self.setup_ui()
+        self.websocket = None
+        self.is_connected = False
+
+    def setup_ui(self):
+        self.status_label = tk.Label(self.window, text="Disconnected")
+        self.status_label.pack(pady=5)
+
+        self.connect_button = tk.Button(
+            self.window,
+            text="Connect",
+            command=self.toggle_connection
+        )
+        self.connect_button.pack(pady=5)
+
+        self.record_button = tk.Button(
+            self.window,
+            text="Start Recording",
+            command=self.toggle_recording,
+            state=tk.DISABLED
+        )
+        self.record_button.pack(pady=5)
+
+    def toggle_connection(self):
+        if not self.is_connected:
+            self.connect_to_server()
+        else:
+            self.disconnect_from_server()
+
+    def connect_to_server(self):
+        async def connect():
+            try:
+                self.websocket = await websockets.connect('ws://localhost:8765')
+                self.is_connected = True
+                self.window.after(0, self.update_ui_connected)
+                await self.handle_messages()
+            except Exception as e:
+                print(f"Connection error: {e}")
+                self.window.after(0, self.update_ui_disconnected)
+
+        asyncio.run(connect())
+
+    def disconnect_from_server(self):
+        async def disconnect():
+            if self.websocket:
+                await self.websocket.close()
+            self.is_connected = False
+            self.window.after(0, self.update_ui_disconnected)
+
+        asyncio.run(disconnect())
+
+    def update_ui_connected(self):
+        self.status_label.config(text="Connected")
+        self.connect_button.config(text="Disconnect")
+        self.record_button.config(state=tk.NORMAL)
+
+    def update_ui_disconnected(self):
+        self.status_label.config(text="Disconnected")
+        self.connect_button.config(text="Connect")
+        self.record_button.config(state=tk.DISABLED)
+
+    def toggle_recording(self):
+        if self.websocket and self.is_connected:
+            async def send_recording_command():
+                await self.websocket.send(json.dumps({
+                    'type': 'start_recording'
+                }))
+
+            asyncio.run(send_recording_command())
+
+    async def handle_messages(self):
+        while True:
+            try:
+                message = await self.websocket.recv()
+                data = json.loads(message)
+                
+                if data['type'] == 'recognized_text':
+                    self.update_status(f"Recognized: {data['text']}")
+                elif data['type'] == 'groq_response':
+                    self.update_status(f"Response: {data['text']}")
+                elif data['type'] == 'audio_chunk':
+                    # Handle audio chunk (implement audio playback)
+                    pass
+                elif data['type'] == 'error':
+                    self.update_status(f"Error: {data['message']}")
+
+            except websockets.exceptions.ConnectionClosed:
+                break
+
+    def update_status(self, message):
+        self.status_label.config(text=message)
+
+    def run(self):
+        self.window.mainloop()
+
+async def main():
+    # Start the WebSocket server
+    audio_server = AudioServer()
+    async with websockets.serve(audio_server.register, "localhost", 8765):
+        # Start the GUI in a separate thread
+        gui_thread = threading.Thread(target=lambda: WebInterface().run())
+        gui_thread.start()
+        
+        # Keep the server running
+        await asyncio.Future()  # run forever
+
+if __name__ == "__main__":
+    asyncio.run(main())
