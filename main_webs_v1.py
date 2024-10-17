@@ -1,226 +1,172 @@
 import os
 import time
-import asyncio
-import websockets
-import json
+import requests
 import speech_recognition as sr
 from typing import IO
 from io import BytesIO
-from elevenlabs import VoiceSettings
-from elevenlabs.client import ElevenLabs
-from dotenv import load_dotenv
+import asyncio
+import websockets
+import json
+import base64
 import pygame
+from dotenv import load_dotenv
 import tkinter as tk
 from tkinter import messagebox
-import threading
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Retrieve the API keys from environment variables
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-LLMINABOX_WS_URL = os.getenv("LLMINABOX_WS_URL")
+LLMINABOX_API_URL = os.getenv("LLMINABOX_API_URL")
 
-# Initialize Eleven Labs client
-eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
+# WebSocket URL for ElevenLabs real-time TTS
+VOICE_ID = "21m00Tcm4TlvDq8ikWAM"  # Adam's pre-made voice
+ELEVENLABS_WS_URL = f"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5"
 
-class AudioProcessor:
-    def __init__(self):
-        self.recognizer = sr.Recognizer()
-        
-    async def text_to_speech_stream(self, text: str) -> IO[bytes]:
-        response = await asyncio.to_thread(
-            eleven_labs_client.text_to_speech.convert,
-            voice_id="jBpfuIE2acCO8z3wKNLl",
-            output_format="mp3_22050_32",
-            text=text,
-            model_id="eleven_turbo_v2_5",
-            voice_settings=VoiceSettings(
-                stability=0.0,
-                similarity_boost=1.0,
-                style=0.0,
-                use_speaker_boost=True,
-            )
-        )
+# Initialize pygame mixer
+pygame.mixer.init()
 
-        audio_stream = BytesIO()
-        for chunk in response:
-            if chunk:
-                audio_stream.write(chunk)
-        audio_stream.seek(0)
-        return audio_stream
+# Function to stream and play audio using pygame
+async def stream(audio_stream):
+    """Stream audio data using pygame for playback."""
+    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks
 
-    async def play_audio(self, audio_stream):
-        await asyncio.to_thread(pygame.mixer.init)
-        await asyncio.to_thread(pygame.mixer.music.load, audio_stream)
-        await asyncio.to_thread(pygame.mixer.music.play)
-        
+    async for chunk in audio_stream:
+        if chunk:
+            print("Received audio chunk")  # Debugging log
+            audio_buffer.write(chunk)  # Write the chunk to the buffer
+
+    # If the buffer is not empty, play the audio
+    if audio_buffer.tell() > 0:
+        # Reset the buffer to the beginning for playback
+        audio_buffer.seek(0)
+
+        # Play the audio using pygame
+        pygame.mixer.music.load(audio_buffer)
+        pygame.mixer.music.play()
+
+        # Wait for the audio to finish playing
         while pygame.mixer.music.get_busy():
             await asyncio.sleep(0.1)
+    else:
+        print("No audio received to play.")
 
-class WebSocketClient:
-    def __init__(self, url, gui):
-        self.url = url
-        self.gui = gui
-        self.websocket = None
-        self.audio_processor = AudioProcessor()
-        self.is_connected = False
-        self.reconnect_delay = 1  # Start with 1 second delay
-        self.max_reconnect_delay = 30  # Maximum delay between reconnection attempts
-        self.should_reconnect = True
 
-    async def connect_with_retry(self):
-        while self.should_reconnect:
-            try:
-                if not self.is_connected:
-                    self.gui.update_status("Connecting to LLMinaBox...")
-                    self.websocket = await websockets.connect(self.url)
-                    self.is_connected = True
-                    self.reconnect_delay = 1  # Reset delay on successful connection
-                    self.gui.update_status("Connected to LLMinaBox")
-                    self.gui.enable_recording()
-                    
-                    # Start heartbeat
-                    asyncio.create_task(self.heartbeat())
-                    
-                    # Wait for connection to close
-                    await self.websocket.wait_closed()
-                    
-                    # Connection closed, update status
-                    self.is_connected = False
-                    self.gui.update_status("Connection lost. Reconnecting...")
-                    self.gui.disable_recording()
-                    
-            except Exception as e:
-                self.is_connected = False
-                self.gui.update_status(f"Connection failed. Retrying in {self.reconnect_delay}s...")
-                self.gui.disable_recording()
-                
-                await asyncio.sleep(self.reconnect_delay)
-                
-                # Exponential backoff with maximum delay
-                self.reconnect_delay = min(self.reconnect_delay * 2, self.max_reconnect_delay)
+async def text_to_speech_websocket(text: str) -> IO[bytes]:
+    """Send text to ElevenLabs API via WebSockets and stream the returned audio."""
+    uri = ELEVENLABS_WS_URL.format(voice_id=VOICE_ID)
 
-    async def heartbeat(self):
-        while self.is_connected:
-            try:
-                await self.websocket.ping()
-                await asyncio.sleep(30)  # Send heartbeat every 30 seconds
-            except:
-                break
+    async with websockets.connect(uri) as websocket:
+        # Initial request
+        bos_message = {
+            "text": " ",  # Start of stream (blank or single space)
+            "voice_settings": {
+                "stability": 0.5,
+                "similarity_boost": 0.8
+            },
+            "xi_api_key": ELEVENLABS_API_KEY,  # Using API key
+        }
+        await websocket.send(json.dumps(bos_message))
 
-    async def send_message(self, message):
-        if not self.is_connected:
-            self.gui.update_status("Not connected to LLMinaBox")
-            return
+        # Send actual text input
+        input_message = {
+            "text": text
+        }
+        await websocket.send(json.dumps(input_message))
 
+        # End of stream message
+        eos_message = {
+            "text": ""  # Empty string as per documentation
+        }
+        await websocket.send(json.dumps(eos_message))
+
+        # Receive and handle the audio data
+        async def audio_data_stream():
+            while True:
+                try:
+                    response = await websocket.recv()
+                    data = json.loads(response)
+
+                    if "audio" in data:
+                        # If audio data is present, decode it
+                        audio_chunk = base64.b64decode(data["audio"])
+                        yield audio_chunk
+                    else:
+                        break
+                except websockets.exceptions.ConnectionClosed:
+                    print("Connection closed")
+                    break
+
+        # Stream the audio data received from ElevenLabs
+        await stream(audio_data_stream())
+
+
+# Function to recognize speech
+def recognize_speech():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
         try:
-            await self.websocket.send(json.dumps({"question": message}))
-            response = await self.websocket.recv()
-            response_data = json.loads(response)
-            
-            response_text = response_data.get('text', 'No response received')
-            self.gui.update_status(f"Response: {response_text}")
-            
-            audio_stream = await self.audio_processor.text_to_speech_stream(response_text)
-            await self.audio_processor.play_audio(audio_stream)
-            
+            text = recognizer.recognize_google(audio)
+            print(f"Recognized: {text}")
+            return text
         except Exception as e:
-            self.gui.update_status(f"Error: {str(e)}")
+            print(f"Error: {str(e)}")
+            return None
 
-    async def cleanup(self):
-        self.should_reconnect = False
-        if self.websocket:
-            await self.websocket.close()
 
-class GUI:
-    def __init__(self):
-        self.window = tk.Tk()
-        self.window.title("LLMinaBox Speech Recognition")
-        self.setup_ui()
-        self.client = WebSocketClient(LLMINABOX_WS_URL, self)
-        self.recognizer = sr.Recognizer()
-        self.is_recording = False
+# Function to send text to LLMinaBox API and get the response
+def send_to_LLMinBox(user_input):
+    payload = {"question": user_input}
+    try:
+        response = requests.post(LLMINABOX_API_URL, json=payload)
+        response.raise_for_status()  # Raise an exception for bad status codes
+
+        print(f"Response status code: {response.status_code}")
         
-        # Start WebSocket connection in a separate thread
-        self.start_websocket_thread()
+        # Try to parse the JSON response
+        json_response = response.json()
+        
+        # Extract the text from the response
+        response_text = json_response.get('text', 'No text field in JSON')
+        return response_text
+    except requests.exceptions.RequestException as req_err:
+        print(f"Request to LLMinaBox failed: {req_err}")
+        return f"Error: Failed to connect to LLMinaBox. {str(req_err)}"
 
-    def setup_ui(self):
-        self.status_label = tk.Label(self.window, text="Initializing...", wraplength=300)
-        self.status_label.pack(pady=10)
 
-        self.record_button = tk.Button(
-            self.window,
-            text="Start Recording",
-            command=self.toggle_recording,
-            state=tk.DISABLED,
-            padx=20,
-            pady=10
-        )
-        self.record_button.pack(pady=10)
-
-    def start_websocket_thread(self):
-        def run_async_loop():
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(self.client.connect_with_retry())
-
-        threading.Thread(target=run_async_loop, daemon=True).start()
-
-    def update_status(self, status):
-        self.status_label.config(text=status)
-
-    def enable_recording(self):
-        self.record_button.config(state=tk.NORMAL)
-
-    def disable_recording(self):
-        self.record_button.config(state=tk.DISABLED)
-
-    def toggle_recording(self):
-        if not self.is_recording:
-            self.start_recording()
+# Function triggered by the Tkinter button to start the process
+def start_recording():
+    user_input = recognize_speech()
+    if user_input:
+        response_text = send_to_LLMinBox(user_input)
+        print("LLMinaBox response:", response_text)
+        if not response_text.startswith("Error:"):
+            # Use asyncio to run the text-to-speech websocket stream
+            loop = asyncio.get_event_loop()
+            try:
+                loop.run_until_complete(text_to_speech_websocket(response_text))
+            except Exception as e:
+                print(f"Error during TTS WebSocket handling: {str(e)}")
         else:
-            self.stop_recording()
+            print("Skipping text-to-speech due to error in LLMinaBox response")
+            messagebox.showerror("Error", "LLMinaBox response error")
 
-    def start_recording(self):
-        self.is_recording = True
-        self.record_button.config(text="Stop Recording")
-        self.update_status("Listening...")
-        threading.Thread(target=self.record_audio, daemon=True).start()
 
-    def stop_recording(self):
-        self.is_recording = False
-        self.record_button.config(text="Start Recording")
-        self.update_status("Ready")
+# Create the Tkinter UI
+def create_gui():
+    window = tk.Tk()
+    window.title("Speech Recognition App")
 
-    def record_audio(self):
-        try:
-            with sr.Microphone() as source:
-                audio = self.recognizer.listen(source)
-                text = self.recognizer.recognize_google(audio)
-                self.update_status(f"Recognized: {text}")
-                
-                # Send to LLMinaBox
-                asyncio.run(self.client.send_message(text))
-                
-        except Exception as e:
-            self.update_status(f"Error: {str(e)}")
-        finally:
-            self.stop_recording()
+    # Create and place the button on the window
+    record_button = tk.Button(window, text="Start Recording", command=start_recording, padx=20, pady=10)
+    record_button.pack(pady=20)
 
-    def run(self):
-        # Handle window closing
-        def on_closing():
-            asyncio.run(self.client.cleanup())
-            self.window.destroy()
-            
-        self.window.protocol("WM_DELETE_WINDOW", on_closing)
-        self.window.mainloop()
+    # Start the Tkinter main loop
+    window.mainloop()
 
-def main():
-    pygame.init()
-    gui = GUI()
-    gui.run()
 
 if __name__ == "__main__":
-    main()
+    create_gui()

@@ -124,22 +124,6 @@
         "documentation": {}
     },
     {
-        "label": "VoiceSettings",
-        "importPath": "elevenlabs",
-        "description": "elevenlabs",
-        "isExtraImport": true,
-        "detail": "elevenlabs",
-        "documentation": {}
-    },
-    {
-        "label": "ElevenLabs",
-        "importPath": "elevenlabs.client",
-        "description": "elevenlabs.client",
-        "isExtraImport": true,
-        "detail": "elevenlabs.client",
-        "documentation": {}
-    },
-    {
         "label": "ElevenLabs",
         "importPath": "elevenlabs.client",
         "description": "elevenlabs.client",
@@ -273,12 +257,12 @@
         "documentation": {}
     },
     {
-        "label": "threading",
+        "label": "base64",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "threading",
-        "description": "threading",
-        "detail": "threading",
+        "importPath": "base64",
+        "description": "base64",
+        "detail": "base64",
         "documentation": {}
     },
     {
@@ -552,38 +536,38 @@
         "documentation": {}
     },
     {
-        "label": "AudioProcessor",
-        "kind": 6,
-        "importPath": "main_webs_v1",
-        "description": "main_webs_v1",
-        "peekOfCode": "class AudioProcessor:\n    def __init__(self):\n        self.recognizer = sr.Recognizer()\n    async def text_to_speech_stream(self, text: str) -> IO[bytes]:\n        response = await asyncio.to_thread(\n            eleven_labs_client.text_to_speech.convert,\n            voice_id=\"jBpfuIE2acCO8z3wKNLl\",\n            output_format=\"mp3_22050_32\",\n            text=text,\n            model_id=\"eleven_turbo_v2_5\",",
-        "detail": "main_webs_v1",
-        "documentation": {}
-    },
-    {
-        "label": "WebSocketClient",
-        "kind": 6,
-        "importPath": "main_webs_v1",
-        "description": "main_webs_v1",
-        "peekOfCode": "class WebSocketClient:\n    def __init__(self, url, gui):\n        self.url = url\n        self.gui = gui\n        self.websocket = None\n        self.audio_processor = AudioProcessor()\n        self.is_connected = False\n        self.reconnect_delay = 1  # Start with 1 second delay\n        self.max_reconnect_delay = 30  # Maximum delay between reconnection attempts\n        self.should_reconnect = True",
-        "detail": "main_webs_v1",
-        "documentation": {}
-    },
-    {
-        "label": "GUI",
-        "kind": 6,
-        "importPath": "main_webs_v1",
-        "description": "main_webs_v1",
-        "peekOfCode": "class GUI:\n    def __init__(self):\n        self.window = tk.Tk()\n        self.window.title(\"LLMinaBox Speech Recognition\")\n        self.setup_ui()\n        self.client = WebSocketClient(LLMINABOX_WS_URL, self)\n        self.recognizer = sr.Recognizer()\n        self.is_recording = False\n        # Start WebSocket connection in a separate thread\n        self.start_websocket_thread()",
-        "detail": "main_webs_v1",
-        "documentation": {}
-    },
-    {
-        "label": "main",
+        "label": "recognize_speech",
         "kind": 2,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "def main():\n    pygame.init()\n    gui = GUI()\n    gui.run()\nif __name__ == \"__main__\":\n    main()",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_LLMinBox",
+        "kind": 2,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    payload = {\"question\": user_input}\n    try:\n        response = requests.post(LLMINABOX_API_URL, json=payload)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")\n        # Try to parse the JSON response\n        json_response = response.json()\n        # Extract the text from the response\n        response_text = json_response.get('text', 'No text field in JSON')",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "start_recording",
+        "kind": 2,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "def start_recording():\n    user_input = recognize_speech()\n    if user_input:\n        response_text = send_to_LLMinBox(user_input)\n        print(\"LLMinaBox response:\", response_text)\n        if not response_text.startswith(\"Error:\"):\n            # Use asyncio to run the text-to-speech websocket stream\n            loop = asyncio.get_event_loop()\n            try:\n                loop.run_until_complete(text_to_speech_websocket(response_text))",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "create_gui",
+        "kind": 2,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "def create_gui():\n    window = tk.Tk()\n    window.title(\"Speech Recognition App\")\n    # Create and place the button on the window\n    record_button = tk.Button(window, text=\"Start Recording\", command=start_recording, padx=20, pady=10)\n    record_button.pack(pady=20)\n    # Start the Tkinter main loop\n    window.mainloop()\nif __name__ == \"__main__\":\n    create_gui()",
         "detail": "main_webs_v1",
         "documentation": {}
     },
@@ -592,25 +576,34 @@
         "kind": 5,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_WS_URL = os.getenv(\"LLMINABOX_WS_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioProcessor:\n    def __init__(self):\n        self.recognizer = sr.Recognizer()\n    async def text_to_speech_stream(self, text: str) -> IO[bytes]:\n        response = await asyncio.to_thread(\n            eleven_labs_client.text_to_speech.convert,",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# WebSocket URL for ElevenLabs real-time TTS\nVOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\nELEVENLABS_WS_URL = f\"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5\"\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"",
         "detail": "main_webs_v1",
         "documentation": {}
     },
     {
-        "label": "LLMINABOX_WS_URL",
+        "label": "LLMINABOX_API_URL",
         "kind": 5,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "LLMINABOX_WS_URL = os.getenv(\"LLMINABOX_WS_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioProcessor:\n    def __init__(self):\n        self.recognizer = sr.Recognizer()\n    async def text_to_speech_stream(self, text: str) -> IO[bytes]:\n        response = await asyncio.to_thread(\n            eleven_labs_client.text_to_speech.convert,\n            voice_id=\"jBpfuIE2acCO8z3wKNLl\",",
+        "peekOfCode": "LLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# WebSocket URL for ElevenLabs real-time TTS\nVOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\nELEVENLABS_WS_URL = f\"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5\"\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks",
         "detail": "main_webs_v1",
         "documentation": {}
     },
     {
-        "label": "eleven_labs_client",
+        "label": "VOICE_ID",
         "kind": 5,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioProcessor:\n    def __init__(self):\n        self.recognizer = sr.Recognizer()\n    async def text_to_speech_stream(self, text: str) -> IO[bytes]:\n        response = await asyncio.to_thread(\n            eleven_labs_client.text_to_speech.convert,\n            voice_id=\"jBpfuIE2acCO8z3wKNLl\",\n            output_format=\"mp3_22050_32\",\n            text=text,",
+        "peekOfCode": "VOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\nELEVENLABS_WS_URL = f\"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5\"\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks\n    async for chunk in audio_stream:\n        if chunk:",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_WS_URL",
+        "kind": 5,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "ELEVENLABS_WS_URL = f\"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5\"\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks\n    async for chunk in audio_stream:\n        if chunk:\n            print(\"Received audio chunk\")  # Debugging log",
         "detail": "main_webs_v1",
         "documentation": {}
     }
