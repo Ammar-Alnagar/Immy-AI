@@ -17,10 +17,10 @@
    ```
 
 3. **Set up your environment**:
-   Add your Mistral API key, Ollama API configurations, and any other necessary credentials to a `.env` file in the project root:
+   Add your API keys , and any other necessary credentials to a `.env` file in the project root:
    ```bash
-   MISTRAL_API_KEY=your_mistral_api_key
-   OLLAMA_API_URL=http://localhost:11434
+LLMINABOX_API_URL = ....
+ELEVENLABS_API_KEY = ......
    ```
 
 4. **Run the main application**:
