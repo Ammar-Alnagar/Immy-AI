@@ -1,4 +1,4 @@
-Here's a rewritten version of the **Installation** section with instructions to install the requirements and run the `main.py` file:
+
 
 ---
 
