@@ -294,14 +294,6 @@
         "documentation": {}
     },
     {
-        "label": "ttk",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
         "label": "messagebox",
         "importPath": "tkinter",
         "description": "tkinter",
@@ -674,7 +666,7 @@
         "kind": 6,
         "importPath": "offline",
         "description": "offline",
-        "peekOfCode": "class SpeechBot:\n    def __init__(self):\n        self.OLLAMA_API_URL = \"http://localhost:11434/api/generate\"\n        self.engine = pyttsx3.init()\n        # Default voice settings for a kid-friendly voice\n        self.engine.setProperty('rate', 150)     # Speed of speech\n        self.engine.setProperty('volume', 0.9)   # Volume level\n        # Get available voices\n        self.voices = self.engine.getProperty('voices')\n        self.current_voice_idx = 0",
+        "peekOfCode": "class SpeechBot:\n    def __init__(self):\n        self.OLLAMA_API_URL = \"http://localhost:11434/api/chat\"  # Changed to chat endpoint\n        self.engine = pyttsx3.init()\n        self.engine.setProperty('rate', 150)\n        self.engine.setProperty('volume', 0.9)\n        voices = self.engine.getProperty('voices')\n        for voice in voices:\n            if \"female\" in voice.name.lower():\n                self.engine.setProperty('voice', voice.id)",
         "detail": "offline",
         "documentation": {}
     },

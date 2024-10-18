@@ -5,7 +5,7 @@ import speech_recognition as sr
 from typing import IO
 from io import BytesIO
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox
 import json
 from pydub import AudioSegment
 from pydub.playback import play
@@ -13,26 +13,16 @@ import pyttsx3
 
 class SpeechBot:
     def __init__(self):
-        self.OLLAMA_API_URL = "http://localhost:11434/api/generate"
+        self.OLLAMA_API_URL = "http://localhost:11434/api/chat"  # Changed to chat endpoint
         self.engine = pyttsx3.init()
+        self.engine.setProperty('rate', 150)
+        self.engine.setProperty('volume', 0.9)
         
-        # Default voice settings for a kid-friendly voice
-        self.engine.setProperty('rate', 150)     # Speed of speech
-        self.engine.setProperty('volume', 0.9)   # Volume level
-        
-        # Get available voices
-        self.voices = self.engine.getProperty('voices')
-        self.current_voice_idx = 0
-        if self.voices:
-            self.engine.setProperty('voice', self.voices[0].id)
-
-    def set_voice_properties(self, rate, volume, voice_idx):
-        """Update voice properties"""
-        self.engine.setProperty('rate', rate)
-        self.engine.setProperty('volume', volume)
-        if 0 <= voice_idx < len(self.voices):
-            self.engine.setProperty('voice', self.voices[voice_idx].id)
-            self.current_voice_idx = voice_idx
+        voices = self.engine.getProperty('voices')
+        for voice in voices:
+            if "female" in voice.name.lower():
+                self.engine.setProperty('voice', voice.id)
+                break
 
     def text_to_speech(self, text: str) -> None:
         start_time = time.time()
@@ -42,9 +32,6 @@ class SpeechBot:
         
         try:
             audio = AudioSegment.from_wav(temp_file)
-            # Add some fun effects to make it more kid-friendly
-            audio = audio + 3  # Slightly increase volume
-            audio = audio.high_pass_filter(300)  # Reduce low frequencies
             play(audio)
         except Exception as e:
             print(f"Error playing audio: {str(e)}")
@@ -89,8 +76,10 @@ class SpeechBot:
             }
         ]
 
+        start_time = time.time()
+        
         payload = {
-            "model": "qwen2.5:0.5b",
+            "model": "qwen2.5:0.5b-instruct-q8_0",
             "messages": messages,
             "stream": False
         }
@@ -98,8 +87,14 @@ class SpeechBot:
         try:
             response = requests.post(self.OLLAMA_API_URL, json=payload)
             response.raise_for_status()
+            
             response_data = response.json()
-            return response_data.get('message', {}).get('content', '')
+            response_text = response_data.get('message', {}).get('content', '')
+            
+            end_time = time.time()
+            print(f"Ollama API response took {end_time - start_time:.2f} seconds")
+            
+            return response_text
         except requests.exceptions.RequestException as e:
             print(f"Error communicating with Ollama API: {str(e)}")
             return None
@@ -115,51 +110,10 @@ class SpeechBot:
                 print("No response from Ollama.")
                 messagebox.showerror("Error", "No response from Ollama API")
 
-    def create_voice_settings_window(self):
-        """Create a window for voice settings"""
-        settings = tk.Toplevel(self.window)
-        settings.title("Voice Settings")
-        settings.geometry("300x400")
-        
-        # Voice selection
-        tk.Label(settings, text="Select Voice:", font=("Arial", 12)).pack(pady=10)
-        voice_var = tk.StringVar(value=self.voices[self.current_voice_idx].name)
-        voice_combo = ttk.Combobox(settings, textvariable=voice_var)
-        voice_combo['values'] = [voice.name for voice in self.voices]
-        voice_combo.pack(pady=5)
-        
-        # Speed control
-        tk.Label(settings, text="Speech Speed:", font=("Arial", 12)).pack(pady=10)
-        speed_var = tk.IntVar(value=self.engine.getProperty('rate'))
-        speed_scale = ttk.Scale(settings, from_=50, to=250, variable=speed_var, orient='horizontal')
-        speed_scale.pack(pady=5)
-        
-        # Volume control
-        tk.Label(settings, text="Volume:", font=("Arial", 12)).pack(pady=10)
-        volume_var = tk.DoubleVar(value=self.engine.getProperty('volume'))
-        volume_scale = ttk.Scale(settings, from_=0, to=1, variable=volume_var, orient='horizontal')
-        volume_scale.pack(pady=5)
-        
-        # Test button
-        def test_voice():
-            voice_idx = voice_combo.current()
-            self.set_voice_properties(speed_var.get(), volume_var.get(), voice_idx)
-            self.text_to_speech("Hi! I'm Immy, your magical teddy bear friend!")
-        
-        ttk.Button(settings, text="Test Voice", command=test_voice).pack(pady=20)
-        
-        # Save button
-        def save_settings():
-            voice_idx = voice_combo.current()
-            self.set_voice_properties(speed_var.get(), volume_var.get(), voice_idx)
-            settings.destroy()
-        
-        ttk.Button(settings, text="Save Settings", command=save_settings).pack(pady=10)
-
     def create_gui(self):
         self.window = tk.Tk()
         self.window.title("Immy - Your AI Teddy Bear Friend")
-        self.window.geometry("400x400")
+        self.window.geometry("400x300")
         
         frame = tk.Frame(self.window, padx=20, pady=20)
         frame.pack(expand=True)
@@ -178,19 +132,6 @@ class SpeechBot:
             justify=tk.CENTER
         )
         instructions.pack(pady=20)
-        
-        # Add voice settings button
-        settings_button = tk.Button(
-            frame,
-            text="Voice Settings",
-            command=self.create_voice_settings_window,
-            font=("Arial", 12),
-            padx=10,
-            pady=5,
-            bg="#4CAF50",
-            fg="white"
-        )
-        settings_button.pack(pady=10)
         
         record_button = tk.Button(
             frame,
