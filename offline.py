@@ -90,7 +90,7 @@ class SpeechBot:
         ]
 
         payload = {
-            "model": "qwen2.5:0.5b-instruct-q8_0",
+            "model": "qwen2.5:0.5b",
             "messages": messages,
             "stream": False
         }
