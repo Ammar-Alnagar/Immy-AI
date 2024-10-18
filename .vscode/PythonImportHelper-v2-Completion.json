@@ -674,7 +674,7 @@
         "kind": 6,
         "importPath": "offline",
         "description": "offline",
-        "peekOfCode": "class SpeechBot:\n    def __init__(self):\n        self.OLLAMA_API_URL = \"http://localhost:11434/api/chat\"\n        self.engine = pyttsx3.init()\n        # Default voice settings for a kid-friendly voice\n        self.engine.setProperty('rate', 150)     # Speed of speech\n        self.engine.setProperty('volume', 0.9)   # Volume level\n        # Get available voices\n        self.voices = self.engine.getProperty('voices')\n        self.current_voice_idx = 0",
+        "peekOfCode": "class SpeechBot:\n    def __init__(self):\n        self.OLLAMA_API_URL = \"http://localhost:11434/api/generate\"\n        self.engine = pyttsx3.init()\n        # Default voice settings for a kid-friendly voice\n        self.engine.setProperty('rate', 150)     # Speed of speech\n        self.engine.setProperty('volume', 0.9)   # Volume level\n        # Get available voices\n        self.voices = self.engine.getProperty('voices')\n        self.current_voice_idx = 0",
         "detail": "offline",
         "documentation": {}
     },

@@ -13,7 +13,7 @@ import pyttsx3
 
 class SpeechBot:
     def __init__(self):
-        self.OLLAMA_API_URL = "http://localhost:11434/api/chat"
+        self.OLLAMA_API_URL = "http://localhost:11434/api/generate"
         self.engine = pyttsx3.init()
         
         # Default voice settings for a kid-friendly voice
