@@ -68,6 +68,22 @@
         "documentation": {}
     },
     {
+        "label": "IO",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
         "label": "BytesIO",
         "importPath": "io",
         "description": "io",
@@ -222,6 +238,22 @@
         "documentation": {}
     },
     {
+        "label": "messagebox",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "ttk",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
         "label": "Groq",
         "importPath": "groq",
         "description": "groq",
@@ -263,6 +295,31 @@
         "importPath": "base64",
         "description": "base64",
         "detail": "base64",
+        "documentation": {}
+    },
+    {
+        "label": "AudioSegment",
+        "importPath": "pydub",
+        "description": "pydub",
+        "isExtraImport": true,
+        "detail": "pydub",
+        "documentation": {}
+    },
+    {
+        "label": "play",
+        "importPath": "pydub.playback",
+        "description": "pydub.playback",
+        "isExtraImport": true,
+        "detail": "pydub.playback",
+        "documentation": {}
+    },
+    {
+        "label": "pyttsx3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pyttsx3",
+        "description": "pyttsx3",
+        "detail": "pyttsx3",
         "documentation": {}
     },
     {
@@ -540,7 +597,7 @@
         "kind": 2,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except sr.UnknownValueError:",
         "detail": "main_webs_v1",
         "documentation": {}
     },
@@ -554,20 +611,11 @@
         "documentation": {}
     },
     {
-        "label": "start_recording",
-        "kind": 2,
-        "importPath": "main_webs_v1",
-        "description": "main_webs_v1",
-        "peekOfCode": "def start_recording():\n    user_input = recognize_speech()\n    if user_input:\n        response_text = send_to_LLMinBox(user_input)\n        print(\"LLMinaBox response:\", response_text)\n        if not response_text.startswith(\"Error:\"):\n            # Use asyncio to run the text-to-speech websocket stream\n            loop = asyncio.get_event_loop()\n            try:\n                loop.run_until_complete(text_to_speech_websocket(response_text))",
-        "detail": "main_webs_v1",
-        "documentation": {}
-    },
-    {
         "label": "create_gui",
         "kind": 2,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "def create_gui():\n    window = tk.Tk()\n    window.title(\"Speech Recognition App\")\n    # Create and place the button on the window\n    record_button = tk.Button(window, text=\"Start Recording\", command=start_recording, padx=20, pady=10)\n    record_button.pack(pady=20)\n    # Start the Tkinter main loop\n    window.mainloop()\nif __name__ == \"__main__\":\n    create_gui()",
+        "peekOfCode": "def create_gui():\n    window = tk.Tk()\n    window.title(\"Speech Recognition App\")\n    # Create and place the button on the window\n    record_button = tk.Button(window, text=\"Start Recording\", command=lambda: asyncio.run(start_recording()), padx=20, pady=10)\n    record_button.pack(pady=20)\n    # Start the Tkinter main loop\n    window.mainloop()\nif __name__ == \"__main__\":\n    create_gui()",
         "detail": "main_webs_v1",
         "documentation": {}
     },
@@ -576,7 +624,7 @@
         "kind": 5,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# WebSocket URL for ElevenLabs real-time TTS\nVOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\nELEVENLABS_WS_URL = f\"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5\"\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# WebSocket URL for ElevenLabs real-time TTS\nELEVENLABS_WS_URL = \"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input?model_id=eleven_turbo_v2_5\"\nVOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"",
         "detail": "main_webs_v1",
         "documentation": {}
     },
@@ -585,16 +633,7 @@
         "kind": 5,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "LLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# WebSocket URL for ElevenLabs real-time TTS\nVOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\nELEVENLABS_WS_URL = f\"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5\"\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks",
-        "detail": "main_webs_v1",
-        "documentation": {}
-    },
-    {
-        "label": "VOICE_ID",
-        "kind": 5,
-        "importPath": "main_webs_v1",
-        "description": "main_webs_v1",
-        "peekOfCode": "VOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\nELEVENLABS_WS_URL = f\"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5\"\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks\n    async for chunk in audio_stream:\n        if chunk:",
+        "peekOfCode": "LLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# WebSocket URL for ElevenLabs real-time TTS\nELEVENLABS_WS_URL = \"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input?model_id=eleven_turbo_v2_5\"\nVOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks",
         "detail": "main_webs_v1",
         "documentation": {}
     },
@@ -603,8 +642,26 @@
         "kind": 5,
         "importPath": "main_webs_v1",
         "description": "main_webs_v1",
-        "peekOfCode": "ELEVENLABS_WS_URL = f\"wss://api.elevenlabs.io/v1/text-to-speech/{{VOICE_ID}}/stream-input?model_id=eleven_turbo_v2_5\"\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks\n    async for chunk in audio_stream:\n        if chunk:\n            print(\"Received audio chunk\")  # Debugging log",
+        "peekOfCode": "ELEVENLABS_WS_URL = \"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input?model_id=eleven_turbo_v2_5\"\nVOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks\n    async for chunk in audio_stream:\n        if chunk:",
         "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "VOICE_ID",
+        "kind": 5,
+        "importPath": "main_webs_v1",
+        "description": "main_webs_v1",
+        "peekOfCode": "VOICE_ID = \"21m00Tcm4TlvDq8ikWAM\"  # Adam's pre-made voice\n# Initialize pygame mixer\npygame.mixer.init()\n# Function to stream and play audio using pygame\nasync def stream(audio_stream):\n    \"\"\"Stream audio data using pygame for playback.\"\"\"\n    audio_buffer = BytesIO()  # Create a buffer to hold the incoming audio chunks\n    async for chunk in audio_stream:\n        if chunk:\n            print(\"Received audio chunk\")  # Debugging log",
+        "detail": "main_webs_v1",
+        "documentation": {}
+    },
+    {
+        "label": "SpeechBot",
+        "kind": 6,
+        "importPath": "offline",
+        "description": "offline",
+        "peekOfCode": "class SpeechBot:\n    def __init__(self):\n        self.OLLAMA_API_URL = \"http://localhost:11434/api/chat\"\n        self.engine = pyttsx3.init()\n        # Default voice settings for a kid-friendly voice\n        self.engine.setProperty('rate', 150)     # Speed of speech\n        self.engine.setProperty('volume', 0.9)   # Volume level\n        # Get available voices\n        self.voices = self.engine.getProperty('voices')\n        self.current_voice_idx = 0",
+        "detail": "offline",
         "documentation": {}
     }
 ]
