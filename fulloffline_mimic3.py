@@ -85,7 +85,7 @@ def send_to_ollama(user_input):
     
     # Prepare the request payload for Ollama
     payload = {
-        "model": "llama2",  # You can change this to any model you have pulled in Ollama
+        "model": "qwen2.5:0.5b-instruct-q8_0",  # You can change this to any model you have pulled in Ollama
         "prompt": f"System: {system_prompt}\n\nUser: {user_input}\n\nAssistant:",
         "stream": False
     }
