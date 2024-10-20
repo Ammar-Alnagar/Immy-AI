@@ -10,7 +10,7 @@
 8. Llama.cpp implementation (offline) (wip)
 9. Whisper.cpp (offline) (wip)
 10. Other offline TTS (wip)
-11. Gather dataset for Immy offline model (wip)
+11. Gather dataset for Immy offline model  ✔
 12. Finetune a model for offline Immy (wip)
 13. LLM in a Box streaming ? (unknown status)
 
