@@ -1,35 +1,15 @@
+##Timeline 
 
-
----
-
-### Installation
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/yourusername/immy-ai-teddy.git
-   cd immy-ai-teddy
-   ```
-
-2. **Install the required dependencies**:
-   Make sure you have Python 3.x installed. Then, install the required packages by running:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Set up your environment**:
-   Add your API keys , and any other necessary credentials to a `.env` file in the project root:
-   ```bash
-LLMINABOX_API_URL = ....
-ELEVENLABS_API_KEY = ......
-   ```
-
-4. **Run the main application**:
-   After setting up the environment and dependencies, start the main program:
-   ```bash
-   python main.py
-   ```
-
-IMMY should now be up and running, ready to interact with children through speech recognition and AI-powered conversations!
-
---- 
-
+1-LLM in a Box imnplementation    ✔
+2-Groq implementation     ✔
+3-Ollama implementation(offline)   ✔
+4-Using websockets for elevenlabs api (wip)
+5-Use Groq toekn streaming (wip)
+6-LLM in a box streaming ? 
+7-Llama.cpp implementation(offiline)(wip)
+8-whisper.cpp(offline)(wip)
+9-other offline tts(wip)
+10-save logs offline then send it to LLM in a box with chatid     ✔
+11-Route between offline and online models for seemless interaction    ✔
+12-gather dataset for immy offline model (wip)
+13-Finetune a model for offline immy (wip)
