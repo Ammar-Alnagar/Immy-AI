@@ -1,15 +1,16 @@
 ## Timeline 
 
-1-LLM in a Box imnplementation    ✔
-2-Groq implementation     ✔
-3-Ollama implementation(offline)   ✔
-4-Using websockets for elevenlabs api (wip)
-5-Use Groq toekn streaming (wip)
-6-LLM in a box streaming ? 
-7-Llama.cpp implementation(offiline)(wip)
-8-whisper.cpp(offline)(wip)
-9-other offline tts(wip)
-10-save logs offline then send it to LLM in a box with chatid     ✔
-11-Route between offline and online models for seemless interaction    ✔
-12-gather dataset for immy offline model (wip)
-13-Finetune a model for offline immy (wip)
+1. LLM in a Box implementation ✔
+2. Groq implementation ✔
+3. Ollama implementation (offline) ✔
+4. Save logs offline, then send it to LLM in a Box with chatid ✔
+5. Route between offline and online models for seamless interaction ✔
+6. Using websockets for ElevenLabs API (wip)
+7. Use Groq token streaming (wip)
+8. Llama.cpp implementation (offline) (wip)
+9. Whisper.cpp (offline) (wip)
+10. Other offline TTS (wip)
+11. Gather dataset for Immy offline model (wip)
+12. Finetune a model for offline Immy (wip)
+13. LLM in a Box streaming ? (unknown status)
+
