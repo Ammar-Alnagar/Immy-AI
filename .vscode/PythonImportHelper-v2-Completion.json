@@ -232,22 +232,6 @@
         "documentation": {}
     },
     {
-        "label": "ttk",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "messagebox",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
         "label": "requests",
         "kind": 6,
         "isExtraImport": true,
@@ -317,48 +301,6 @@
         "documentation": {}
     },
     {
-        "label": "sounddevice",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sounddevice",
-        "description": "sounddevice",
-        "detail": "sounddevice",
-        "documentation": {}
-    },
-    {
-        "label": "wave",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "wave",
-        "description": "wave",
-        "detail": "wave",
-        "documentation": {}
-    },
-    {
-        "label": "Popen",
-        "importPath": "subprocess",
-        "description": "subprocess",
-        "isExtraImport": true,
-        "detail": "subprocess",
-        "documentation": {}
-    },
-    {
-        "label": "PIPE",
-        "importPath": "subprocess",
-        "description": "subprocess",
-        "isExtraImport": true,
-        "detail": "subprocess",
-        "documentation": {}
-    },
-    {
-        "label": "Llama",
-        "importPath": "llama_cpp",
-        "description": "llama_cpp",
-        "isExtraImport": true,
-        "detail": "llama_cpp",
-        "documentation": {}
-    },
-    {
         "label": "AudioStreamPlayer",
         "kind": 6,
         "importPath": "Groq",
@@ -390,7 +332,7 @@
         "kind": 2,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n    )\n    try:\n        stream = groq_client.chat.completions.create(\n            model=\"llama-3.1-70b-versatile\",\n            messages=[",
+        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n        \"keep your responses short and cute\"\n        \"Dont use emojis in your responses. \"\n    )\n    try:\n        stream = groq_client.chat.completions.create(",
         "detail": "Groq",
         "documentation": {}
     },
@@ -530,20 +472,11 @@
         "documentation": {}
     },
     {
-        "label": "SpeechBot",
-        "kind": 6,
-        "importPath": "raspberrypitestver",
-        "description": "raspberrypitestver",
-        "peekOfCode": "class SpeechBot:\n    def __init__(self, \n                 llama_model_path=\"models/llama-2-7b-q4_0.gguf\",  # Quantized model\n                 whisper_model_path=\"models/whisper-tiny-q5_1.bin\"):  # Tiny quantized model\n        # Initialize llama.cpp with minimal resources\n        self.llm = Llama(\n            model_path=llama_model_path,\n            n_ctx=512,  # Reduced context window\n            n_threads=2,  # Reduced threads for Raspberry Pi\n            n_batch=8    # Smaller batch size",
-        "detail": "raspberrypitestver",
-        "documentation": {}
-    },
-    {
         "label": "text_to_speech_stream",
         "kind": 2,
         "importPath": "LLMinAbox",
         "description": "LLMinAbox",
-        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"0\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",\n        voice_settings=VoiceSettings(",
+        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"4\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",\n        voice_settings=VoiceSettings(",
         "detail": "LLMinAbox",
         "documentation": {}
     },
@@ -615,7 +548,7 @@
         "kind": 5,
         "importPath": "LLMinAbox",
         "description": "LLMinAbox",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"0\",\n        text=text,",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"4\",\n        text=text,",
         "detail": "LLMinAbox",
         "documentation": {}
     }
