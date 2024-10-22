@@ -9,6 +9,15 @@
         "documentation": {}
     },
     {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
         "label": "time",
         "kind": 6,
         "isExtraImport": true,
@@ -18,12 +27,38 @@
         "documentation": {}
     },
     {
-        "label": "requests",
+        "label": "queue",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "requests",
-        "description": "requests",
-        "detail": "requests",
+        "importPath": "queue",
+        "description": "queue",
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Queue",
+        "importPath": "queue",
+        "description": "queue",
+        "isExtraImport": true,
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "pygame",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pygame",
+        "description": "pygame",
+        "detail": "pygame",
         "documentation": {}
     },
     {
@@ -36,7 +71,7 @@
         "documentation": {}
     },
     {
-        "label": "IO",
+        "label": "Iterator",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -57,22 +92,6 @@
         "description": "typing",
         "isExtraImport": true,
         "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "IO",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "BytesIO",
-        "importPath": "io",
-        "description": "io",
-        "isExtraImport": true,
-        "detail": "io",
         "documentation": {}
     },
     {
@@ -180,15 +199,6 @@
         "documentation": {}
     },
     {
-        "label": "pygame",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "pygame",
-        "description": "pygame",
-        "detail": "pygame",
-        "documentation": {}
-    },
-    {
         "label": "tkinter",
         "kind": 6,
         "isExtraImport": true,
@@ -238,19 +248,12 @@
         "documentation": {}
     },
     {
-        "label": "messagebox",
-        "importPath": "tkinter",
-        "description": "tkinter",
+        "label": "requests",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "ttk",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
         "documentation": {}
     },
     {
@@ -263,54 +266,11 @@
         "documentation": {}
     },
     {
-        "label": "sounddevice",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sounddevice",
-        "description": "sounddevice",
-        "detail": "sounddevice",
-        "documentation": {}
-    },
-    {
-        "label": "numpy",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "numpy",
-        "description": "numpy",
-        "detail": "numpy",
-        "documentation": {}
-    },
-    {
-        "label": "wave",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "wave",
-        "description": "wave",
-        "detail": "wave",
-        "documentation": {}
-    },
-    {
         "label": "AudioSegment",
         "importPath": "pydub",
         "description": "pydub",
         "isExtraImport": true,
         "detail": "pydub",
-        "documentation": {}
-    },
-    {
-        "label": "AudioSegment",
-        "importPath": "pydub",
-        "description": "pydub",
-        "isExtraImport": true,
-        "detail": "pydub",
-        "documentation": {}
-    },
-    {
-        "label": "play",
-        "importPath": "pydub.playback",
-        "description": "pydub.playback",
-        "isExtraImport": true,
-        "detail": "pydub.playback",
         "documentation": {}
     },
     {
@@ -331,36 +291,21 @@
         "documentation": {}
     },
     {
-        "label": "Llama",
-        "importPath": "llama_cpp",
-        "description": "llama_cpp",
-        "isExtraImport": true,
-        "detail": "llama_cpp",
-        "documentation": {}
-    },
-    {
-        "label": "Llama",
-        "importPath": "llama_cpp",
-        "description": "llama_cpp",
-        "isExtraImport": true,
-        "detail": "llama_cpp",
-        "documentation": {}
-    },
-    {
-        "label": "Whisper",
-        "importPath": "whispercpp",
-        "description": "whispercpp",
-        "isExtraImport": true,
-        "detail": "whispercpp",
-        "documentation": {}
-    },
-    {
         "label": "pyaudio",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "pyaudio",
         "description": "pyaudio",
         "detail": "pyaudio",
+        "documentation": {}
+    },
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
         "documentation": {}
     },
     {
@@ -372,20 +317,21 @@
         "documentation": {}
     },
     {
-        "label": "threading",
+        "label": "sounddevice",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "threading",
-        "description": "threading",
-        "detail": "threading",
+        "importPath": "sounddevice",
+        "description": "sounddevice",
+        "detail": "sounddevice",
         "documentation": {}
     },
     {
-        "label": "Queue",
-        "importPath": "queue",
-        "description": "queue",
+        "label": "wave",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "queue",
+        "importPath": "wave",
+        "description": "wave",
+        "detail": "wave",
         "documentation": {}
     },
     {
@@ -405,11 +351,46 @@
         "documentation": {}
     },
     {
-        "label": "text_to_speech_stream",
+        "label": "Llama",
+        "importPath": "llama_cpp",
+        "description": "llama_cpp",
+        "isExtraImport": true,
+        "detail": "llama_cpp",
+        "documentation": {}
+    },
+    {
+        "label": "AudioStreamPlayer",
+        "kind": 6,
+        "importPath": "Groq",
+        "description": "Groq",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_stream(self):",
+        "detail": "Groq",
+        "documentation": {}
+    },
+    {
+        "label": "ConversationApp",
+        "kind": 6,
+        "importPath": "Groq",
+        "description": "Groq",
+        "peekOfCode": "class ConversationApp:\n    def __init__(self):\n        self.window = tk.Tk()\n        self.window.title(\"Interactive Conversation System\")\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        # Start audio player thread\n        self.audio_thread = threading.Thread(\n            target=self.audio_player.play_audio_stream,\n            daemon=True",
+        "detail": "Groq",
+        "documentation": {}
+    },
+    {
+        "label": "stream_to_eleven_labs",
         "kind": 2,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"0\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",\n        voice_settings=VoiceSettings(",
+        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            # Process text when we have enough for natural speech\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(",
+        "detail": "Groq",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_groq_streaming",
+        "kind": 2,
+        "importPath": "Groq",
+        "description": "Groq",
+        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n    )\n    try:\n        stream = groq_client.chat.completions.create(\n            model=\"llama-3.1-70b-versatile\",\n            messages=[",
         "detail": "Groq",
         "documentation": {}
     },
@@ -418,43 +399,7 @@
         "kind": 2,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        start_time = time.time()\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            end_time = time.time()\n            print(f\"Recognized: {text}\")",
-        "detail": "Groq",
-        "documentation": {}
-    },
-    {
-        "label": "send_to_groq",
-        "kind": 2,
-        "importPath": "Groq",
-        "description": "Groq",
-        "peekOfCode": "def send_to_groq(user_input):\n    # Define the system prompt to guide the model's behavior\n    system_prompt = (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n    )\n    start_time = time.time()\n    # Send the prompt and user message to Groq API\n    chat_response = groq_client.chat.completions.create(",
-        "detail": "Groq",
-        "documentation": {}
-    },
-    {
-        "label": "play_audio",
-        "kind": 2,
-        "importPath": "Groq",
-        "description": "Groq",
-        "peekOfCode": "def play_audio(audio_stream):\n    # Initialize pygame mixer\n    pygame.mixer.init()\n    # Load the audio stream into pygame\n    pygame.mixer.music.load(audio_stream)\n    # Play the audio\n    pygame.mixer.music.play()\n    # Wait for the audio to finish playing\n    while pygame.mixer.music.get_busy():\n        time.sleep(0.1)",
-        "detail": "Groq",
-        "documentation": {}
-    },
-    {
-        "label": "start_recording",
-        "kind": 2,
-        "importPath": "Groq",
-        "description": "Groq",
-        "peekOfCode": "def start_recording():\n    user_input = recognize_speech()\n    if user_input:\n        response_text = send_to_groq(user_input)\n        print(\"Groq response:\", response_text)\n        if response_text:\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\n        else:\n            print(\"No response from Groq.\")",
-        "detail": "Groq",
-        "documentation": {}
-    },
-    {
-        "label": "create_gui",
-        "kind": 2,
-        "importPath": "Groq",
-        "description": "Groq",
-        "peekOfCode": "def create_gui():\n    window = tk.Tk()\n    window.title(\"Speech Recognition with Groq & Eleven Labs\")\n    # Create and place the button on the window\n    record_button = tk.Button(window, text=\"Start Recording\", command=start_recording, padx=20, pady=10)\n    record_button.pack(pady=20)\n    # Start the Tkinter main loop\n    window.mainloop()\nif __name__ == \"__main__\":\n    create_gui()",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
         "detail": "Groq",
         "documentation": {}
     },
@@ -463,7 +408,7 @@
         "kind": 5,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Groq client\ngroq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion",
+        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False",
         "detail": "Groq",
         "documentation": {}
     },
@@ -472,7 +417,7 @@
         "kind": 5,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize Groq client\ngroq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()",
         "detail": "Groq",
         "documentation": {}
     },
@@ -481,7 +426,7 @@
         "kind": 5,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",",
+        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):\n        if chunk:",
         "detail": "Groq",
         "documentation": {}
     },
@@ -490,98 +435,8 @@
         "kind": 5,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"0\",\n        text=text,",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)",
         "detail": "Groq",
-        "documentation": {}
-    },
-    {
-        "label": "text_to_speech_stream",
-        "kind": 2,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"0\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",\n        voice_settings=VoiceSettings(",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "recognize_speech",
-        "kind": 2,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "send_to_LLMinBox",
-        "kind": 2,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "def send_to_LLMinBox(user_input):\n    payload = {\"question\": user_input}\n    try:\n        response = requests.post(LLMINABOX_API_URL, json=payload)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")\n        # Try to parse the JSON response\n        json_response = response.json()\n        # Extract the text from the response\n        response_text = json_response.get('text', 'No text field in JSON')",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "play_audio",
-        "kind": 2,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "def play_audio(audio_stream):\n    # Initialize pygame mixer\n    pygame.mixer.init()\n    # Load the audio stream into pygame\n    pygame.mixer.music.load(audio_stream)\n    # Play the audio\n    pygame.mixer.music.play()\n    # Wait for the audio to finish playing\n    while pygame.mixer.music.get_busy():\n        time.sleep(0.1)",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "start_recording",
-        "kind": 2,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "def start_recording():\n    user_input = recognize_speech()\n    if user_input:\n        response_text = send_to_LLMinBox(user_input)\n        print(\"LLMinaBox response:\", response_text)\n        if not response_text.startswith(\"Error:\"):\n            # Send the response_text directly to ElevenLabs for TTS\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\n        else:",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "create_gui",
-        "kind": 2,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "def create_gui():\n    window = tk.Tk()\n    window.title(\"Speech Recognition App\")\n    # Create and place the button on the window\n    record_button = tk.Button(window, text=\"Start Recording\", command=start_recording, padx=20, pady=10)\n    record_button.pack(pady=20)\n    # Start the Tkinter main loop\n    window.mainloop()\nif __name__ == \"__main__\":\n    create_gui()",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "ELEVENLABS_API_KEY",
-        "kind": 5,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "LLMINABOX_API_URL",
-        "kind": 5,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "LLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "eleven_labs_client",
-        "kind": 5,
-        "importPath": "LLMinAbox",
-        "description": "LLMinAbox",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"0\",\n        text=text,",
-        "detail": "LLMinAbox",
-        "documentation": {}
-    },
-    {
-        "label": "SpeechBot",
-        "kind": 6,
-        "importPath": "full_offline_whisper",
-        "description": "full_offline_whisper",
-        "peekOfCode": "class SpeechBot:\n    def __init__(self, \n                 llama_model_path=\"qwen2.5:0.5b\",\n                 whisper_model_path=\"models/ggml-base.en.bin\"):\n        # Initialize llama.cpp\n        self.llm = Llama(\n            model_path=llama_model_path,\n            n_ctx=2048,\n            n_threads=4\n        )",
-        "detail": "full_offline_whisper",
         "documentation": {}
     },
     {
@@ -681,6 +536,87 @@
         "description": "raspberrypitestver",
         "peekOfCode": "class SpeechBot:\n    def __init__(self, \n                 llama_model_path=\"models/llama-2-7b-q4_0.gguf\",  # Quantized model\n                 whisper_model_path=\"models/whisper-tiny-q5_1.bin\"):  # Tiny quantized model\n        # Initialize llama.cpp with minimal resources\n        self.llm = Llama(\n            model_path=llama_model_path,\n            n_ctx=512,  # Reduced context window\n            n_threads=2,  # Reduced threads for Raspberry Pi\n            n_batch=8    # Smaller batch size",
         "detail": "raspberrypitestver",
+        "documentation": {}
+    },
+    {
+        "label": "text_to_speech_stream",
+        "kind": 2,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"0\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",\n        voice_settings=VoiceSettings(",
+        "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "recognize_speech",
+        "kind": 2,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_LLMinBox",
+        "kind": 2,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    payload = {\"question\": user_input}\n    try:\n        response = requests.post(LLMINABOX_API_URL, json=payload)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")\n        # Try to parse the JSON response\n        json_response = response.json()\n        # Extract the text from the response\n        response_text = json_response.get('text', 'No text field in JSON')",
+        "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "play_audio",
+        "kind": 2,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "def play_audio(audio_stream):\n    # Initialize pygame mixer\n    pygame.mixer.init()\n    # Load the audio stream into pygame\n    pygame.mixer.music.load(audio_stream)\n    # Play the audio\n    pygame.mixer.music.play()\n    # Wait for the audio to finish playing\n    while pygame.mixer.music.get_busy():\n        time.sleep(0.1)",
+        "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "start_recording",
+        "kind": 2,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "def start_recording():\n    user_input = recognize_speech()\n    if user_input:\n        response_text = send_to_LLMinBox(user_input)\n        print(\"LLMinaBox response:\", response_text)\n        if not response_text.startswith(\"Error:\"):\n            # Send the response_text directly to ElevenLabs for TTS\n            audio_stream = text_to_speech_stream(response_text)\n            play_audio(audio_stream)\n        else:",
+        "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "create_gui",
+        "kind": 2,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "def create_gui():\n    window = tk.Tk()\n    window.title(\"Speech Recognition App\")\n    # Create and place the button on the window\n    record_button = tk.Button(window, text=\"Start Recording\", command=start_recording, padx=20, pady=10)\n    record_button.pack(pady=20)\n    # Start the Tkinter main loop\n    window.mainloop()\nif __name__ == \"__main__\":\n    create_gui()",
+        "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice",
+        "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "LLMINABOX_API_URL",
+        "kind": 5,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "LLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",",
+        "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "LLMinAbox",
+        "description": "LLMinAbox",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"0\",\n        text=text,",
+        "detail": "LLMinAbox",
         "documentation": {}
     }
 ]
