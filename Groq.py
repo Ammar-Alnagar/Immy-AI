@@ -29,9 +29,10 @@ eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 def text_to_speech_stream(text: str) -> IO[bytes]:
     start_time = time.time()
     # Perform the text-to-speech conversion
-    response = eleven_labs_client.text_to_speech.convert(
+    response = eleven_labs_client.text_to_speech.convert_as_stream(
         voice_id="jBpfuIE2acCO8z3wKNLl",  # Adam pre-made voice
         output_format="mp3_22050_32",
+        optimize_streaming_latency="0",
         text=text,
         model_id="eleven_turbo_v2_5",
         voice_settings=VoiceSettings(

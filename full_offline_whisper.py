@@ -16,7 +16,7 @@ from whispercpp import Whisper
 
 class SpeechBot:
     def __init__(self, 
-                 llama_model_path="models/llama-2-7b-chat.gguf",
+                 llama_model_path="qwen2.5:0.5b",
                  whisper_model_path="models/ggml-base.en.bin"):
         # Initialize llama.cpp
         self.llm = Llama(
