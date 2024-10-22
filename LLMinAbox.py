@@ -71,7 +71,7 @@ def recognize_speech():
 def send_to_LLMinBox(user_input):
     payload = {"question": user_input}
     try:
-        response = requests.post(LLMINABOX_API_URL, json=payload)
+        response = requests.post(LLMINABOX_API_URL, json=payload , stream=True)
         response.raise_for_status()  # Raise an exception for bad status codes
 
         print(f"Response status code: {response.status_code}")
