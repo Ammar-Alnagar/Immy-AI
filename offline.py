@@ -27,7 +27,7 @@ class SpeechBot:
         # Initialize Faster Whisper with optimized settings
         print("Loading Whisper model...")
         self.model = WhisperModel(
-            "turbo",
+            "distil-large-v3",
             device="cpu" if self.is_cuda_available() else "cpu",
             compute_type="int8" if self.is_cuda_available() else "int8",
             cpu_threads=8,  # Adjust based on your CPU
