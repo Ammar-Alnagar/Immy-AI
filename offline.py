@@ -27,7 +27,7 @@ class SpeechBot:
         # Initialize Faster Whisper with optimized settings
         print("Loading Whisper model...")
         self.model = WhisperModel(
-            "distil-large-v3",
+            "base",
             device="cpu" if self.is_cuda_available() else "cpu",
             compute_type="int8" if self.is_cuda_available() else "int8",
             cpu_threads=8,  # Adjust based on your CPU
@@ -121,9 +121,9 @@ class SpeechBot:
             segments, _ = self.model.transcribe(
                 audio_data,
                 language='en',
-                beam_size=1,  # Reduced beam size for speed
+                beam_size=2,  # Reduced beam size for speed
                 vad_filter=True,  # Voice activity detection
-                vad_parameters=dict(min_silence_duration_ms=500),
+                vad_parameters=dict(min_silence_duration_ms=300),
             )
             
             # Get the transcribed text
