@@ -97,11 +97,13 @@ def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:
         "You are Immy, a magical AI-powered teddy bear who loves to chat with children. "
         "You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. "
         "When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination."
+        "keep your responses short and cute"
+        "Dont use emojis in your responses. "
     )
     
     try:
         stream = groq_client.chat.completions.create(
-            model="llama-3.1-70b-versatile",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_input}
