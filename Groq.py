@@ -71,7 +71,7 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
                     audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(
                         voice_id="jBpfuIE2acCO8z3wKNLl",  # Adam pre-made voice
                         output_format="mp3_22050_32",
-                        optimize_streaming_latency="2",
+                        optimize_streaming_latency="4",
                         text=accumulated_text,
                         model_id="eleven_turbo_v2_5",
                         voice_settings=VoiceSettings(
