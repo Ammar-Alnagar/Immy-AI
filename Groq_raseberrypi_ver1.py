@@ -17,8 +17,8 @@ import RPi.GPIO as GPIO
 
 
 # Retrieve the API keys from environment variables
-GROQ_API_KEY = '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'
-ELEVENLABS_API_KEY = 'sk_b917a35288dd727edb8ebc70744f4fc9c4cf86daa3bf1036'
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 
 # Initialize clients
 groq_client = Groq(api_key=GROQ_API_KEY)
