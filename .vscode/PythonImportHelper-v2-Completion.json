@@ -95,6 +95,38 @@
         "documentation": {}
     },
     {
+        "label": "Iterator",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "IO",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
         "label": "BytesIO",
         "importPath": "io",
         "description": "io",
@@ -140,6 +172,38 @@
         "description": "elevenlabs",
         "isExtraImport": true,
         "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
+        "isExtraImport": true,
+        "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
+        "isExtraImport": true,
+        "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
         "documentation": {}
     },
     {
@@ -172,6 +236,30 @@
         "description": "groq",
         "isExtraImport": true,
         "detail": "groq",
+        "documentation": {}
+    },
+    {
+        "label": "Groq",
+        "importPath": "groq",
+        "description": "groq",
+        "isExtraImport": true,
+        "detail": "groq",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
         "documentation": {}
     },
     {
@@ -298,6 +386,15 @@
         "description": "faster_whisper",
         "isExtraImport": true,
         "detail": "faster_whisper",
+        "documentation": {}
+    },
+    {
+        "label": "RPi.GPIO",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "RPi.GPIO",
+        "description": "RPi.GPIO",
+        "detail": "RPi.GPIO",
         "documentation": {}
     },
     {
@@ -494,7 +591,7 @@
         "kind": 2,
         "importPath": "LLMinAbox",
         "description": "LLMinAbox",
-        "peekOfCode": "def send_to_LLMinBox(user_input):\n    payload = {\"question\": user_input}\n    try:\n        response = requests.post(LLMINABOX_API_URL, json=payload)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")\n        # Try to parse the JSON response\n        json_response = response.json()\n        # Extract the text from the response\n        response_text = json_response.get('text', 'No text field in JSON')",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    payload = {\"question\": user_input}\n    try:\n        response = requests.post(LLMINABOX_API_URL, json=payload , stream=True)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")\n        # Try to parse the JSON response\n        json_response = response.json()\n        # Extract the text from the response\n        response_text = json_response.get('text', 'No text field in JSON')",
         "detail": "LLMinAbox",
         "documentation": {}
     },
@@ -550,6 +647,177 @@
         "description": "LLMinAbox",
         "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"4\",\n        text=text,",
         "detail": "LLMinAbox",
+        "documentation": {}
+    },
+    {
+        "label": "AudioStreamPlayer",
+        "kind": 6,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_stream(self):",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "stream_to_eleven_labs",
+        "kind": 2,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            # Process text when we have enough for natural speech\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_groq_streaming",
+        "kind": 2,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n        \"Keep your responses short and cute.\"\n        \"Don't use emojis in your responses.\"\n    )\n    try:\n        stream = groq_client.chat.completions.create(",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "recognize_speech",
+        "kind": 2,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "def main():\n    audio_player = AudioStreamPlayer()\n    text_queue = queue.Queue()\n    # Start audio player thread\n    audio_thread = threading.Thread(target=audio_player.play_audio_stream, daemon=True)\n    audio_thread.start()\n    # Start text-to-speech conversion thread\n    tts_thread = threading.Thread(target=stream_to_eleven_labs, args=(text_queue, audio_player), daemon=True)\n    tts_thread.start()\n    print(\"Waiting for button press...\")",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "GROQ_API_KEY",
+        "kind": 5,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# GPIO setup for button\nBUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\nclass AudioStreamPlayer:",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# GPIO setup for button\nBUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "groq_client",
+        "kind": 5,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# GPIO setup for button\nBUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# GPIO setup for button\nBUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "BUTTON_PIN",
+        "kind": 5,
+        "importPath": "Groq_raseberrypi_ver1",
+        "description": "Groq_raseberrypi_ver1",
+        "peekOfCode": "BUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):",
+        "detail": "Groq_raseberrypi_ver1",
+        "documentation": {}
+    },
+    {
+        "label": "text_to_speech_stream",
+        "kind": 2,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "def text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",\n        optimize_streaming_latency=\"4\",\n        text=text,\n        model_id=\"eleven_turbo_v2_5\",\n        voice_settings=VoiceSettings(",
+        "detail": "LLMinaBox_raspberrypi",
+        "documentation": {}
+    },
+    {
+        "label": "recognize_speech",
+        "kind": 2,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "LLMinaBox_raspberrypi",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_LLMinBox",
+        "kind": 2,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "def send_to_LLMinBox(user_input):\n    payload = {\"question\": user_input}\n    try:\n        response = requests.post(LLMINABOX_API_URL, json=payload, stream=True)\n        response.raise_for_status()  # Raise an exception for bad status codes\n        print(f\"Response status code: {response.status_code}\")\n        # Try to parse the JSON response\n        json_response = response.json()\n        # Extract the text from the response\n        response_text = json_response.get('text', 'No text field in JSON')",
+        "detail": "LLMinaBox_raspberrypi",
+        "documentation": {}
+    },
+    {
+        "label": "play_audio",
+        "kind": 2,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "def play_audio(audio_stream):\n    # Initialize pygame mixer\n    pygame.mixer.init()\n    # Load the audio stream into pygame\n    pygame.mixer.music.load(audio_stream)\n    # Play the audio\n    pygame.mixer.music.play()\n    # Wait for the audio to finish playing\n    while pygame.mixer.music.get_busy():\n        time.sleep(0.1)",
+        "detail": "LLMinaBox_raspberrypi",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "def main():\n    print(\"Waiting for button press...\")\n    while True:\n        # Detect button press (falling edge)\n        if GPIO.input(BUTTON_PIN) == GPIO.LOW:\n            user_input = recognize_speech()\n            if user_input:\n                response_text = send_to_LLMinBox(user_input)\n                print(\"LLMinaBox response:\", response_text)\n                if not response_text.startswith(\"Error:\"):",
+        "detail": "LLMinaBox_raspberrypi",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\nLLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# GPIO setup for button\nBUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:",
+        "detail": "LLMinaBox_raspberrypi",
+        "documentation": {}
+    },
+    {
+        "label": "LLMINABOX_API_URL",
+        "kind": 5,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "LLMINABOX_API_URL = os.getenv(\"LLMINABOX_API_URL\")\n# Initialize Eleven Labs client\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# GPIO setup for button\nBUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()",
+        "detail": "LLMinaBox_raspberrypi",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# GPIO setup for button\nBUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(",
+        "detail": "LLMinaBox_raspberrypi",
+        "documentation": {}
+    },
+    {
+        "label": "BUTTON_PIN",
+        "kind": 5,
+        "importPath": "LLMinaBox_raspberrypi",
+        "description": "LLMinaBox_raspberrypi",
+        "peekOfCode": "BUTTON_PIN = 17\nGPIO.setmode(GPIO.BCM)\nGPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)\n# Function to convert text to speech and return as audio stream\ndef text_to_speech_stream(text: str) -> IO[bytes]:\n    start_time = time.time()\n    # Perform the text-to-speech conversion\n    response = eleven_labs_client.text_to_speech.convert_as_stream(\n        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice\n        output_format=\"mp3_22050_32\",",
+        "detail": "LLMinaBox_raspberrypi",
         "documentation": {}
     }
 ]
