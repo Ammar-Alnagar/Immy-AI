@@ -15,7 +15,6 @@ import RPi.GPIO as GPIO
 
 # Load environment variables from .env file
 
-
 # Retrieve the API keys from environment variables
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
@@ -128,14 +127,17 @@ def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:
 def recognize_speech():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening...")
+        print("Hi!")  # Output "Hi" when listening
         audio = recognizer.listen(source)
         try:
             text = recognizer.recognize_google(audio)
             print(f"Recognized: {text}")
             return text
+        except sr.UnknownValueError:
+            print("Couldn't catch that")
+            return None
         except Exception as e:
-            print(f"Error: {str(e)}")
+            print("Couldn't catch that")
             return None
 
 def main():
