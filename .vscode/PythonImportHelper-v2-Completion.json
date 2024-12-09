@@ -771,7 +771,7 @@
         "kind": 2,
         "importPath": "Groq_raseberrypi_ver1",
         "description": "Groq_raseberrypi_ver1",
-        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Hi!\")  # Output \"Hi\" when listening\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except sr.UnknownValueError:",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
         "detail": "Groq_raseberrypi_ver1",
         "documentation": {}
     },
