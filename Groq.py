@@ -19,6 +19,8 @@ from tkinter import messagebox
 # Load environment variables from .env file
 load_dotenv()
 
+
+
 # Retrieve the API keys from environment variables
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
