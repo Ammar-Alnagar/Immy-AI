@@ -14,8 +14,6 @@ from groq import Groq
 from dotenv import load_dotenv
 import numpy as np
 
-
-
 # Load environment variables from .env file
 load_dotenv()
 
