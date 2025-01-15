@@ -118,6 +118,22 @@
         "documentation": {}
     },
     {
+        "label": "Iterator",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
         "label": "BytesIO",
         "importPath": "io",
         "description": "io",
@@ -230,11 +246,11 @@
         "documentation": {}
     },
     {
-        "label": "ElevenLabs",
-        "importPath": "elevenlabs.client",
-        "description": "elevenlabs.client",
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
         "isExtraImport": true,
-        "detail": "elevenlabs.client",
+        "detail": "elevenlabs",
         "documentation": {}
     },
     {
@@ -283,6 +299,30 @@
         "description": "elevenlabs.client",
         "isExtraImport": true,
         "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
         "documentation": {}
     },
     {
@@ -451,6 +491,14 @@
         "description": "queue",
         "isExtraImport": true,
         "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "Groq",
+        "importPath": "groq",
+        "description": "groq",
+        "isExtraImport": true,
+        "detail": "groq",
         "documentation": {}
     },
     {
@@ -1186,6 +1234,96 @@
         "description": "Groq",
         "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)",
         "detail": "Groq",
+        "documentation": {}
+    },
+    {
+        "label": "AudioStreamPlayer",
+        "kind": 6,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size\n        self.sample_rate = 44100  # Match ElevenLabs output sample rate\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "ConversationSystem",
+        "kind": 6,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "class ConversationSystem:\n    def __init__(self):\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        self.is_awake = False\n        self.should_run = True\n        self.recognizer = sr.Recognizer()\n        # Start audio player thread\n        self.audio_thread = threading.Thread(\n            target=self.audio_player.play_audio_stream,",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "stream_to_eleven_labs",
+        "kind": 2,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            # Process text when we have a complete sentence\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_groq_streaming",
+        "kind": 2,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = \"\"\"\n    You are Immy, a magical, AI-powered teddy bear who adores chatting with children.\n    You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice.\n    You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination.\n    Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \n    Remember, you're here to make every interaction magical—without using emojis.\n    \"\"\"\n    try:\n        stream = groq_client.chat.completions.create(",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "GROQ_API_KEY",
+        "kind": 5,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "groq_client",
+        "kind": 5,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size\n        self.sample_rate = 44100  # Match ElevenLabs output sample rate",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "WAKE_WORD",
+        "kind": 5,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "WAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size\n        self.sample_rate = 44100  # Match ElevenLabs output sample rate\n    def add_audio_chunk(self, chunk):\n        if chunk:",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "SLEEP_WORD",
+        "kind": 5,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "SLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size\n        self.sample_rate = 44100  # Match ElevenLabs output sample rate\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)",
+        "detail": "wip",
         "documentation": {}
     }
 ]
