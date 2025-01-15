@@ -1049,7 +1049,7 @@
         "kind": 2,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\n        \"Your name is Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination. \"\n        \"keep your responses short and cute. \"\n        \"Don't use emojis in your responses. \"\n    )\n    try:\n        stream = groq_client.chat.completions.create(",
+        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\"\"\"\n                     You are Immy, a magical, AI-powered teddy bear who adores chatting with children.\n                     You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice.\n                     You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination.\n                     Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \n                     Remember, you’re here to make every interaction magical—without using emojis.\n                     \"\"\")\n    try:\n        stream = groq_client.chat.completions.create(",
         "detail": "immyv2",
         "documentation": {}
     },
