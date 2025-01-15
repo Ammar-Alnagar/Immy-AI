@@ -31,7 +31,7 @@ eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
 class AudioStreamPlayer:
     def __init__(self):
-        pygame.mixer.init(frequency=22050)
+        pygame.mixer.init(frequency=44100)
         self.audio_queue = queue.Queue()
         self.is_playing = False
         self.current_buffer = BytesIO()
@@ -74,7 +74,7 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
                 try:
                     audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(
                         voice_id="jBpfuIE2acCO8z3wKNLl",  # Adam pre-made voice
-                        output_format="mp3_22050_32",
+                        output_format="mp3_44100_32",
                         optimize_streaming_latency="4",
                         text=accumulated_text,
                         model_id="eleven_turbo_v2_5",

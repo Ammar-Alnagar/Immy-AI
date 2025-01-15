@@ -3,62 +3,91 @@ import sys
 import time
 import queue
 import threading
-import pygame
+import sounddevice as sd
+import numpy as np
 import speech_recognition as sr
 from io import BytesIO
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from groq import Groq
 from dotenv import load_dotenv
-from pydub import AudioSegment
-
-# Set the path to ffmpeg explicitly
-ffmpeg_path = "C:\\ffmpeg\\bin\\ffmpeg.exe"  # Update this path to match your FFmpeg installation
-AudioSegment.converter = ffmpeg_path
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Retrieve the API keys from environment variables
-GROQ_API_KEY = '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'
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 ELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'
 
 # Initialize clients
 groq_client = Groq(api_key=GROQ_API_KEY)
 eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
+# Define wake and sleep words
+WAKE_WORD = "hey"
+SLEEP_WORD = "good night"
+
 class AudioStreamPlayer:
     def __init__(self):
-        pygame.mixer.init(frequency=22050, size=-16, channels=1)  # Initialize with specific settings
         self.audio_queue = queue.Queue()
         self.is_playing = False
-        self.current_buffer = BytesIO()
-        
+        self.lock = threading.Lock()  # Add a lock for thread safety
+
     def add_audio_chunk(self, chunk):
         if chunk:
-            self.audio_queue.put(chunk)
-            
+            with self.lock:
+                self.audio_queue.put(chunk)
+
+    def play_audio_file(self, audio_data):
+        try:
+            # Save the audio data to a temporary file for debugging
+            with open("debug_audio.mp3", "wb") as f:
+                f.write(audio_data)
+
+            # Convert the audio data to numpy array using pydub
+            with BytesIO(audio_data) as audio_buffer:
+                import pydub
+                audio_segment = pydub.AudioSegment.from_mp3(audio_buffer)
+
+                # Convert to numpy array
+                samples = np.array(audio_segment.get_array_of_samples())
+
+                # Normalize based on sample width
+                if audio_segment.sample_width == 2:
+                    samples = samples.astype(np.float32) / 32768.0  # Normalize for 16-bit PCM
+                elif audio_segment.sample_width == 4:
+                    samples = samples.astype(np.float32) / 2147483648.0  # Normalize for 32-bit PCM
+
+                # Handle mono to stereo conversion if needed
+                if audio_segment.channels == 1:
+                    samples = np.column_stack((samples, samples))
+
+                # Play the audio
+                sd.play(samples, audio_segment.frame_rate)
+                sd.wait()
+
+        except Exception as e:
+            print(f"Error playing audio: {e}")
+
     def play_audio_stream(self):
         while True:
-            if not self.is_playing and not self.audio_queue.empty():
-                # Collect accumulated chunks
-                self.current_buffer = BytesIO()
-                while not self.audio_queue.empty():
-                    chunk = self.audio_queue.get()
-                    self.current_buffer.write(chunk)
-                
-                self.current_buffer.seek(0)
-                try:
-                    # Load and play the WAV data
-                    pygame.mixer.music.load(self.current_buffer, "wav")
-                    pygame.mixer.music.play()
-                    self.is_playing = True
-                    while pygame.mixer.music.get_busy():
-                        time.sleep(0.1)
-                    self.is_playing = False
-                except Exception as e:
-                    print(f"Error playing audio: {e}")
-                    self.is_playing = False
+            with self.lock:
+                if not self.is_playing and not self.audio_queue.empty():
+                    try:
+                        self.is_playing = True
+                        audio_data = BytesIO()
+
+                        # Collect all available chunks
+                        while not self.audio_queue.empty():
+                            chunk = self.audio_queue.get()
+                            audio_data.write(chunk)
+
+                        audio_data.seek(0)
+                        self.play_audio_file(audio_data.getvalue())
+                        self.is_playing = False
+                    except Exception as e:
+                        print(f"Error in audio playback: {e}")
+                        self.is_playing = False
             time.sleep(0.1)
 
 def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):
@@ -67,16 +96,15 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
         while not text_queue.empty():
             text_chunk = text_queue.get()
             accumulated_text += text_chunk
-            
-            # Process text when we have enough for natural speech
+
             if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):
                 try:
                     audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(
                         voice_id="jBpfuIE2acCO8z3wKNLl",  # Adam pre-made voice
-                        output_format="mp3_22050_32",
-                        optimize_streaming_latency="4",
+                        output_format="pcm_22050",  # Changed format for better compatibility
+                        optimize_streaming_latency="2",  # Lower latency for faster streaming
                         text=accumulated_text,
-                        model_id="eleven_turbo_v2_5",
+                        model_id="eleven_turbo_v2",
                         voice_settings=VoiceSettings(
                             stability=0.0,
                             similarity_boost=1.0,
@@ -84,113 +112,127 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
                             use_speaker_boost=True,
                         ),
                     )
-                    
-                    # Save MP3 data to a temporary file
-                    mp3_data = b"".join(audio_stream)
-                    mp3_buffer = BytesIO(mp3_data)
-                    
-                    # Convert MP3 to WAV using pydub
-                    audio = AudioSegment.from_file(mp3_buffer, format="mp3")
-                    wav_buffer = BytesIO()
-                    audio.export(wav_buffer, format="wav")
-                    wav_buffer.seek(0)
-                    
-                    # Add WAV data to the audio player
-                    audio_player.add_audio_chunk(wav_buffer.read())
-                    
-                    accumulated_text = ""  # Reset after processing
-                    
+
+                    for audio_chunk in audio_stream:
+                        if audio_chunk:
+                            print(f"Received audio chunk of size: {len(audio_chunk)} bytes")
+                            audio_player.add_audio_chunk(audio_chunk)
+                        else:
+                            print("Empty audio chunk received")
+
+                    accumulated_text = ""
+
                 except Exception as e:
                     print(f"Error in text-to-speech conversion: {e}")
-                
+
         time.sleep(0.1)
 
 def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:
-    system_prompt = (
-        "You are Immy, a magical AI-powered teddy bear who loves to chat with children. "
-        "You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. "
-        "When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination."
-        "keep your responses short and cute"
-        "Dont use emojis in your responses. "
-    )
-    
+    system_prompt = ("""
+                     You are Immy, a magical, AI-powered teddy bear who adores chatting with children.
+                     You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice.
+                     You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination.
+                     Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. 
+                     Remember, you’re here to make every interaction magical—without using emojis.
+                     """)
+
     try:
         stream = groq_client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama3-8b-8192",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_input}
             ],
             stream=True
         )
-        
+
         for chunk in stream:
             if chunk.choices[0].delta.content is not None:
                 content = chunk.choices[0].delta.content
                 text_queue.put(content)
                 sys.stdout.write(content)
                 sys.stdout.flush()
-                
+
     except Exception as e:
         print(f"Error in Groq API call: {e}")
 
-def recognize_speech():
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Listening...")
-        audio = recognizer.listen(source)
-        try:
-            text = recognizer.recognize_google(audio)
-            print(f"Recognized: {text}")
-            return text
-        except Exception as e:
-            print(f"Error: {str(e)}")
-            return None
+class ConversationSystem:
+    def __init__(self):
+        self.text_queue = queue.Queue()
+        self.audio_player = AudioStreamPlayer()
+        self.is_awake = False
+        self.should_run = True
+        self.recognizer = sr.Recognizer()
 
-def listen_for_wake_word():
-    recognizer = sr.Recognizer()
-    while True:
+        # Start audio player thread
+        self.audio_thread = threading.Thread(
+            target=self.audio_player.play_audio_stream,
+            daemon=True
+        )
+        self.audio_thread.start()
+
+        # Start text-to-speech conversion thread
+        self.tts_thread = threading.Thread(
+            target=stream_to_eleven_labs,
+            args=(self.text_queue, self.audio_player),
+            daemon=True
+        )
+        self.tts_thread.start()
+
+    def listen_continuously(self):
         with sr.Microphone() as source:
-            print("Waiting for wake word 'hi there'...")
-            audio = recognizer.listen(source)
-            try:
-                text = recognizer.recognize_google(audio).lower()
-                if "hi there" in text:
-                    print("Wake word detected!")
-                    return True
-            except Exception as e:
-                print(f"Error: {str(e)}")
+            print("\nListening...")
 
-def main():
-    text_queue = queue.Queue()
-    audio_player = AudioStreamPlayer()
-    
-    # Start audio player thread
-    audio_thread = threading.Thread(
-        target=audio_player.play_audio_stream,
-        daemon=True
-    )
-    audio_thread.start()
-    
-    # Start text-to-speech conversion thread
-    tts_thread = threading.Thread(
-        target=stream_to_eleven_labs,
-        args=(text_queue, audio_player),
-        daemon=True
-    )
-    tts_thread.start()
-    
-    while True:
-        if listen_for_wake_word():
-            user_input = recognize_speech()
-            if user_input:
-                # Start Groq streaming in a separate thread
-                groq_thread = threading.Thread(
-                    target=send_to_groq_streaming,
-                    args=(user_input, text_queue),
-                    daemon=True
-                )
-                groq_thread.start()
+            while self.should_run:
+                try:
+                    audio = self.recognizer.listen(source, timeout=None, phrase_time_limit=5)
+                    try:
+                        text = self.recognizer.recognize_google(audio).lower()
+                        print(f"\nRecognized: {text}")
+
+                        if not self.is_awake and WAKE_WORD in text:
+                            self.is_awake = True
+                            print("\n--- Teddy is now awake and ready to chat! ---")
+                            self.text_queue.put("Hi! I'm awake and ready to chat!")
+                        elif self.is_awake and SLEEP_WORD in text:
+                            self.is_awake = False
+                            print("\n--- Teddy is now sleeping. Say 'hey teddy' to wake me up! ---")
+                            self.text_queue.put("Good night! Say 'hey teddy' when you want to chat again!")
+                        elif self.is_awake:
+                            groq_thread = threading.Thread(
+                                target=send_to_groq_streaming,
+                                args=(text, self.text_queue),
+                                daemon=True
+                            )
+                            groq_thread.start()
+                            # Wait for the response to finish before listening again
+                            groq_thread.join()
+                            print("\nListening...")
+
+                    except sr.UnknownValueError:
+                        if self.is_awake:
+                            print("\nListening...")
+                        continue
+                    except sr.RequestError as e:
+                        print(f"Could not request results: {e}")
+                        continue
+
+                except KeyboardInterrupt:
+                    self.should_run = False
+                    break
+
+    def run(self):
+        print("\nWelcome to Teddy Bear Chat!")
+        print(f"Say '{WAKE_WORD}' to wake me up")
+        print(f"Say '{SLEEP_WORD}' to put me to sleep")
+        print("Press Ctrl+C to exit")
+
+        try:
+            self.listen_continuously()
+        except KeyboardInterrupt:
+            print("\nGoodbye! Thanks for chatting!")
+            self.should_run = False
 
 if __name__ == "__main__":
-    main()
+    system = ConversationSystem()
+    system.run()

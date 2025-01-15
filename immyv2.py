@@ -96,14 +96,14 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
                     audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(
                         voice_id="jBpfuIE2acCO8z3wKNLl",  # Adam pre-made voice
                         output_format="mp3_44100_128",  # Changed format for better compatibility
-                        optimize_streaming_latency="4",
+                        optimize_streaming_latency="0",
                         text=accumulated_text,
                         model_id="eleven_turbo_v2_5",
                         voice_settings=VoiceSettings(
                             stability=0.0,
                             similarity_boost=1.0,
-                            style=0.0,
-                            use_speaker_boost=True,
+                            style=0.2,
+                            use_speaker_boost=False,
                         ),
                     )
                     
@@ -124,6 +124,7 @@ def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:
                      You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination.
                      Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. 
                      Remember, you’re here to make every interaction magical—without using emojis.
+                     keep your answers short and firendly.
 
  
                      """)
