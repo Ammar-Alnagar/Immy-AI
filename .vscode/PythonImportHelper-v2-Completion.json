@@ -118,14 +118,6 @@
         "documentation": {}
     },
     {
-        "label": "Iterator",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
         "label": "BytesIO",
         "importPath": "io",
         "description": "io",
@@ -414,6 +406,14 @@
         "importPath": "json",
         "description": "json",
         "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "AudioSegment",
+        "importPath": "pydub",
+        "description": "pydub",
+        "isExtraImport": true,
+        "detail": "pydub",
         "documentation": {}
     },
     {
@@ -1070,7 +1070,7 @@
         "kind": 6,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:\n            with BytesIO(audio_data) as audio_file:",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:\n            # Save the audio data to a temporary file in memory",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1106,7 +1106,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1115,7 +1115,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
+        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1124,7 +1124,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):",
+        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1133,7 +1133,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1142,7 +1142,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "WAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
+        "peekOfCode": "WAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1151,7 +1151,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "SLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:",
+        "peekOfCode": "SLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1205,7 +1205,7 @@
         "kind": 5,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False",
+        "peekOfCode": "GROQ_API_KEY = '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'\nELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False",
         "detail": "Groq",
         "documentation": {}
     },
@@ -1214,7 +1214,7 @@
         "kind": 5,
         "importPath": "Groq",
         "description": "Groq",
-        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()",
+        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050)\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()",
         "detail": "Groq",
         "documentation": {}
     },
@@ -1241,16 +1241,7 @@
         "kind": 6,
         "importPath": "wip",
         "description": "wip",
-        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size\n        self.sample_rate = 44100  # Match ElevenLabs output sample rate\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
-        "detail": "wip",
-        "documentation": {}
-    },
-    {
-        "label": "ConversationSystem",
-        "kind": 6,
-        "importPath": "wip",
-        "description": "wip",
-        "peekOfCode": "class ConversationSystem:\n    def __init__(self):\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        self.is_awake = False\n        self.should_run = True\n        self.recognizer = sr.Recognizer()\n        # Start audio player thread\n        self.audio_thread = threading.Thread(\n            target=self.audio_player.play_audio_stream,",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050, size=-16, channels=1)  # Initialize with specific settings\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_stream(self):",
         "detail": "wip",
         "documentation": {}
     },
@@ -1259,7 +1250,7 @@
         "kind": 2,
         "importPath": "wip",
         "description": "wip",
-        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            # Process text when we have a complete sentence\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(",
+        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            # Process text when we have enough for natural speech\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(",
         "detail": "wip",
         "documentation": {}
     },
@@ -1268,7 +1259,52 @@
         "kind": 2,
         "importPath": "wip",
         "description": "wip",
-        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = \"\"\"\n    You are Immy, a magical, AI-powered teddy bear who adores chatting with children.\n    You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice.\n    You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination.\n    Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \n    Remember, you're here to make every interaction magical—without using emojis.\n    \"\"\"\n    try:\n        stream = groq_client.chat.completions.create(",
+        "peekOfCode": "def send_to_groq_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\n        \"You are Immy, a magical AI-powered teddy bear who loves to chat with children. \"\n        \"You are kind, funny, and full of wonder, always ready to tell stories, answer questions, and offer friendly advice. \"\n        \"When speaking, you are playful, patient, and use simple, child-friendly language. You encourage curiosity, learning, and imagination.\"\n        \"keep your responses short and cute\"\n        \"Dont use emojis in your responses. \"\n    )\n    try:\n        stream = groq_client.chat.completions.create(",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "recognize_speech",
+        "kind": 2,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "def recognize_speech():\n    recognizer = sr.Recognizer()\n    with sr.Microphone() as source:\n        print(\"Listening...\")\n        audio = recognizer.listen(source)\n        try:\n            text = recognizer.recognize_google(audio)\n            print(f\"Recognized: {text}\")\n            return text\n        except Exception as e:",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "listen_for_wake_word",
+        "kind": 2,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "def listen_for_wake_word():\n    recognizer = sr.Recognizer()\n    while True:\n        with sr.Microphone() as source:\n            print(\"Waiting for wake word 'hi there'...\")\n            audio = recognizer.listen(source)\n            try:\n                text = recognizer.recognize_google(audio).lower()\n                if \"hi there\" in text:\n                    print(\"Wake word detected!\")",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "def main():\n    text_queue = queue.Queue()\n    audio_player = AudioStreamPlayer()\n    # Start audio player thread\n    audio_thread = threading.Thread(\n        target=audio_player.play_audio_stream,\n        daemon=True\n    )\n    audio_thread.start()\n    # Start text-to-speech conversion thread",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "ffmpeg_path",
+        "kind": 5,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "ffmpeg_path = \"C:\\\\ffmpeg\\\\bin\\\\ffmpeg.exe\"  # Update this path to match your FFmpeg installation\nAudioSegment.converter = ffmpeg_path\n# Load environment variables from .env file\nload_dotenv()\n# Retrieve the API keys from environment variables\nGROQ_API_KEY = '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'\nELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)",
+        "detail": "wip",
+        "documentation": {}
+    },
+    {
+        "label": "AudioSegment.converter",
+        "kind": 5,
+        "importPath": "wip",
+        "description": "wip",
+        "peekOfCode": "AudioSegment.converter = ffmpeg_path\n# Load environment variables from .env file\nload_dotenv()\n# Retrieve the API keys from environment variables\nGROQ_API_KEY = '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'\nELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:",
         "detail": "wip",
         "documentation": {}
     },
@@ -1277,7 +1313,7 @@
         "kind": 5,
         "importPath": "wip",
         "description": "wip",
-        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "peekOfCode": "GROQ_API_KEY = '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'\nELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050, size=-16, channels=1)  # Initialize with specific settings\n        self.audio_queue = queue.Queue()\n        self.is_playing = False",
         "detail": "wip",
         "documentation": {}
     },
@@ -1286,7 +1322,7 @@
         "kind": 5,
         "importPath": "wip",
         "description": "wip",
-        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
+        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050, size=-16, channels=1)  # Initialize with specific settings\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()",
         "detail": "wip",
         "documentation": {}
     },
@@ -1295,7 +1331,7 @@
         "kind": 5,
         "importPath": "wip",
         "description": "wip",
-        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size",
+        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050, size=-16, channels=1)  # Initialize with specific settings\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):\n        if chunk:",
         "detail": "wip",
         "documentation": {}
     },
@@ -1304,25 +1340,7 @@
         "kind": 5,
         "importPath": "wip",
         "description": "wip",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size\n        self.sample_rate = 44100  # Match ElevenLabs output sample rate",
-        "detail": "wip",
-        "documentation": {}
-    },
-    {
-        "label": "WAKE_WORD",
-        "kind": 5,
-        "importPath": "wip",
-        "description": "wip",
-        "peekOfCode": "WAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size\n        self.sample_rate = 44100  # Match ElevenLabs output sample rate\n    def add_audio_chunk(self, chunk):\n        if chunk:",
-        "detail": "wip",
-        "documentation": {}
-    },
-    {
-        "label": "SLEEP_WORD",
-        "kind": 5,
-        "importPath": "wip",
-        "description": "wip",
-        "peekOfCode": "SLEEP_WORD = \"good night teddy\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.buffer_size = 1024  # Adjustable buffer size\n        self.sample_rate = 44100  # Match ElevenLabs output sample rate\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\nclass AudioStreamPlayer:\n    def __init__(self):\n        pygame.mixer.init(frequency=22050, size=-16, channels=1)  # Initialize with specific settings\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.current_buffer = BytesIO()\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)",
         "detail": "wip",
         "documentation": {}
     }

@@ -26,8 +26,8 @@ groq_client = Groq(api_key=GROQ_API_KEY)
 eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
 # Define wake and sleep words
-WAKE_WORD = "hey teddy"
-SLEEP_WORD = "good night teddy"
+WAKE_WORD = "hey"
+SLEEP_WORD = "good night "
 
 class AudioStreamPlayer:
     def __init__(self):
@@ -40,10 +40,27 @@ class AudioStreamPlayer:
     
     def play_audio_file(self, audio_data):
         try:
-            with BytesIO(audio_data) as audio_file:
-                data, samplerate = sf.read(audio_file)
-                sd.play(data, samplerate)
+            # Save the audio data to a temporary file in memory
+            with BytesIO(audio_data) as audio_buffer:
+                # Convert the audio data to numpy array directly
+                # ElevenLabs returns MP3, so we need to handle it appropriately
+                import pydub
+                audio_segment = pydub.AudioSegment.from_mp3(audio_buffer)
+                
+                # Convert to numpy array
+                samples = np.array(audio_segment.get_array_of_samples())
+                
+                # Convert to float32 and normalize
+                samples = samples.astype(np.float32) / (2**15 if audio_segment.sample_width == 2 else 2**31)
+                
+                # Handle mono to stereo conversion if needed
+                if audio_segment.channels == 1:
+                    samples = np.column_stack((samples, samples))
+                
+                # Play the audio
+                sd.play(samples, audio_segment.frame_rate)
                 sd.wait()
+                
         except Exception as e:
             print(f"Error playing audio: {e}")
             

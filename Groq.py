@@ -22,8 +22,8 @@ load_dotenv()
 
 
 # Retrieve the API keys from environment variables
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+GROQ_API_KEY = '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'
+ELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'
 
 # Initialize clients
 groq_client = Groq(api_key=GROQ_API_KEY)
