@@ -19,14 +19,15 @@ load_dotenv()
 
 # Retrieve the API keys from environment variables
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-ELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 
 # Initialize clients
 groq_client = Groq(api_key=GROQ_API_KEY)
 eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
+ 
 # Define wake and sleep words
-WAKE_WORD = "hey"
+WAKE_WORD = "hey teddy"
 SLEEP_WORD = "good night "
 
 class AudioStreamPlayer:
@@ -96,14 +97,14 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
                     audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(
                         voice_id="jBpfuIE2acCO8z3wKNLl",  # Adam pre-made voice
                         output_format="mp3_44100_128",  # Changed format for better compatibility
-                        optimize_streaming_latency="0",
+                        optimize_streaming_latency="2",
                         text=accumulated_text,
                         model_id="eleven_turbo_v2_5",
                         voice_settings=VoiceSettings(
-                            stability=0.0,
+                            stability=0.5,
                             similarity_boost=1.0,
                             style=0.2,
-                            use_speaker_boost=False,
+                            use_speaker_boost=True,
                         ),
                     )
                     

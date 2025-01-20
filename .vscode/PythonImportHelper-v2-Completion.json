@@ -1098,7 +1098,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "peekOfCode": "GROQ_API_KEY = os.getenv(\"GROQ_API_KEY\")\nELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1107,7 +1107,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
+        "peekOfCode": "ELEVENLABS_API_KEY = os.getenv(\"ELEVENLABS_API_KEY\")\n# Initialize clients\ngroq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1116,7 +1116,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):",
+        "peekOfCode": "groq_client = Groq(api_key=GROQ_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1125,7 +1125,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:",
         "detail": "immyv2",
         "documentation": {}
     },
@@ -1134,7 +1134,7 @@
         "kind": 5,
         "importPath": "immyv2",
         "description": "immyv2",
-        "peekOfCode": "WAKE_WORD = \"hey\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
+        "peekOfCode": "WAKE_WORD = \"hey teddy\"\nSLEEP_WORD = \"good night \"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
         "detail": "immyv2",
         "documentation": {}
     },
