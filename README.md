@@ -7,6 +7,4 @@
 5. Route between offline and online models for seamless interaction ✔
 6. Using websockets for ElevenLabs API # not possible 
 7. Use Groq token streaming ✔
-8. Llama.cpp implementation (offline) C
-9. Whisper.cpp (offline) ✔
-10. Other offline TTS 
+8. Llama.cpp 
