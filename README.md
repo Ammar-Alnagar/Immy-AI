@@ -9,13 +9,4 @@
 7. Use Groq token streaming ✔
 8. Llama.cpp implementation (offline) C
 9. Whisper.cpp (offline) ✔
-10. Other offline TTS ✔
-11. Gather dataset for Immy offline model  ✔
-12. Finetune a model for offline Immy ✔
-13. LLM in a Box streaming ? # not possible 
-
-
-Successfully deployed and tested , pending heavy testing 
-
-
-
+10. Other offline TTS 
