@@ -27,7 +27,7 @@ eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
  
 # Define wake and sleep words
-WAKE_WORD = "hey teddy"
+WAKE_WORD = "Hey "
 SLEEP_WORD = "good night "
 
 class AudioStreamPlayer:
