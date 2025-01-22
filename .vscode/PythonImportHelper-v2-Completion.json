@@ -190,6 +190,22 @@
         "documentation": {}
     },
     {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "VoiceSettings",
+        "importPath": "elevenlabs",
+        "description": "elevenlabs",
+        "isExtraImport": true,
+        "detail": "elevenlabs",
+        "documentation": {}
+    },
+    {
         "label": "VoiceSettings",
         "importPath": "elevenlabs",
         "description": "elevenlabs",
@@ -315,6 +331,22 @@
         "description": "elevenlabs.client",
         "isExtraImport": true,
         "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "ElevenLabs",
+        "importPath": "elevenlabs.client",
+        "description": "elevenlabs.client",
+        "isExtraImport": true,
+        "detail": "elevenlabs.client",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
         "documentation": {}
     },
     {
@@ -542,6 +574,14 @@
         "importPath": "soundfile",
         "description": "soundfile",
         "detail": "soundfile",
+        "documentation": {}
+    },
+    {
+        "label": "OpenAI",
+        "importPath": "openai",
+        "description": "openai",
+        "isExtraImport": true,
+        "detail": "openai",
         "documentation": {}
     },
     {
@@ -1277,7 +1317,7 @@
         "kind": 5,
         "importPath": "Immy_OPenAI",
         "description": "Immy_OPenAI",
-        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\nELEVENLABS_API_KEY ='sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\n# ELEVENLABS_API_KEY ='sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\nELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:",
         "detail": "Immy_OPenAI",
         "documentation": {}
     },
@@ -1360,6 +1400,96 @@
         "description": "audiodownload",
         "peekOfCode": "OUTPUT_FILE = \"output_audio.mp3\"\ndef text_to_speech(api_key, voice_id, text, output_file):\n    headers = {\n        \"xi-api-key\": 'sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4',\n        \"Content-Type\": \"application/json\",\n    }\n    payload = {\n        \"text\": text,\n        \"voice_settings\": {\n            \"stability\": 0.0,",
         "detail": "audiodownload",
+        "documentation": {}
+    },
+    {
+        "label": "AudioStreamPlayer",
+        "kind": 6,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:\n            # Save the audio data to a temporary file in memory",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "ConversationSystem",
+        "kind": 6,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "class ConversationSystem:\n    def __init__(self):\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        self.is_awake = False\n        self.should_run = True\n        # Start audio player thread\n        self.audio_thread = threading.Thread(\n            target=self.audio_player.play_audio_stream,\n            daemon=True",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "stream_to_eleven_labs",
+        "kind": 2,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(\n                        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_openai_streaming",
+        "kind": 2,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "def send_to_openai_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\"\"\"\n                     You are Immy, a magical, AI-powered teddy bear who adores chatting with children.\n                     You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice.\n                     You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination.\n                     Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \n                     Remember, you’re here to make every interaction magical—without using emojis.\n                     keep your answers short and friendly.\n                     \"\"\")\n    try:",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "OPENAI_API_KEY",
+        "kind": 5,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\nELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "openai_client",
+        "kind": 5,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "openai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "WAKE_WORD",
+        "kind": 5,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "WAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
+        "detail": "newtest",
+        "documentation": {}
+    },
+    {
+        "label": "SLEEP_WORD",
+        "kind": 5,
+        "importPath": "newtest",
+        "description": "newtest",
+        "peekOfCode": "SLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:",
+        "detail": "newtest",
         "documentation": {}
     }
 ]

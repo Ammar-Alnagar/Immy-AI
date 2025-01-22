@@ -5,22 +5,19 @@ import queue
 import threading
 import sounddevice as sd
 import soundfile as sf
-import speech_recognition as sr
-from typing import Iterator
+import numpy as np
 from io import BytesIO
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from openai import OpenAI
 from dotenv import load_dotenv
-import numpy as np
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Retrieve the API keys from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-# ELEVENLABS_API_KEY ='sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'
-ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'
+ELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'
 
 # Initialize clients
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
@@ -130,7 +127,7 @@ def send_to_openai_streaming(user_input: str, text_queue: queue.Queue) -> None:
     
     try:
         stream = openai_client.chat.completions.create(
-            model="chatgpt-4o-latest",  # Use the appropriate OpenAI model
+            model="gpt-3.5-turbo",  # Use the appropriate OpenAI model
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_input}
@@ -154,7 +151,6 @@ class ConversationSystem:
         self.audio_player = AudioStreamPlayer()
         self.is_awake = False
         self.should_run = True
-        self.recognizer = sr.Recognizer()
         
         # Start audio player thread
         self.audio_thread = threading.Thread(
@@ -171,54 +167,68 @@ class ConversationSystem:
         )
         self.tts_thread.start()
 
+    def record_audio(self, duration: int = 5, samplerate: int = 16000):
+        """Record audio from the microphone."""
+        print("Recording...")
+        audio_data = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1, dtype='float32')
+        sd.wait()  # Wait until the recording is finished
+        print("Recording finished.")
+        return audio_data.flatten(), samplerate
+
+    def transcribe_audio(self, audio_data, samplerate):
+        """Transcribe audio using OpenAI's Whisper API."""
+        try:
+            # Save the audio data to a temporary file in memory
+            with BytesIO() as audio_buffer:
+                sf.write(audio_buffer, audio_data, samplerate, format='wav')
+                audio_buffer.seek(0)
+                
+                # Send the audio data to Whisper API
+                transcription = openai_client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=("audio.wav", audio_buffer, "audio/wav")
+                )
+                return transcription.text
+        except Exception as e:
+            print(f"Error in transcription: {e}")
+            return None
+
     def listen_continuously(self):
-        with sr.Microphone() as source:
-            print("\nListening...")
-            
-            # Adjust for ambient noise to improve recognition accuracy
-            self.recognizer.adjust_for_ambient_noise(source)
-            
-            while self.should_run:
-                try:
-                    print("\nSay something...")
-                    audio = self.recognizer.listen(source, timeout=None, phrase_time_limit=5)
-                    try:
-                        text = self.recognizer.recognize_google(audio).lower()
-                        print(f"\nRecognized: {text}")
+        while self.should_run:
+            try:
+                print("\nSay something...")
+                audio_data, samplerate = self.record_audio()
+                text = self.transcribe_audio(audio_data, samplerate)
+                
+                if text:
+                    print(f"\nRecognized: {text}")
+                    
+                    # Wake word detection
+                    if not self.is_awake and WAKE_WORD in text.lower():
+                        self.is_awake = True
+                        print("\n--- Teddy is now awake and ready to chat! ---")
+                        self.text_queue.put("Hi! I'm awake and ready to chat!")
+                    
+                    # Sleep word detection
+                    elif self.is_awake and SLEEP_WORD in text.lower():
+                        self.is_awake = False
+                        print("\n--- Teddy is now sleeping. Say 'hey teddy' to wake me up! ---")
+                        self.text_queue.put("Good night! Say 'hey teddy' when you want to chat again!")
+                    
+                    # Process user input if awake
+                    elif self.is_awake:
+                        print("\nProcessing your request...")
+                        openai_thread = threading.Thread(
+                            target=send_to_openai_streaming,
+                            args=(text, self.text_queue),
+                            daemon=True
+                        )
+                        openai_thread.start()
+                        # Do not call join() here to avoid blocking
                         
-                        # Wake word detection
-                        if not self.is_awake and WAKE_WORD in text:
-                            self.is_awake = True
-                            print("\n--- Teddy is now awake and ready to chat! ---")
-                            self.text_queue.put("Hi! I'm awake and ready to chat!")
-                        
-                        # Sleep word detection
-                        elif self.is_awake and SLEEP_WORD in text:
-                            self.is_awake = False
-                            print("\n--- Teddy is now sleeping. Say 'hey teddy' to wake me up! ---")
-                            self.text_queue.put("Good night! Say 'hey teddy' when you want to chat again!")
-                        
-                        # Process user input if awake
-                        elif self.is_awake:
-                            print("\nProcessing your request...")
-                            openai_thread = threading.Thread(
-                                target=send_to_openai_streaming,
-                                args=(text, self.text_queue),
-                                daemon=True
-                            )
-                            openai_thread.start()
-                            # Do not call join() here to avoid blocking
-                            
-                    except sr.UnknownValueError:
-                        print("\nListening ")
-                        continue
-                    except sr.RequestError as e:
-                        print(f"\nCould not request results from Google Speech Recognition service: {e}")
-                        continue
-                        
-                except KeyboardInterrupt:
-                    self.should_run = False
-                    break
+            except KeyboardInterrupt:
+                self.should_run = False
+                break
 
     def run(self):
         print("\nWelcome to Teddy Bear Chat!")
