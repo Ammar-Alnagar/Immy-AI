@@ -1317,7 +1317,7 @@
         "kind": 5,
         "importPath": "Immy_OPenAI",
         "description": "Immy_OPenAI",
-        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\n# ELEVENLABS_API_KEY ='sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\nELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:",
+        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\nELEVENLABS_API_KEY ='sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:",
         "detail": "Immy_OPenAI",
         "documentation": {}
     },
