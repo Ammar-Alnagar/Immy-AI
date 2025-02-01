@@ -19,8 +19,8 @@ load_dotenv()
 
 # Retrieve the API keys from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-# ELEVENLABS_API_KEY ='sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'
-ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'
+ELEVENLABS_API_KEY ='sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'
+# ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'
 
 # Initialize clients
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
