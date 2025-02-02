@@ -19,7 +19,7 @@ load_dotenv()
 
 # Retrieve the API keys from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-ELEVENLABS_API_KEY ='sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'
+ELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'
 # ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'
 
 # Initialize clients
@@ -30,11 +30,11 @@ eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 WAKE_WORD = "hey "
 SLEEP_WORD = "good night"
 
+
 class AudioStreamPlayer:
-    def __init__(self, is_speaking_event):
+    def __init__(self):
         self.audio_queue = queue.Queue()
         self.is_playing = False
-        self.is_speaking = is_speaking_event
 
     def add_audio_chunk(self, chunk):
         if chunk:
@@ -42,9 +42,6 @@ class AudioStreamPlayer:
 
     def play_audio_file(self, audio_data):
         try:
-            # Signal that speaking has started
-            self.is_speaking.set()
-
             # Save the audio data to a temporary file in memory
             with BytesIO(audio_data) as audio_buffer:
                 # Convert the audio data to numpy array directly
@@ -56,7 +53,7 @@ class AudioStreamPlayer:
                 samples = np.array(audio_segment.get_array_of_samples())
 
                 # Convert to float32 and normalize
-                samples = samples.astype(np.float32) / (2**15 if audio_segment.sample_width == 2 else 2**31)
+                samples = samples.astype(np.float32) / (2 ** 15 if audio_segment.sample_width == 2 else 2 ** 31)
 
                 # Handle mono to stereo conversion if needed
                 if audio_segment.channels == 1:
@@ -65,10 +62,9 @@ class AudioStreamPlayer:
                 # Play the audio
                 sd.play(samples, audio_segment.frame_rate)
                 sd.wait()
-                
-        finally:
-            # Ensure that the speaking flag is cleared even if an error occurs
-            self.is_speaking.clear()
+
+        except Exception as e:
+            print(f"Error playing audio: {e}")
 
     def play_audio_stream(self):
         while True:
@@ -89,6 +85,7 @@ class AudioStreamPlayer:
                     print(f"Error in audio playback: {e}")
                     self.is_playing = False
             time.sleep(0.1)
+
 
 def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):
     accumulated_text = ""
@@ -123,6 +120,7 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
 
         time.sleep(0.1)
 
+
 def send_to_openai_streaming(user_input: str, text_queue: queue.Queue) -> None:
     system_prompt = ("""
                      You are Immy, a magical, AI-powered teddy bear who adores chatting with children.
@@ -153,17 +151,14 @@ def send_to_openai_streaming(user_input: str, text_queue: queue.Queue) -> None:
     except Exception as e:
         print(f"Error in OpenAI API call: {e}")
 
+
 class ConversationSystem:
     def __init__(self):
         self.text_queue = queue.Queue()
+        self.audio_player = AudioStreamPlayer()
+        self.is_awake = False
         self.should_run = True
         self.recognizer = sr.Recognizer()
-
-        # Initialize the is_speaking event
-        self.is_speaking = threading.Event()
-
-        # Initialize the audio player with the is_speaking event
-        self.audio_player = AudioStreamPlayer(self.is_speaking)
 
         # Start audio player thread
         self.audio_thread = threading.Thread(
@@ -183,15 +178,14 @@ class ConversationSystem:
     def listen_continuously(self):
         with sr.Microphone() as source:
             print("\nListening...")
-
             # Adjust for ambient noise to improve recognition accuracy
             self.recognizer.adjust_for_ambient_noise(source)
 
             while self.should_run:
-                # Wait if speaking
-                if self.is_speaking.is_set():
-                    print("\nWaiting for playback to finish...")
-                    self.is_speaking.wait()
+                # If audio is playing, wait until it finishes before listening
+                if self.audio_player.is_playing:
+                    time.sleep(0.1)
+                    continue
 
                 try:
                     print("\nSay something...")
@@ -224,7 +218,7 @@ class ConversationSystem:
                             # Do not call join() here to avoid blocking
 
                     except sr.UnknownValueError:
-                        print("\nListening ")
+                        print("\nCould not understand audio.")
                         continue
                     except sr.RequestError as e:
                         print(f"\nCould not request results from Google Speech Recognition service: {e}")
@@ -245,6 +239,7 @@ class ConversationSystem:
         except KeyboardInterrupt:
             print("\nGoodbye! Thanks for chatting!")
             self.should_run = False
+
 
 if __name__ == "__main__":
     system = ConversationSystem()
