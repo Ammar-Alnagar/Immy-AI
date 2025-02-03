@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d338718a-1d22-48f0-a091-860b29652069" name="Changes" comment="sdfasd">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/newimop.py" beforeDir="false" afterPath="$PROJECT_DIR$/newimop.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +80,7 @@
       <workItem from="1732384746479" duration="1086000" />
       <workItem from="1732396840156" duration="15000" />
       <workItem from="1738491200833" duration="1725000" />
-      <workItem from="1738577036573" duration="347000" />
+      <workItem from="1738577036573" duration="3384000" />
     </task>
     <task id="LOCAL-00001" summary="sdf">
       <option name="closed" value="true" />
@@ -111,7 +110,7 @@
     <option name="LAST_COMMIT_MESSAGE" value="sdfasd" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Immy_AI$newimop.coverage" NAME="newimop Coverage Results" MODIFIED="1738491666648" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Immy_AI$newimop.coverage" NAME="newimop Coverage Results" MODIFIED="1738577288836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Immy_AI$Groq.coverage" NAME="Groq Coverage Results" MODIFIED="1732364601644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
