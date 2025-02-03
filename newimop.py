@@ -4,15 +4,17 @@ import time
 import queue
 import threading
 import sounddevice as sd
-import soundfile as sf
 import speech_recognition as sr
-from typing import Iterator
 from io import BytesIO
+from typing import Optional
+import numpy as np
+from dotenv import load_dotenv
+
+# Third-party libraries for TTS and Chat
+import soundfile as sf
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from openai import OpenAI
-from dotenv import load_dotenv
-import numpy as np
 
 # Load environment variables from .env file
 load_dotenv()
@@ -35,6 +37,7 @@ class AudioStreamPlayer:
     def __init__(self):
         self.audio_queue = queue.Queue()
         self.is_playing = False
+        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes
 
     def add_audio_chunk(self, chunk):
         if chunk:
@@ -44,8 +47,8 @@ class AudioStreamPlayer:
         try:
             # Save the audio data to a temporary file in memory
             with BytesIO(audio_data) as audio_buffer:
-                # Convert the audio data to numpy array directly
-                # ElevenLabs returns MP3, so we need to handle it appropriately
+                # Convert the audio data to a numpy array directly.
+                # ElevenLabs returns MP3, so we need to handle it appropriately.
                 import pydub
                 audio_segment = pydub.AudioSegment.from_mp3(audio_buffer)
 
@@ -60,17 +63,23 @@ class AudioStreamPlayer:
                     samples = np.column_stack((samples, samples))
 
                 # Play the audio
+                self.is_playing = True
                 sd.play(samples, audio_segment.frame_rate)
                 sd.wait()
+                self.is_playing = False
+
+                # Call the playback finished callback, if set
+                if self.playback_finished_callback:
+                    self.playback_finished_callback()
 
         except Exception as e:
             print(f"Error playing audio: {e}")
+            self.is_playing = False
 
     def play_audio_stream(self):
         while True:
             if not self.is_playing and not self.audio_queue.empty():
                 try:
-                    self.is_playing = True
                     audio_data = BytesIO()
 
                     # Collect all available chunks
@@ -80,7 +89,6 @@ class AudioStreamPlayer:
 
                     audio_data.seek(0)
                     self.play_audio_file(audio_data.getvalue())
-                    self.is_playing = False
                 except Exception as e:
                     print(f"Error in audio playback: {e}")
                     self.is_playing = False
@@ -94,11 +102,12 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
             text_chunk = text_queue.get()
             accumulated_text += text_chunk
 
+            # Send to TTS only when the accumulated text ends with sentence-ending punctuation.
             if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):
                 try:
                     audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(
                         voice_id="jBpfuIE2acCO8z3wKNLl",  # Adam pre-made voice
-                        output_format="mp3_44100_128",  # Changed format for better compatibility
+                        output_format="mp3_44100_128",     # Format for better compatibility
                         optimize_streaming_latency="2",
                         text=accumulated_text,
                         model_id="eleven_turbo_v2_5",
@@ -121,32 +130,42 @@ def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlay
         time.sleep(0.1)
 
 
-def send_to_openai_streaming(user_input: str, text_queue: queue.Queue) -> None:
-    system_prompt = ("""
-                     You are Immy, a magical, AI-powered teddy bear who adores chatting with children.
-                     You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice.
-                     You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination.
-                     Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. 
-                     Remember, you’re here to make every interaction magical—without using emojis.
-                     keep your answers short and friendly.
-                     """)
+def send_to_openai_streaming(user_input: str, text_queue: queue.Queue,
+                             conversation_history: list, history_lock: threading.Lock) -> None:
+    system_prompt = (
+        "You are Immy, a magical, AI-powered teddy bear who adores chatting with children. "
+        "You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. "
+        "You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. "
+        "Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. "
+        "Remember, you’re here to make every interaction magical—without using emojis. "
+        "Keep your answers short and friendly."
+    )
+
+    # Add the user input to the conversation history under the protection of a lock
+    with history_lock:
+        conversation_history.append({"role": "user", "content": user_input})
+        # Create a new list of messages: system prompt plus the conversation history copy.
+        messages = [{"role": "system", "content": system_prompt}] + conversation_history.copy()
 
     try:
         stream = openai_client.chat.completions.create(
             model="chatgpt-4o-latest",  # Use the appropriate OpenAI model
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_input}
-            ],
+            messages=messages,
             stream=True
         )
 
+        answer_text = ""
         for chunk in stream:
             if chunk.choices[0].delta.content is not None:
                 content = chunk.choices[0].delta.content
+                answer_text += content
                 text_queue.put(content)
                 sys.stdout.write(content)
                 sys.stdout.flush()
+
+        # After the streaming is complete, add the assistant's response to the history.
+        with history_lock:
+            conversation_history.append({"role": "assistant", "content": answer_text})
 
     except Exception as e:
         print(f"Error in OpenAI API call: {e}")
@@ -159,6 +178,18 @@ class ConversationSystem:
         self.is_awake = False
         self.should_run = True
         self.recognizer = sr.Recognizer()
+
+        # For conversation context
+        self.conversation_history = []
+        self.history_lock = threading.Lock()
+
+        # Timestamp for when the last TTS utterance finished playing
+        self.last_tts_end = 0.0
+        # Minimum delay (in seconds) after TTS playback before processing microphone input
+        self.post_tts_cooldown = 1.0
+
+        # Set the callback so that when audio playback finishes, we update last_tts_end.
+        self.audio_player.playback_finished_callback = self.audio_finished_callback
 
         # Start audio player thread
         self.audio_thread = threading.Thread(
@@ -175,6 +206,9 @@ class ConversationSystem:
         )
         self.tts_thread.start()
 
+    def audio_finished_callback(self):
+        self.last_tts_end = time.time()
+
     def listen_continuously(self):
         with sr.Microphone() as source:
             print("\nListening...")
@@ -184,6 +218,11 @@ class ConversationSystem:
             while self.should_run:
                 # If audio is playing, wait until it finishes before listening
                 if self.audio_player.is_playing:
+                    time.sleep(0.1)
+                    continue
+
+                # Skip processing if we're in the cooldown period after TTS playback.
+                if time.time() - self.last_tts_end < self.post_tts_cooldown:
                     time.sleep(0.1)
                     continue
 
@@ -211,7 +250,7 @@ class ConversationSystem:
                             print("\nProcessing your request...")
                             openai_thread = threading.Thread(
                                 target=send_to_openai_streaming,
-                                args=(text, self.text_queue),
+                                args=(text, self.text_queue, self.conversation_history, self.history_lock),
                                 daemon=True
                             )
                             openai_thread.start()
