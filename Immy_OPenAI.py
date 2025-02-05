@@ -15,7 +15,6 @@ from dotenv import load_dotenv
 import numpy as np
 
 # Load environment variables from .env file
-load_dotenv()
 
 # Retrieve the API keys from environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
