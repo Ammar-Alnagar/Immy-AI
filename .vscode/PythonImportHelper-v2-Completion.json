@@ -35,6 +35,69 @@
         "documentation": {}
     },
     {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "glob",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "glob",
+        "description": "glob",
+        "detail": "glob",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "sysconfig",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sysconfig",
+        "description": "sysconfig",
+        "detail": "sysconfig",
+        "documentation": {}
+    },
+    {
+        "label": "tempfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tempfile",
+        "description": "tempfile",
+        "detail": "tempfile",
+        "documentation": {}
+    },
+    {
+        "label": "winreg",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "winreg",
+        "description": "winreg",
+        "detail": "winreg",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
         "label": "time",
         "kind": 6,
         "isExtraImport": true,
@@ -118,7 +181,7 @@
         "documentation": {}
     },
     {
-        "label": "Optional",
+        "label": "Iterator",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -134,6 +197,30 @@
         "documentation": {}
     },
     {
+        "label": "Iterator",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "BytesIO",
+        "importPath": "io",
+        "description": "io",
+        "isExtraImport": true,
+        "detail": "io",
+        "documentation": {}
+    },
+    {
         "label": "BytesIO",
         "importPath": "io",
         "description": "io",
@@ -286,14 +373,6 @@
         "documentation": {}
     },
     {
-        "label": "VoiceSettings",
-        "importPath": "elevenlabs",
-        "description": "elevenlabs",
-        "isExtraImport": true,
-        "detail": "elevenlabs",
-        "documentation": {}
-    },
-    {
         "label": "ElevenLabs",
         "importPath": "elevenlabs.client",
         "description": "elevenlabs.client",
@@ -363,22 +442,6 @@
         "description": "elevenlabs.client",
         "isExtraImport": true,
         "detail": "elevenlabs.client",
-        "documentation": {}
-    },
-    {
-        "label": "ElevenLabs",
-        "importPath": "elevenlabs.client",
-        "description": "elevenlabs.client",
-        "isExtraImport": true,
-        "detail": "elevenlabs.client",
-        "documentation": {}
-    },
-    {
-        "label": "load_dotenv",
-        "importPath": "dotenv",
-        "description": "dotenv",
-        "isExtraImport": true,
-        "detail": "dotenv",
         "documentation": {}
     },
     {
@@ -633,11 +696,54 @@
         "documentation": {}
     },
     {
-        "label": "OpenAI",
-        "importPath": "openai",
-        "description": "openai",
+        "label": "asyncio",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "openai",
+        "importPath": "asyncio",
+        "description": "asyncio",
+        "detail": "asyncio",
+        "documentation": {}
+    },
+    {
+        "label": "edge_tts",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "edge_tts",
+        "description": "edge_tts",
+        "detail": "edge_tts",
+        "documentation": {}
+    },
+    {
+        "label": "Llama",
+        "importPath": "llama_cpp",
+        "description": "llama_cpp",
+        "isExtraImport": true,
+        "detail": "llama_cpp",
+        "documentation": {}
+    },
+    {
+        "label": "AutoModelForCausalLM",
+        "importPath": "transformers",
+        "description": "transformers",
+        "isExtraImport": true,
+        "detail": "transformers",
+        "documentation": {}
+    },
+    {
+        "label": "AutoTokenizer",
+        "importPath": "transformers",
+        "description": "transformers",
+        "isExtraImport": true,
+        "detail": "transformers",
+        "documentation": {}
+    },
+    {
+        "label": "torch",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "torch",
+        "description": "torch",
+        "detail": "torch",
         "documentation": {}
     },
     {
@@ -719,6 +825,258 @@
         "description": "venv.Scripts.activate_this",
         "peekOfCode": "sys.prefix = base",
         "detail": "venv.Scripts.activate_this",
+        "documentation": {}
+    },
+    {
+        "label": "Tee",
+        "kind": 6,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "class Tee:\n    def __init__(self, file):\n        self.f = file\n    def write(self, what):\n        if self.f is not None:\n            try:\n                self.f.write(what.replace(\"\\n\", \"\\r\\n\"))\n            except OSError:\n                pass\n        tee_f.write(what)",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "CopyTo",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def CopyTo(desc, src, dest):\n    import win32api\n    import win32con\n    while 1:\n        try:\n            win32api.CopyFile(src, dest, 0)\n            return\n        except win32api.error as details:\n            if details.winerror == 5:  # access denied - user not admin.\n                raise",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "LoadSystemModule",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def LoadSystemModule(lib_dir, modname):\n    # See if this is a debug build.\n    import importlib.machinery\n    import importlib.util\n    suffix = \"_d\" if \"_d.pyd\" in importlib.machinery.EXTENSION_SUFFIXES else \"\"\n    filename = \"%s%d%d%s.dll\" % (\n        modname,\n        sys.version_info.major,\n        sys.version_info.minor,\n        suffix,",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "SetPyKeyVal",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def SetPyKeyVal(key_name, value_name, value):\n    root_hkey = get_root_hkey()\n    root_key = winreg.OpenKey(root_hkey, root_key_name)\n    try:\n        my_key = winreg.CreateKey(root_key, key_name)\n        try:\n            winreg.SetValueEx(my_key, value_name, 0, winreg.REG_SZ, value)\n            if verbose:\n                print(f\"-> {root_key_name}\\\\{key_name}[{value_name}]={value!r}\")\n        finally:",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "UnsetPyKeyVal",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def UnsetPyKeyVal(key_name, value_name, delete_key=False):\n    root_hkey = get_root_hkey()\n    root_key = winreg.OpenKey(root_hkey, root_key_name)\n    try:\n        my_key = winreg.OpenKey(root_key, key_name, 0, winreg.KEY_SET_VALUE)\n        try:\n            winreg.DeleteValue(my_key, value_name)\n            if verbose:\n                print(f\"-> DELETE {root_key_name}\\\\{key_name}[{value_name}]\")\n        finally:",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "RegisterCOMObjects",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def RegisterCOMObjects(register=True):\n    import win32com.server.register\n    if register:\n        func = win32com.server.register.RegisterClasses\n    else:\n        func = win32com.server.register.UnregisterClasses\n    flags = {}\n    if not verbose:\n        flags[\"quiet\"] = 1\n    for module, klass_name in com_modules:",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "RegisterHelpFile",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def RegisterHelpFile(register=True, lib_dir=None):\n    if lib_dir is None:\n        lib_dir = sysconfig.get_paths()[\"platlib\"]\n    if register:\n        # Register the .chm help file.\n        chm_file = os.path.join(lib_dir, \"PyWin32.chm\")\n        if os.path.isfile(chm_file):\n            # This isn't recursive, so if 'Help' doesn't exist, we croak\n            SetPyKeyVal(\"Help\", None, None)\n            SetPyKeyVal(\"Help\\\\Pythonwin Reference\", None, chm_file)",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "RegisterPythonwin",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def RegisterPythonwin(register=True, lib_dir=None):\n    \"\"\"Add (or remove) Pythonwin to context menu for python scripts.\n    ??? Should probably also add Edit command for pys files also.\n    Also need to remove these keys on uninstall, but there's no function\n        like file_created to add registry entries to uninstall log ???\n    \"\"\"\n    import os\n    if lib_dir is None:\n        lib_dir = sysconfig.get_paths()[\"platlib\"]\n    classes_root = get_root_hkey()",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "get_shortcuts_folder",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def get_shortcuts_folder():\n    if get_root_hkey() == winreg.HKEY_LOCAL_MACHINE:\n        try:\n            fldr = get_special_folder_path(\"CSIDL_COMMON_PROGRAMS\")\n        except OSError:\n            # No CSIDL_COMMON_PROGRAMS on this platform\n            fldr = get_special_folder_path(\"CSIDL_PROGRAMS\")\n    else:\n        # non-admin install - always goes in this user's start menu.\n        fldr = get_special_folder_path(\"CSIDL_PROGRAMS\")",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "get_system_dir",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def get_system_dir():\n    import win32api  # we assume this exists.\n    try:\n        import pythoncom\n        import win32process\n        from win32com.shell import shell, shellcon\n        try:\n            if win32process.IsWow64Process():\n                return shell.SHGetSpecialFolderPath(0, shellcon.CSIDL_SYSTEMX86)\n            return shell.SHGetSpecialFolderPath(0, shellcon.CSIDL_SYSTEM)",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "fixup_dbi",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def fixup_dbi():\n    # We used to have a dbi.pyd with our .pyd files, but now have a .py file.\n    # If the user didn't uninstall, they will find the .pyd which will cause\n    # problems - so handle that.\n    import win32api\n    import win32con\n    pyd_name = os.path.join(os.path.dirname(win32api.__file__), \"dbi.pyd\")\n    pyd_d_name = os.path.join(os.path.dirname(win32api.__file__), \"dbi_d.pyd\")\n    py_name = os.path.join(os.path.dirname(win32con.__file__), \"dbi.py\")\n    for this_pyd in (pyd_name, pyd_d_name):",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "install",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def install(lib_dir):\n    import traceback\n    # The .pth file is now installed as a regular file.\n    # Create the .pth file in the site-packages dir, and use only relative paths\n    # We used to write a .pth directly to sys.prefix - clobber it.\n    if os.path.isfile(os.path.join(sys.prefix, \"pywin32.pth\")):\n        os.unlink(os.path.join(sys.prefix, \"pywin32.pth\"))\n    # The .pth may be new and therefore not loaded in this session.\n    # Setup the paths just in case.\n    for name in \"win32 win32\\\\lib Pythonwin\".split():",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "uninstall",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def uninstall(lib_dir):\n    # First ensure our system modules are loaded from pywin32_system, so\n    # we can remove the ones we copied...\n    LoadSystemModule(lib_dir, \"pywintypes\")\n    LoadSystemModule(lib_dir, \"pythoncom\")\n    try:\n        RegisterCOMObjects(False)\n    except Exception as why:\n        print(f\"Failed to unregister COM objects: {why}\")\n    try:",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "verify_destination",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def verify_destination(location):\n    if not os.path.isdir(location):\n        raise argparse.ArgumentTypeError(f'Path \"{location}\" does not exist!')\n    return location\ndef main():\n    parser = argparse.ArgumentParser(\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        description=\"\"\"A post-install script for the pywin32 extensions.\n    * Typical usage:\n    > python pywin32_postinstall.py -install",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(\n        formatter_class=argparse.RawDescriptionHelpFormatter,\n        description=\"\"\"A post-install script for the pywin32 extensions.\n    * Typical usage:\n    > python pywin32_postinstall.py -install\n    If you installed pywin32 via a .exe installer, this should be run\n    automatically after installation, but if it fails you can run it again.\n    If you installed pywin32 via PIP, you almost certainly need to run this to\n    setup the environment correctly.",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "tee_f",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "tee_f = open(os.path.join(tempfile.gettempdir(), \"pywin32_postinstall.log\"), \"w\")\nclass Tee:\n    def __init__(self, file):\n        self.f = file\n    def write(self, what):\n        if self.f is not None:\n            try:\n                self.f.write(what.replace(\"\\n\", \"\\r\\n\"))\n            except OSError:\n                pass",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "sys.stderr",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "sys.stderr = Tee(sys.stderr)\nsys.stdout = Tee(sys.stdout)\ncom_modules = [\n    # module_name,                      class_names\n    (\"win32com.servers.interp\", \"Interpreter\"),\n    (\"win32com.servers.dictionary\", \"DictionaryPolicy\"),\n    (\"win32com.axscript.client.pyscript\", \"PyScript\"),\n]\n# Is this a 'silent' install - ie, avoid all dialogs.\n# Different than 'verbose'",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "sys.stdout",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "sys.stdout = Tee(sys.stdout)\ncom_modules = [\n    # module_name,                      class_names\n    (\"win32com.servers.interp\", \"Interpreter\"),\n    (\"win32com.servers.dictionary\", \"DictionaryPolicy\"),\n    (\"win32com.axscript.client.pyscript\", \"PyScript\"),\n]\n# Is this a 'silent' install - ie, avoid all dialogs.\n# Different than 'verbose'\nsilent = 0",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "com_modules",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "com_modules = [\n    # module_name,                      class_names\n    (\"win32com.servers.interp\", \"Interpreter\"),\n    (\"win32com.servers.dictionary\", \"DictionaryPolicy\"),\n    (\"win32com.axscript.client.pyscript\", \"PyScript\"),\n]\n# Is this a 'silent' install - ie, avoid all dialogs.\n# Different than 'verbose'\nsilent = 0\n# Verbosity of output messages.",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "silent",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "silent = 0\n# Verbosity of output messages.\nverbose = 1\nroot_key_name = \"Software\\\\Python\\\\PythonCore\\\\\" + sys.winver\ntry:\n    # When this script is run from inside the bdist_wininst installer,\n    # file_created() and directory_created() are additional builtin\n    # functions which write lines to PythonXX\\pywin32-install.log. This is\n    # a list of actions for the uninstaller, the format is inspired by what\n    # the Wise installer also creates.",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "verbose",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "verbose = 1\nroot_key_name = \"Software\\\\Python\\\\PythonCore\\\\\" + sys.winver\ntry:\n    # When this script is run from inside the bdist_wininst installer,\n    # file_created() and directory_created() are additional builtin\n    # functions which write lines to PythonXX\\pywin32-install.log. This is\n    # a list of actions for the uninstaller, the format is inspired by what\n    # the Wise installer also creates.\n    file_created  # type: ignore[used-before-def]\n    # 3.10 stopped supporting bdist_wininst, but we can still build them with 3.9.",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "root_key_name",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_postinstall",
+        "description": "venv.Scripts.pywin32_postinstall",
+        "peekOfCode": "root_key_name = \"Software\\\\Python\\\\PythonCore\\\\\" + sys.winver\ntry:\n    # When this script is run from inside the bdist_wininst installer,\n    # file_created() and directory_created() are additional builtin\n    # functions which write lines to PythonXX\\pywin32-install.log. This is\n    # a list of actions for the uninstaller, the format is inspired by what\n    # the Wise installer also creates.\n    file_created  # type: ignore[used-before-def]\n    # 3.10 stopped supporting bdist_wininst, but we can still build them with 3.9.\n    # This can be kept until Python 3.9 or exe installers support is dropped.",
+        "detail": "venv.Scripts.pywin32_postinstall",
+        "documentation": {}
+    },
+    {
+        "label": "run_test",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_testall",
+        "description": "venv.Scripts.pywin32_testall",
+        "peekOfCode": "def run_test(script, cmdline_extras):\n    dirname, scriptname = os.path.split(script)\n    # some tests prefer to be run from their directory.\n    cmd = [sys.executable, \"-u\", scriptname] + cmdline_extras\n    print(\"--- Running '%s' ---\" % script)\n    sys.stdout.flush()\n    result = subprocess.run(cmd, check=False, cwd=dirname)\n    print(f\"*** Test script '{script}' exited with {result.returncode}\")\n    sys.stdout.flush()\n    if result.returncode:",
+        "detail": "venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "find_and_run",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_testall",
+        "description": "venv.Scripts.pywin32_testall",
+        "peekOfCode": "def find_and_run(possible_locations, extras):\n    for maybe in possible_locations:\n        if os.path.isfile(maybe):\n            run_test(maybe, extras)\n            break\n    else:\n        raise RuntimeError(\n            \"Failed to locate a test script in one of %s\" % possible_locations\n        )\ndef main():",
+        "detail": "venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "venv.Scripts.pywin32_testall",
+        "description": "venv.Scripts.pywin32_testall",
+        "peekOfCode": "def main():\n    import argparse\n    code_directories = [this_dir] + site_packages\n    parser = argparse.ArgumentParser(\n        description=\"A script to trigger tests in all subprojects of PyWin32.\"\n    )\n    parser.add_argument(\n        \"-no-user-interaction\",\n        default=False,\n        action=\"store_true\",",
+        "detail": "venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "this_dir",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_testall",
+        "description": "venv.Scripts.pywin32_testall",
+        "peekOfCode": "this_dir = os.path.dirname(__file__)\nsite_packages = [\n    site.getusersitepackages(),\n] + site.getsitepackages()\nfailures = []\n# Run a test using subprocess and wait for the result.\n# If we get an returncode != 0, we know that there was an error, but we don't\n# abort immediately - we run as many tests as we can.\ndef run_test(script, cmdline_extras):\n    dirname, scriptname = os.path.split(script)",
+        "detail": "venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "site_packages",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_testall",
+        "description": "venv.Scripts.pywin32_testall",
+        "peekOfCode": "site_packages = [\n    site.getusersitepackages(),\n] + site.getsitepackages()\nfailures = []\n# Run a test using subprocess and wait for the result.\n# If we get an returncode != 0, we know that there was an error, but we don't\n# abort immediately - we run as many tests as we can.\ndef run_test(script, cmdline_extras):\n    dirname, scriptname = os.path.split(script)\n    # some tests prefer to be run from their directory.",
+        "detail": "venv.Scripts.pywin32_testall",
+        "documentation": {}
+    },
+    {
+        "label": "failures",
+        "kind": 5,
+        "importPath": "venv.Scripts.pywin32_testall",
+        "description": "venv.Scripts.pywin32_testall",
+        "peekOfCode": "failures = []\n# Run a test using subprocess and wait for the result.\n# If we get an returncode != 0, we know that there was an error, but we don't\n# abort immediately - we run as many tests as we can.\ndef run_test(script, cmdline_extras):\n    dirname, scriptname = os.path.split(script)\n    # some tests prefer to be run from their directory.\n    cmd = [sys.executable, \"-u\", scriptname] + cmdline_extras\n    print(\"--- Running '%s' ---\" % script)\n    sys.stdout.flush()",
+        "detail": "venv.Scripts.pywin32_testall",
         "documentation": {}
     },
     {
@@ -1372,186 +1730,6 @@
     {
         "label": "AudioStreamPlayer",
         "kind": 6,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:\n            # Save the audio data to a temporary file in memory",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "ConversationSystem",
-        "kind": 6,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "class ConversationSystem:\n    def __init__(self):\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        self.is_awake = False\n        self.should_run = True\n        # Start audio player thread\n        self.audio_thread = threading.Thread(\n            target=self.audio_player.play_audio_stream,\n            daemon=True",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "stream_to_eleven_labs",
-        "kind": 2,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(\n                        voice_id=\"jBpfuIE2acCO8z3wKNLl\",  # Adam pre-made voice",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "send_to_openai_streaming",
-        "kind": 2,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "def send_to_openai_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    system_prompt = (\"\"\"\n                     You are Immy, a magical, AI-powered teddy bear who adores chatting with children.\n                     You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice.\n                     You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination.\n                     Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \n                     Remember, you’re here to make every interaction magical—without using emojis.\n                     keep your answers short and friendly.\n                     \"\"\")\n    try:",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "OPENAI_API_KEY",
-        "kind": 5,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\nELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "ELEVENLABS_API_KEY",
-        "kind": 5,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "openai_client",
-        "kind": 5,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "openai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "eleven_labs_client",
-        "kind": 5,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "WAKE_WORD",
-        "kind": 5,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "WAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "SLEEP_WORD",
-        "kind": 5,
-        "importPath": "newtest",
-        "description": "newtest",
-        "peekOfCode": "SLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:",
-        "detail": "newtest",
-        "documentation": {}
-    },
-    {
-        "label": "AudioStreamPlayer",
-        "kind": 6,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "ConversationSystem",
-        "kind": 6,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "class ConversationSystem:\n    def __init__(self):\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        self.is_awake = False\n        self.should_run = True\n        self.recognizer = sr.Recognizer()\n        # For conversation context\n        self.conversation_history = []\n        self.history_lock = threading.Lock()",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "stream_to_eleven_labs",
-        "kind": 2,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            # Send to TTS only when the accumulated text ends with sentence-ending punctuation.\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "send_to_openai_streaming",
-        "kind": 2,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "def send_to_openai_streaming(user_input: str, text_queue: queue.Queue,\n                             conversation_history: list, history_lock: threading.Lock) -> None:\n    system_prompt = (\n        \"You are Immy, a magical, AI-powered teddy bear who adores chatting with children. \"\n        \"You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. \"\n        \"You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. \"\n        \"Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \"\n        \"Remember, you’re here to make every interaction magical—without using emojis. \"\n        \"Keep your answers short and friendly.\"\n    )",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "OPENAI_API_KEY",
-        "kind": 5,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\nELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "ELEVENLABS_API_KEY",
-        "kind": 5,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "openai_client",
-        "kind": 5,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "openai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "eleven_labs_client",
-        "kind": 5,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes\n    def add_audio_chunk(self, chunk):",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "WAKE_WORD",
-        "kind": 5,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "WAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "SLEEP_WORD",
-        "kind": 5,
-        "importPath": "newimop",
-        "description": "newimop",
-        "peekOfCode": "SLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
-        "detail": "newimop",
-        "documentation": {}
-    },
-    {
-        "label": "AudioStreamPlayer",
-        "kind": 6,
         "importPath": "Immy_OPenAI",
         "description": "Immy_OPenAI",
         "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:\n            # Save the audio data to a temporary file in memory",
@@ -1628,6 +1806,294 @@
         "description": "Immy_OPenAI",
         "peekOfCode": "SLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:",
         "detail": "Immy_OPenAI",
+        "documentation": {}
+    },
+    {
+        "label": "AudioStreamPlayer",
+        "kind": 6,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:\n            # Load audio with pydub (handles MP3)",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "ConversationSystem",
+        "kind": 6,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "class ConversationSystem:\n    def __init__(self):\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        self.is_awake = False\n        self.should_run = True\n        self.recognizer = sr.Recognizer()\n        # Start audio playback thread\n        self.audio_thread = threading.Thread(\n            target=self.audio_player.play_audio_stream,",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "text_to_speech_sync",
+        "kind": 2,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "def text_to_speech_sync(text: str, voice: str = \"en-US-AnaNeural\", rate: int = 0, pitch: int = 0) -> bytes:\n    \"\"\"Wrapper to run the async TTS function synchronously.\"\"\"\n    return asyncio.run(async_text_to_speech(text, voice, rate, pitch))\n# ------------------------------------------------------------------------------\n# TTS streaming thread (replacing ElevenLabs streaming)\ndef stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    # You may adjust these TTS parameters as desired.\n    tts_voice = \"en-US-AnaNeural\"\n    tts_rate = 0",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "stream_to_edge_tts",
+        "kind": 2,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    # You may adjust these TTS parameters as desired.\n    tts_voice = \"en-US-AnaNeural\"\n    tts_rate = 0\n    tts_pitch = 0\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_llama_streaming",
+        "kind": 2,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "def send_to_llama_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    # Create a prompt combining the system instructions and the user input.\n    prompt = f\"{SYSTEM_PROMPT}\\nUser: {user_input}\\nImmy:\"\n    try:\n        # Call the LLaMA model in streaming mode.\n        # The llama_cpp package returns a generator yielding tokens.\n        response = llama_model(prompt=prompt, stream=True)\n        for token in response:\n            # Depending on your llama_cpp version the token may be a dict or a string.\n            # Here we assume a dict with key 'token' for simplicity.",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "WAKE_WORD",
+        "kind": 5,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "WAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\n# Set the path to your GGUF model file (adjust as needed)\nLLAMA_MODEL_PATH = os.getenv(\"models\", \"models/immy_hermes_v2-q4_k_m.gguf\")\n# Initialize the LLaMA model\nllama_model = Llama(\n    model_path=LLAMA_MODEL_PATH,\n    n_ctx=1024,       # adjust context length if needed\n    seed=0,\n    verbose=False,",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "SLEEP_WORD",
+        "kind": 5,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "SLEEP_WORD = \"good night\"\n# Set the path to your GGUF model file (adjust as needed)\nLLAMA_MODEL_PATH = os.getenv(\"models\", \"models/immy_hermes_v2-q4_k_m.gguf\")\n# Initialize the LLaMA model\nllama_model = Llama(\n    model_path=LLAMA_MODEL_PATH,\n    n_ctx=1024,       # adjust context length if needed\n    seed=0,\n    verbose=False,\n    n_threads=8",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "LLAMA_MODEL_PATH",
+        "kind": 5,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "LLAMA_MODEL_PATH = os.getenv(\"models\", \"models/immy_hermes_v2-q4_k_m.gguf\")\n# Initialize the LLaMA model\nllama_model = Llama(\n    model_path=LLAMA_MODEL_PATH,\n    n_ctx=1024,       # adjust context length if needed\n    seed=0,\n    verbose=False,\n    n_threads=8\n)\n# Define the system prompt (your “personality” instructions)",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "llama_model",
+        "kind": 5,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "llama_model = Llama(\n    model_path=LLAMA_MODEL_PATH,\n    n_ctx=1024,       # adjust context length if needed\n    seed=0,\n    verbose=False,\n    n_threads=8\n)\n# Define the system prompt (your “personality” instructions)\nSYSTEM_PROMPT = (\n    \"You are Immy, a magical, AI-powered teddy bear who adores chatting with children. \"",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "SYSTEM_PROMPT",
+        "kind": 5,
+        "importPath": "Offline_Immy_LatestWIP",
+        "description": "Offline_Immy_LatestWIP",
+        "peekOfCode": "SYSTEM_PROMPT = (\n    \"You are Immy, a magical, AI-powered teddy bear who adores chatting with children. \"\n    \"You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. \"\n    \"You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. \"\n    \"Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \"\n    \"Remember, you’re here to make every interaction magical—without using emojis. \"\n    \"Keep your answers short and friendly.\"\n)\n# ------------------------------------------------------------------------------\n# Audio playback class",
+        "detail": "Offline_Immy_LatestWIP",
+        "documentation": {}
+    },
+    {
+        "label": "AudioStreamPlayer",
+        "kind": 6,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:\n            # Load audio with pydub (handles MP3)",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "ConversationSystem",
+        "kind": 6,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "class ConversationSystem:\n    def __init__(self):\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        self.is_awake = False\n        self.should_run = True\n        self.recognizer = sr.Recognizer()\n        # Start audio playback thread.\n        self.audio_thread = threading.Thread(\n            target=self.audio_player.play_audio_stream,",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "text_to_speech_sync",
+        "kind": 2,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "def text_to_speech_sync(text: str, voice: str = \"en-US-AnaNeural\", rate: int = 30, pitch: int = 0) -> bytes:\n    \"\"\"Wrapper to run the async TTS function synchronously.\"\"\"\n    return asyncio.run(async_text_to_speech(text, voice, rate, pitch))\n# -------------------------------------------------------------------------------\n# TTS streaming thread (using Edge-TTS)\ndef stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    # TTS parameters\n    tts_voice = \"en-US-AnaNeural\"\n    tts_rate = 30",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "stream_to_edge_tts",
+        "kind": 2,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    # TTS parameters\n    tts_voice = \"en-US-AnaNeural\"\n    tts_rate = 30\n    tts_pitch = 0\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_transformers_streaming",
+        "kind": 2,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "def send_to_transformers_streaming(user_input: str, text_queue: queue.Queue) -> None:\n    # Create a prompt combining the system instructions and the user input.\n    prompt = f\"{SYSTEM_PROMPT}\\nUser: {user_input}\\nImmy:\"\n    print(\"DEBUG: Prompt sent to Transformers model:\")\n    print(prompt)\n    try:\n        # Tokenize and move input to the same device as the model.\n        input_ids = tokenizer.encode(prompt, return_tensors=\"pt\").to(device)\n        # Generate a response with the model.\n        # Adjust parameters (temperature, top_p, max_new_tokens) as needed.",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "WAKE_WORD",
+        "kind": 5,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "WAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\n# Define the system prompt (your “personality” instructions)\nSYSTEM_PROMPT = (\n    \"You are Immy, a magical, AI-powered teddy bear who adores chatting with children. \"\n    \"You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. \"\n    \"You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. \"\n    \"Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \"\n    \"Remember, you’re here to make every interaction magical—without using emojis. \"\n    \"Keep your answers short and friendly.\"",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "SLEEP_WORD",
+        "kind": 5,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "SLEEP_WORD = \"good night\"\n# Define the system prompt (your “personality” instructions)\nSYSTEM_PROMPT = (\n    \"You are Immy, a magical, AI-powered teddy bear who adores chatting with children. \"\n    \"You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. \"\n    \"You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. \"\n    \"Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \"\n    \"Remember, you’re here to make every interaction magical—without using emojis. \"\n    \"Keep your answers short and friendly.\"\n)",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "SYSTEM_PROMPT",
+        "kind": 5,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "SYSTEM_PROMPT = (\n    \"You are Immy, a magical, AI-powered teddy bear who adores chatting with children. \"\n    \"You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. \"\n    \"You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. \"\n    \"Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \"\n    \"Remember, you’re here to make every interaction magical—without using emojis. \"\n    \"Keep your answers short and friendly.\"\n)\n# Load the Hugging Face model \"critical-hf/Immy_H_7_GGUF\" and its tokenizer.\n# If the repository requires custom code, trust_remote_code=True might be needed.",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "MODEL_NAME",
+        "kind": 5,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "MODEL_NAME = \"critical-hf/Immy_H_7_GGUF\"\ntokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)\nmodel = AutoModelForCausalLM.from_pretrained(MODEL_NAME, trust_remote_code=True)\n# Move the model to GPU if available.\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nmodel.to(device)\nmodel.eval()\n# -------------------------------------------------------------------------------\n# Audio playback class\nclass AudioStreamPlayer:",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "tokenizer",
+        "kind": 5,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)\nmodel = AutoModelForCausalLM.from_pretrained(MODEL_NAME, trust_remote_code=True)\n# Move the model to GPU if available.\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nmodel.to(device)\nmodel.eval()\n# -------------------------------------------------------------------------------\n# Audio playback class\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "model",
+        "kind": 5,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, trust_remote_code=True)\n# Move the model to GPU if available.\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nmodel.to(device)\nmodel.eval()\n# -------------------------------------------------------------------------------\n# Audio playback class\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "device",
+        "kind": 5,
+        "importPath": "Offline_WIP",
+        "description": "Offline_WIP",
+        "peekOfCode": "device = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nmodel.to(device)\nmodel.eval()\n# -------------------------------------------------------------------------------\n# Audio playback class\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n    def add_audio_chunk(self, chunk):",
+        "detail": "Offline_WIP",
+        "documentation": {}
+    },
+    {
+        "label": "AudioStreamPlayer",
+        "kind": 6,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "class AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):\n        try:",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "ConversationSystem",
+        "kind": 6,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "class ConversationSystem:\n    def __init__(self):\n        self.text_queue = queue.Queue()\n        self.audio_player = AudioStreamPlayer()\n        self.is_awake = False\n        self.should_run = True\n        self.recognizer = sr.Recognizer()\n        # For conversation context\n        self.conversation_history = []\n        self.history_lock = threading.Lock()",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "stream_to_eleven_labs",
+        "kind": 2,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "def stream_to_eleven_labs(text_queue: queue.Queue, audio_player: AudioStreamPlayer):\n    accumulated_text = \"\"\n    while True:\n        while not text_queue.empty():\n            text_chunk = text_queue.get()\n            accumulated_text += text_chunk\n            # Send to TTS only when the accumulated text ends with sentence-ending punctuation.\n            if len(accumulated_text.strip()) > 0 and (accumulated_text.strip()[-1] in '.!?'):\n                try:\n                    audio_stream = eleven_labs_client.text_to_speech.convert_as_stream(",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "send_to_openai_streaming",
+        "kind": 2,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "def send_to_openai_streaming(user_input: str, text_queue: queue.Queue,\n                             conversation_history: list, history_lock: threading.Lock) -> None:\n    system_prompt = (\n        \"You are Immy, a magical, AI-powered teddy bear who adores chatting with children. \"\n        \"You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. \"\n        \"You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. \"\n        \"Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. \"\n        \"Remember, you’re here to make every interaction magical—without using emojis. \"\n        \"Keep your answers short and friendly.\"\n    )",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "OPENAI_API_KEY",
+        "kind": 5,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\")\nELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "ELEVENLABS_API_KEY",
+        "kind": 5,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "ELEVENLABS_API_KEY = 'sk_482ee3f5c997da5dc21b63628d96b27e81a3a17dcfc5e8bf'\n# ELEVENLABS_API_KEY ='sk_dee83966a5e3d57289bb6ed748776fb374cac26e29f931a4'\n# Initialize clients\nopenai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "openai_client",
+        "kind": 5,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "openai_client = OpenAI(api_key=OPENAI_API_KEY)\neleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "eleven_labs_client",
+        "kind": 5,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "eleven_labs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)\n# Define wake and sleep words\nWAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes\n    def add_audio_chunk(self, chunk):",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "WAKE_WORD",
+        "kind": 5,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "WAKE_WORD = \"hey \"\nSLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)",
+        "detail": "Immy_Online_Latest",
+        "documentation": {}
+    },
+    {
+        "label": "SLEEP_WORD",
+        "kind": 5,
+        "importPath": "Immy_Online_Latest",
+        "description": "Immy_Online_Latest",
+        "peekOfCode": "SLEEP_WORD = \"good night\"\nclass AudioStreamPlayer:\n    def __init__(self):\n        self.audio_queue = queue.Queue()\n        self.is_playing = False\n        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes\n    def add_audio_chunk(self, chunk):\n        if chunk:\n            self.audio_queue.put(chunk)\n    def play_audio_file(self, audio_data):",
+        "detail": "Immy_Online_Latest",
         "documentation": {}
     }
 ]
