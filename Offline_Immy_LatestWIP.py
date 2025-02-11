@@ -101,7 +101,7 @@ class AudioStreamPlayer:
 # then reads back the file's bytes so it can be played by our audio player.
 # You can adjust the default voice, rate, and pitch as desired.
 
-async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 0, pitch: int = 0) -> bytes:
+async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 0) -> bytes:
     if not text.strip():
         return None
     rate_str = f"{rate:+d}%"
@@ -115,7 +115,7 @@ async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: 
     os.remove(tmp_path)
     return audio_data
 
-def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 0, pitch: int = 0) -> bytes:
+def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 0) -> bytes:
     """Wrapper to run the async TTS function synchronously."""
     return asyncio.run(async_text_to_speech(text, voice, rate, pitch))
 
@@ -126,7 +126,7 @@ def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer)
     accumulated_text = ""
     # You may adjust these TTS parameters as desired.
     tts_voice = "en-US-AnaNeural"
-    tts_rate = 0
+    tts_rate = 25
     tts_pitch = 0
 
     while True:
