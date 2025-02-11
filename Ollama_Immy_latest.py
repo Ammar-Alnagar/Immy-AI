@@ -113,6 +113,9 @@ def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 2
 #
 # This function listens to a text queue and, once a sentence (ending with punctuation)
 # is accumulated, converts the text into speech and queues the audio for playback.
+#
+# Modification: We first check if the audio player is busy. If it is, we wait before
+# processing new text. This prevents overlapping speech.
 def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer):
     accumulated_text = ""
     tts_voice = "en-US-AnaNeural"
@@ -120,6 +123,11 @@ def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer)
     tts_pitch = 0
 
     while True:
+        # If the audio player is currently playing, wait a bit before processing new text.
+        if audio_player.is_playing:
+            time.sleep(0.1)
+            continue
+
         while not text_queue.empty():
             text_chunk = text_queue.get()
             # Ensure the text_chunk is a string.
@@ -168,6 +176,7 @@ def send_to_ollama_streaming(user_input: str, text_queue: queue.Queue) -> None:
 
 # ------------------------------------------------------------------------------
 # Main Conversation System
+
 class ConversationSystem:
     def __init__(self):
         self.text_queue = queue.Queue()

@@ -90,7 +90,7 @@
       <workItem from="1738577036573" duration="3384000" />
       <workItem from="1738763404403" duration="6340000" />
       <workItem from="1738777078556" duration="436000" />
-      <workItem from="1739268968944" duration="6942000" />
+      <workItem from="1739268968944" duration="7546000" />
     </task>
     <task id="LOCAL-00001" summary="sdf">
       <option name="closed" value="true" />
@@ -145,7 +145,7 @@
     <SUITE FILE_PATH="coverage/Immy_AI$newimop.coverage" NAME="newimop Coverage Results" MODIFIED="1738577288836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Immy_AI$OfflineImmyV2.coverage" NAME="OfflineImmyV2 Coverage Results" MODIFIED="1738764999338" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Immy_AI$Offline_WIP.coverage" NAME="Offline_WIP Coverage Results" MODIFIED="1739271178995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Immy_AI$Ollama_Immy_latest.coverage" NAME="Ollama_Immy_latest Coverage Results" MODIFIED="1739274841800" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Immy_AI$Ollama_Immy_latest.coverage" NAME="Ollama_Immy_latest Coverage Results" MODIFIED="1739276952835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Immy_AI$Groq.coverage" NAME="Groq Coverage Results" MODIFIED="1732364601644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
