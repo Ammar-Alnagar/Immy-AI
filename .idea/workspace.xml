@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d338718a-1d22-48f0-a091-860b29652069" name="Changes" comment="sdfasd">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Offline_Immy_LatestWIP.py" beforeDir="false" afterPath="$PROJECT_DIR$/Offline_Immy_LatestWIP.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Offline_WIP.py" beforeDir="false" afterPath="$PROJECT_DIR$/Ollama_Immy_latest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ollama_Immy_latest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Ollama_Immy_latest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +43,7 @@
     "Python.OfflineImmyV2.executor": "Run",
     "Python.Offline_Immy_LatestWIP.executor": "Run",
     "Python.Offline_WIP.executor": "Run",
+    "Python.Ollama_Immy_latest.executor": "Run",
     "Python.newimop.executor": "Run",
     "Python.offline.executor": "Run",
     "Python.testoffline.executor": "Run",
@@ -90,7 +90,7 @@
       <workItem from="1738577036573" duration="3384000" />
       <workItem from="1738763404403" duration="6340000" />
       <workItem from="1738777078556" duration="436000" />
-      <workItem from="1739268968944" duration="3099000" />
+      <workItem from="1739268968944" duration="6942000" />
     </task>
     <task id="LOCAL-00001" summary="sdf">
       <option name="closed" value="true" />
@@ -145,6 +145,7 @@
     <SUITE FILE_PATH="coverage/Immy_AI$newimop.coverage" NAME="newimop Coverage Results" MODIFIED="1738577288836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Immy_AI$OfflineImmyV2.coverage" NAME="OfflineImmyV2 Coverage Results" MODIFIED="1738764999338" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Immy_AI$Offline_WIP.coverage" NAME="Offline_WIP Coverage Results" MODIFIED="1739271178995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Immy_AI$Ollama_Immy_latest.coverage" NAME="Ollama_Immy_latest Coverage Results" MODIFIED="1739274841800" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Immy_AI$Groq.coverage" NAME="Groq Coverage Results" MODIFIED="1732364601644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

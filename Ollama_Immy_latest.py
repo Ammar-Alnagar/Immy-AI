@@ -13,18 +13,18 @@ import tempfile
 import edge_tts
 import whisper  # <-- Import Whisper for speech recognition
 
-# Import Ollama's Python client (make sure you have it installed, e.g., via `pip install ollama`)
+# Import Ollama's Python client (make sure you have it installed, e.g., via pip install ollama)
 import ollama
 
 # ------------------------------------------------------------------------------
 # Configuration and Initialization
 
 # Set up wake/sleep words
-WAKE_WORD = "hey "
+WAKE_WORD = "hey "  # Adjusted wake word for clarity.
 SLEEP_WORD = "good night"
 
 # Set the model name to be used by Ollama (adjust as needed)
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "immy_hermes_v2")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "hf.co/critical-hf/Immy_H_7_GGUF")
 
 # Define the system prompt (your “personality” instructions)
 SYSTEM_PROMPT = (
@@ -35,7 +35,6 @@ SYSTEM_PROMPT = (
     "Remember, you’re here to make every interaction magical—without using emojis. "
     "Keep your answers short and friendly."
 )
-
 
 # ------------------------------------------------------------------------------
 # Audio Playback Class
@@ -86,13 +85,11 @@ class AudioStreamPlayer:
                     self.is_playing = False
             time.sleep(0.1)
 
-
 # ------------------------------------------------------------------------------
 # Edge-TTS Implementation (for text-to-speech conversion)
 #
 # This asynchronous function uses Edge-TTS to synthesize speech into an MP3 file,
 # then reads the file's bytes so it can be played by our audio player.
-
 async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 0) -> bytes:
     if not text.strip():
         return None
@@ -107,18 +104,15 @@ async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: 
     os.remove(tmp_path)
     return audio_data
 
-
 def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 0) -> bytes:
     """Wrapper to run the async TTS function synchronously."""
     return asyncio.run(async_text_to_speech(text, voice, rate, pitch))
-
 
 # ------------------------------------------------------------------------------
 # TTS Streaming Thread (Edge-TTS)
 #
 # This function listens to a text queue and, once a sentence (ending with punctuation)
 # is accumulated, converts the text into speech and queues the audio for playback.
-
 def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer):
     accumulated_text = ""
     tts_voice = "en-US-AnaNeural"
@@ -128,6 +122,9 @@ def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer)
     while True:
         while not text_queue.empty():
             text_chunk = text_queue.get()
+            # Ensure the text_chunk is a string.
+            if not isinstance(text_chunk, str):
+                text_chunk = str(text_chunk)
             accumulated_text += text_chunk
             # Process once we have a complete sentence.
             if accumulated_text.strip() and accumulated_text.strip()[-1] in ".!?":
@@ -140,30 +137,37 @@ def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer)
                     print(f"Error in text-to-speech conversion: {e}")
         time.sleep(0.1)
 
-
 # ------------------------------------------------------------------------------
 # Ollama Chat Generation
 #
 # This function sends a prompt (which includes the system instructions and the user input)
-# to the Ollama model with streaming enabled. Here we pass the model name and prompt
-# as positional arguments.
+# to the Ollama model with streaming enabled.
 def send_to_ollama_streaming(user_input: str, text_queue: queue.Queue) -> None:
-    prompt = f"{SYSTEM_PROMPT}\nUser: {user_input}\nImmy:"
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_input},
+    ]
+    print(f"Sending to Ollama: {messages}")  # Debug print
     try:
-        # Call the Ollama chat API.
-        # Pass the model name and the prompt as positional arguments.
-        for token in ollama.chat(OLLAMA_MODEL, prompt, stream=True):
+        # Call the Ollama chat API with streaming enabled.
+        for token in ollama.chat(model=OLLAMA_MODEL, messages=messages, stream=True):
             if token:
-                text_queue.put(token)
-                sys.stdout.write(token)
+                # Convert the token to a string.
+                if isinstance(token, str):
+                    text = token
+                elif hasattr(token, 'message') and hasattr(token.message, 'content'):
+                    text = token.message.content
+                else:
+                    text = str(token)
+                print(f"Received token: {text}")  # Debug print
+                text_queue.put(text)
+                sys.stdout.write(text)
                 sys.stdout.flush()
     except Exception as e:
         print(f"Error in Ollama generation: {e}")
 
-
 # ------------------------------------------------------------------------------
 # Main Conversation System
-
 class ConversationSystem:
     def __init__(self):
         self.text_queue = queue.Queue()
@@ -172,9 +176,9 @@ class ConversationSystem:
         self.should_run = True
         self.recognizer = sr.Recognizer()
 
-        # Load the Whisper model once (using the "large-v3-turbo" variant)
+        # Load the Whisper model once (using the "base" variant)
         print("Loading Whisper model (this may take a while)...")
-        self.whisper_model = whisper.load_model("large-v3-turbo")
+        self.whisper_model = whisper.load_model("base")
         print("Whisper model loaded.")
 
         # Start the audio playback thread.
@@ -221,15 +225,26 @@ class ConversationSystem:
                     # Capture audio for a phrase (limit to 5 seconds)
                     audio = self.recognizer.listen(source, timeout=None, phrase_time_limit=5)
                     try:
-                        # Transcribe using Whisper instead of Google Speech Recognition.
+                        # Transcribe using Whisper.
                         text = self.transcribe_with_whisper(audio).lower()
                         print(f"\nRecognized: {text}")
 
                         # Detect wake word.
                         if not self.is_awake and WAKE_WORD in text:
                             self.is_awake = True
-                            print("\n--- Teddy is now awake and ready to chat! ---")
-                            self.text_queue.put("Hi! I'm awake and ready to chat!")
+                            # Remove wake word from the text if there's additional content.
+                            parts = text.split(WAKE_WORD, 1)
+                            query = parts[1].strip() if len(parts) > 1 else ""
+                            if query:
+                                print("\nProcessing your request after wake word...")
+                                threading.Thread(
+                                    target=send_to_ollama_streaming,
+                                    args=(query, self.text_queue),
+                                    daemon=True
+                                ).start()
+                            else:
+                                print("\n--- Teddy is now awake and ready to chat! ---")
+                                self.text_queue.put("Hi! I'm awake and ready to chat!")
 
                         # Detect sleep word.
                         elif self.is_awake and SLEEP_WORD in text:
@@ -237,15 +252,14 @@ class ConversationSystem:
                             print("\n--- Teddy is now sleeping. Say 'hey teddy' to wake me up! ---")
                             self.text_queue.put("Good night! Say 'hey teddy' when you want to chat again!")
 
-                        # Process user input if awake.
+                        # Process user input if already awake.
                         elif self.is_awake:
                             print("\nProcessing your request...")
-                            ollama_thread = threading.Thread(
+                            threading.Thread(
                                 target=send_to_ollama_streaming,
                                 args=(text, self.text_queue),
                                 daemon=True
-                            )
-                            ollama_thread.start()
+                            ).start()
 
                     except Exception as e:
                         print(f"\nError during transcription: {e}")
@@ -267,10 +281,8 @@ class ConversationSystem:
             print("\nGoodbye! Thanks for chatting!")
             self.should_run = False
 
-
 # ------------------------------------------------------------------------------
 # Main Entry Point
-
 if __name__ == "__main__":
     system = ConversationSystem()
     system.run()

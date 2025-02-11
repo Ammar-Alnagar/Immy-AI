@@ -6,34 +6,25 @@ import threading
 import sounddevice as sd
 import soundfile as sf
 import speech_recognition as sr
-from typing import Iterator
 from io import BytesIO
 import numpy as np
 import asyncio
 import tempfile
 import edge_tts
+import whisper  # <-- Import Whisper for speech recognition
 
-# Import llama-cpp for local LLaMA model inference
-from llama_cpp import Llama
+# Import Ollama's Python client (make sure you have it installed, e.g., via pip install ollama)
+import ollama
 
 # ------------------------------------------------------------------------------
 # Configuration and Initialization
 
 # Set up wake/sleep words
-WAKE_WORD = "hey "
+WAKE_WORD = "hey "  # Adjusted wake word for clarity.
 SLEEP_WORD = "good night"
 
-# Set the path to your GGUF model file (adjust as needed)
-LLAMA_MODEL_PATH = os.getenv("models", "models/immy_hermes_v2-q4_k_m.gguf")
-
-# Initialize the LLaMA model
-llama_model = Llama(
-    model_path=LLAMA_MODEL_PATH,
-    n_ctx=1024,       # adjust context length if needed
-    seed=0,
-    verbose=False,
-    n_threads=8
-)
+# Set the model name to be used by Ollama (adjust as needed)
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "hf.co/critical-hf/Immy_H_7_GGUF")
 
 # Define the system prompt (your “personality” instructions)
 SYSTEM_PROMPT = (
@@ -46,43 +37,43 @@ SYSTEM_PROMPT = (
 )
 
 # ------------------------------------------------------------------------------
-# Audio playback class
+# Audio Playback Class
 
 class AudioStreamPlayer:
     def __init__(self):
         self.audio_queue = queue.Queue()
         self.is_playing = False
-        
+
     def add_audio_chunk(self, chunk):
         if chunk:
             self.audio_queue.put(chunk)
-    
+
     def play_audio_file(self, audio_data):
         try:
-            # Load audio with pydub (handles MP3)
+            # Use pydub to load the MP3 data.
             from pydub import AudioSegment
             with BytesIO(audio_data) as audio_buffer:
                 audio_segment = AudioSegment.from_mp3(audio_buffer)
-                # Convert to numpy array
+                # Convert to numpy array.
                 samples = np.array(audio_segment.get_array_of_samples())
-                # Normalize samples to float32
-                samples = samples.astype(np.float32) / (2**15 if audio_segment.sample_width == 2 else 2**31)
-                # If mono, duplicate channel for stereo playback
+                # Normalize samples to float32.
+                samples = samples.astype(np.float32) / (2 ** 15 if audio_segment.sample_width == 2 else 2 ** 31)
+                # If mono, duplicate channel for stereo playback.
                 if audio_segment.channels == 1:
                     samples = np.column_stack((samples, samples))
-                # Play audio using sounddevice
+                # Play audio using sounddevice.
                 sd.play(samples, audio_segment.frame_rate)
                 sd.wait()
         except Exception as e:
             print(f"Error playing audio: {e}")
-            
+
     def play_audio_stream(self):
         while True:
             if not self.is_playing and not self.audio_queue.empty():
                 try:
                     self.is_playing = True
                     audio_data = BytesIO()
-                    # Combine all queued audio chunks
+                    # Combine all queued audio chunks.
                     while not self.audio_queue.empty():
                         chunk = self.audio_queue.get()
                         audio_data.write(chunk)
@@ -95,12 +86,10 @@ class AudioStreamPlayer:
             time.sleep(0.1)
 
 # ------------------------------------------------------------------------------
-# Edge-TTS Implementation (replacing ElevenLabs)
+# Edge-TTS Implementation (for text-to-speech conversion)
 #
-# This asynchronous function uses Edge-TTS to synthesize speech to an MP3 file,
-# then reads back the file's bytes so it can be played by our audio player.
-# You can adjust the default voice, rate, and pitch as desired.
-
+# This asynchronous function uses Edge-TTS to synthesize speech into an MP3 file,
+# then reads the file's bytes so it can be played by our audio player.
 async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 0) -> bytes:
     if not text.strip():
         return None
@@ -120,11 +109,12 @@ def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 2
     return asyncio.run(async_text_to_speech(text, voice, rate, pitch))
 
 # ------------------------------------------------------------------------------
-# TTS streaming thread (replacing ElevenLabs streaming)
-
+# TTS Streaming Thread (Edge-TTS)
+#
+# This function listens to a text queue and, once a sentence (ending with punctuation)
+# is accumulated, converts the text into speech and queues the audio for playback.
 def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer):
     accumulated_text = ""
-    # You may adjust these TTS parameters as desired.
     tts_voice = "en-US-AnaNeural"
     tts_rate = 25
     tts_pitch = 0
@@ -132,11 +122,13 @@ def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer)
     while True:
         while not text_queue.empty():
             text_chunk = text_queue.get()
+            # Ensure the text_chunk is a string.
+            if not isinstance(text_chunk, str):
+                text_chunk = str(text_chunk)
             accumulated_text += text_chunk
-            # When the accumulated text ends with a sentence-ending punctuation, process it.
+            # Process once we have a complete sentence.
             if accumulated_text.strip() and accumulated_text.strip()[-1] in ".!?":
                 try:
-                    # Convert the accumulated text to speech (synchronously calling our async wrapper)
                     audio_data = text_to_speech_sync(accumulated_text, voice=tts_voice, rate=tts_rate, pitch=tts_pitch)
                     if audio_data:
                         audio_player.add_audio_chunk(audio_data)
@@ -146,30 +138,36 @@ def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer)
         time.sleep(0.1)
 
 # ------------------------------------------------------------------------------
-# LLaMA Chat Generation (replacing OpenAI ChatGPT)
-
-def send_to_llama_streaming(user_input: str, text_queue: queue.Queue) -> None:
-    # Create a prompt combining the system instructions and the user input.
-    prompt = f"{SYSTEM_PROMPT}\nUser: {user_input}\nImmy:"
-    
+# Ollama Chat Generation
+#
+# This function sends a prompt (which includes the system instructions and the user input)
+# to the Ollama model with streaming enabled.
+def send_to_ollama_streaming(user_input: str, text_queue: queue.Queue) -> None:
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_input},
+    ]
+    print(f"Sending to Ollama: {messages}")  # Debug print
     try:
-        # Call the LLaMA model in streaming mode.
-        # The llama_cpp package returns a generator yielding tokens.
-        response = llama_model(prompt=prompt, stream=True)
-        for token in response:
-            # Depending on your llama_cpp version the token may be a dict or a string.
-            # Here we assume a dict with key 'token' for simplicity.
-            token_text = token.get("token", "")
-            if token_text:
-                text_queue.put(token_text)
-                sys.stdout.write(token_text)
+        # Call the Ollama chat API with streaming enabled.
+        for token in ollama.chat(model=OLLAMA_MODEL, messages=messages, stream=True):
+            if token:
+                # Convert the token to a string.
+                if isinstance(token, str):
+                    text = token
+                elif hasattr(token, 'message') and hasattr(token.message, 'content'):
+                    text = token.message.content
+                else:
+                    text = str(token)
+                print(f"Received token: {text}")  # Debug print
+                text_queue.put(text)
+                sys.stdout.write(text)
                 sys.stdout.flush()
     except Exception as e:
-        print(f"Error in LLaMA generation: {e}")
+        print(f"Error in Ollama generation: {e}")
 
 # ------------------------------------------------------------------------------
-# Main conversation system
-
+# Main Conversation System
 class ConversationSystem:
     def __init__(self):
         self.text_queue = queue.Queue()
@@ -177,15 +175,20 @@ class ConversationSystem:
         self.is_awake = False
         self.should_run = True
         self.recognizer = sr.Recognizer()
-        
-        # Start audio playback thread
+
+        # Load the Whisper model once (using the "base" variant)
+        print("Loading Whisper model (this may take a while)...")
+        self.whisper_model = whisper.load_model("base")
+        print("Whisper model loaded.")
+
+        # Start the audio playback thread.
         self.audio_thread = threading.Thread(
             target=self.audio_player.play_audio_stream,
             daemon=True
         )
         self.audio_thread.start()
-        
-        # Start TTS thread (Edge-TTS)
+
+        # Start the TTS thread.
         self.tts_thread = threading.Thread(
             target=stream_to_edge_tts,
             args=(self.text_queue, self.audio_player),
@@ -193,50 +196,75 @@ class ConversationSystem:
         )
         self.tts_thread.start()
 
+    def transcribe_with_whisper(self, audio: sr.AudioData) -> str:
+        """
+        Transcribe audio using OpenAI's Whisper model.
+        The audio is first written to a temporary WAV file,
+        then processed by Whisper.
+        """
+        try:
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_file:
+                tmp_file.write(audio.get_wav_data())
+                tmp_filename = tmp_file.name
+            result = self.whisper_model.transcribe(tmp_filename)
+            os.remove(tmp_filename)
+            return result["text"]
+        except Exception as e:
+            print(f"Error transcribing audio with Whisper: {e}")
+            return ""
+
     def listen_continuously(self):
         with sr.Microphone() as source:
             print("\nListening...")
-            # Adjust for ambient noise to improve recognition accuracy.
+            # Adjust for ambient noise.
             self.recognizer.adjust_for_ambient_noise(source)
-            
+
             while self.should_run:
                 try:
                     print("\nSay something...")
+                    # Capture audio for a phrase (limit to 5 seconds)
                     audio = self.recognizer.listen(source, timeout=None, phrase_time_limit=5)
                     try:
-                        text = self.recognizer.recognize_google(audio).lower()
+                        # Transcribe using Whisper.
+                        text = self.transcribe_with_whisper(audio).lower()
                         print(f"\nRecognized: {text}")
-                        
-                        # Detect wake word to “wake” the teddy.
+
+                        # Detect wake word.
                         if not self.is_awake and WAKE_WORD in text:
                             self.is_awake = True
-                            print("\n--- Teddy is now awake and ready to chat! ---")
-                            self.text_queue.put("Hi! I'm awake and ready to chat!")
-                        
-                        # Detect sleep word to put the teddy to sleep.
+                            # Remove wake word from the text if there's additional content.
+                            parts = text.split(WAKE_WORD, 1)
+                            query = parts[1].strip() if len(parts) > 1 else ""
+                            if query:
+                                print("\nProcessing your request after wake word...")
+                                threading.Thread(
+                                    target=send_to_ollama_streaming,
+                                    args=(query, self.text_queue),
+                                    daemon=True
+                                ).start()
+                            else:
+                                print("\n--- Teddy is now awake and ready to chat! ---")
+                                self.text_queue.put("Hi! I'm awake and ready to chat!")
+
+                        # Detect sleep word.
                         elif self.is_awake and SLEEP_WORD in text:
                             self.is_awake = False
                             print("\n--- Teddy is now sleeping. Say 'hey teddy' to wake me up! ---")
                             self.text_queue.put("Good night! Say 'hey teddy' when you want to chat again!")
-                        
-                        # Process user input if awake.
+
+                        # Process user input if already awake.
                         elif self.is_awake:
                             print("\nProcessing your request...")
-                            # Start a new thread to call the LLaMA generation function.
-                            llama_thread = threading.Thread(
-                                target=send_to_llama_streaming,
+                            threading.Thread(
+                                target=send_to_ollama_streaming,
                                 args=(text, self.text_queue),
                                 daemon=True
-                            )
-                            llama_thread.start()
-                            
-                    except sr.UnknownValueError:
-                        print("\nCould not understand audio.")
+                            ).start()
+
+                    except Exception as e:
+                        print(f"\nError during transcription: {e}")
                         continue
-                    except sr.RequestError as e:
-                        print(f"\nCould not request results from Google Speech Recognition service: {e}")
-                        continue
-                        
+
                 except KeyboardInterrupt:
                     self.should_run = False
                     break
@@ -246,7 +274,7 @@ class ConversationSystem:
         print(f"Say '{WAKE_WORD}' to wake me up")
         print(f"Say '{SLEEP_WORD}' to put me to sleep")
         print("Press Ctrl+C to exit")
-        
+
         try:
             self.listen_continuously()
         except KeyboardInterrupt:
@@ -254,8 +282,7 @@ class ConversationSystem:
             self.should_run = False
 
 # ------------------------------------------------------------------------------
-# Main entry point
-
+# Main Entry Point
 if __name__ == "__main__":
     system = ConversationSystem()
     system.run()
