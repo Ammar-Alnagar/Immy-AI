@@ -83,14 +83,14 @@ class AudioStreamPlayer:
                 except Exception as e:
                     print(f"Error in audio playback: {e}")
                     self.is_playing = False
-            time.sleep(0.1)
+            time.sleep(0.5)
 
 # ------------------------------------------------------------------------------
 # Edge-TTS Implementation (for text-to-speech conversion)
 #
 # This asynchronous function uses Edge-TTS to synthesize speech into an MP3 file,
 # then reads the file's bytes so it can be played by our audio player.
-async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 0) -> bytes:
+async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 10) -> bytes:
     if not text.strip():
         return None
     rate_str = f"{rate:+d}%"
@@ -104,7 +104,7 @@ async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: 
     os.remove(tmp_path)
     return audio_data
 
-def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 0) -> bytes:
+def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 10) -> bytes:
     """Wrapper to run the async TTS function synchronously."""
     return asyncio.run(async_text_to_speech(text, voice, rate, pitch))
 
@@ -120,12 +120,12 @@ def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer)
     accumulated_text = ""
     tts_voice = "en-US-AnaNeural"
     tts_rate = 25
-    tts_pitch = 0
+    tts_pitch = 10
 
     while True:
         # If the audio player is currently playing, wait a bit before processing new text.
         if audio_player.is_playing:
-            time.sleep(0.1)
+            time.sleep(1)
             continue
 
         while not text_queue.empty():
