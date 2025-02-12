@@ -166,7 +166,7 @@ def send_to_openai_streaming(user_input: str, text_queue: queue.Queue,
 
     try:
         stream = openai_client.chat.completions.create(
-            model="chatgpt-4o-latest",  # Adjust model as needed.
+            model="gpt-4o-mini",  # Adjust model as needed.
             messages=messages,
             stream=True
         )
