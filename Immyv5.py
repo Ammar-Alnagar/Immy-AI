@@ -89,9 +89,12 @@ class AudioStreamPlayer:
             time.sleep(0.1)
 
 
+
 # -------------------------------
 # Edge-TTS Conversion Functions
 # -------------------------------
+#en-US-AnaNeural
+#en-US-AvaMultilingualNeural
 async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 10) -> bytes:
     if not text.strip():
         return None
