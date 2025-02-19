@@ -12,6 +12,7 @@ import time
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, List, Optional
+import edge_tts
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -75,6 +76,40 @@ class TranscriptionService:
             except Exception as e:
                 print(f"Error cleaning up temporary files: {e}")
 
+class TTSService:
+    def __init__(self):
+        self.executor = ThreadPoolExecutor(max_workers=5)
+        self.voice = "en-US-JennyNeural"  # Default voice
+        self.rate = "+0%"
+        self.pitch = "+0Hz"
+
+    async def text_to_speech(self, text: str) -> str:
+        """Convert text to speech using Edge TTS."""
+        tmp_path = None
+        try:
+            # Generate unique filename without creating the file
+            timestamp = time.time_ns()
+            tmp_path = os.path.join(tempfile.gettempdir(), f"tts_{timestamp}.mp3")
+
+            # Initialize TTS and save directly to the path
+            communicate = edge_tts.Communicate(text, self.voice, rate=self.rate, pitch=self.pitch)
+            await communicate.save(tmp_path)
+            
+            # Read file in binary mode and encode to base64
+            with open(tmp_path, 'rb') as audio_file:
+                audio_data = audio_file.read()
+                return base64.b64encode(audio_data).decode('utf-8')
+
+        except Exception as e:
+            raise RuntimeError(f"TTS error: {str(e)}")
+        finally:
+            # Clean up temp file if it exists
+            if tmp_path and os.path.exists(tmp_path):
+                try:
+                    os.unlink(tmp_path)
+                except Exception as e:
+                    print(f"Warning: Failed to clean up temp file {tmp_path}: {e}")
+
 class LLMService:
     def __init__(self):
         self.api_key = self._validate_api_key()
@@ -88,6 +123,7 @@ class LLMService:
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable is not set")
         return api_key
+
     def _initialize_openai_client(self) -> OpenAI:
         """Initialize and test OpenAI client."""
         try:
@@ -119,9 +155,10 @@ class LLMService:
             raise RuntimeError(f"Answer error: {str(e)}")
 
 class WebSocketManager:
-    def __init__(self, transcription_service: TranscriptionService, llm_service: LLMService):
+    def __init__(self, transcription_service: TranscriptionService, llm_service: LLMService, tts_service: TTSService):
         self.transcription_service = transcription_service
         self.llm_service = llm_service
+        self.tts_service = tts_service
         self.pending_transcriptions: Dict[int, Dict[int, str]] = {}
         self.next_sequence: Dict[int, int] = {}
 
@@ -160,12 +197,22 @@ class WebSocketManager:
             transcribe_end = time.perf_counter()
             transcribe_time = transcribe_end - transcribe_start
 
-            # Get LLM response
-            await websocket.send_json({"debug": "Getting AI response..."})
-            llm_start = time.perf_counter()
-            llm_response = await self.llm_service.answer(transcription_text)
-            llm_end = time.perf_counter()
-            llm_time = llm_end - llm_start
+            try:
+                # Get LLM response
+                await websocket.send_json({"debug": "Getting AI response..."})
+                llm_start = time.perf_counter()
+                llm_response = await self.llm_service.answer(transcription_text)
+                llm_end = time.perf_counter()
+                llm_time = llm_end - llm_start
+
+                # Convert to speech
+                await websocket.send_json({"debug": "Converting to speech..."})
+                tts_start = time.perf_counter()
+                tts_audio = await self.tts_service.text_to_speech(llm_response)
+                tts_end = time.perf_counter()
+                tts_time = tts_end - tts_start
+            except Exception as e:
+                raise RuntimeError(f"Processing error: {str(e)}")
 
             if transcription_text.strip():
                 chunk_end_time = time.perf_counter()
@@ -185,10 +232,12 @@ class WebSocketManager:
                         "audio_process_time": round(audio_process_time * 1000, 2),
                         "transcribe_time": round(transcribe_time * 1000, 2),
                         "llm_time": round(llm_time * 1000, 2),
+                        "tts_time": round(tts_time * 1000, 2),
                         "total_time": round(total_time * 1000, 2)
                     },
                     "transcription": transcription_text,
-                    "llm_response": llm_response
+                    "llm_response": llm_response,
+                    "tts_audio": tts_audio
                 })
 
                 # Process transcriptions in order
@@ -218,7 +267,8 @@ class WebSocketManager:
 # Initialize services
 transcription_service = TranscriptionService()
 llm_service = LLMService()
-websocket_manager = WebSocketManager(transcription_service,llm_service)
+tts_service = TTSService()
+websocket_manager = WebSocketManager(transcription_service, llm_service, tts_service)
 
 @app.get("/")
 async def get():

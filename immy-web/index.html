@@ -83,6 +83,10 @@
         .metric-section {
             margin-left: 15px;
         }
+        #tts-audio {
+            width: 100%;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -98,6 +102,10 @@
         <div class="transcription-label">AI Response:</div>
         <textarea id="llm-response" readonly></textarea>
     </div>
+    <div class="transcription-container">
+        <div class="transcription-label">AI Voice Response:</div>
+        <audio id="tts-audio" controls></audio>
+    </div>
     <div id="metrics">
         <h3>Performance Metrics</h3>
         <div id="metricsContent"></div>
@@ -110,6 +118,7 @@
         let audioContext;
         const transcriptionDiv = document.getElementById('transcription');
         const llmResponseDiv = document.getElementById('llm-response');
+        const ttsAudioDiv = document.getElementById('tts-audio');
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
         const statusDiv = document.getElementById('status');
@@ -144,6 +153,7 @@
                             Audio Processing: <span class="metric-time">${data.timing.audio_process_time}ms</span><br>
                             Transcription: <span class="metric-time">${data.timing.transcribe_time}ms</span><br>
                             LLM Processing: <span class="metric-time">${data.timing.llm_time}ms</span><br>
+                            TTS Processing: <span class="metric-time">${data.timing.tts_time}ms</span><br>
                             Total Time: <span class="metric-time">${data.timing.total_time}ms</span>
                         </div>
                     `;
@@ -165,6 +175,11 @@
                     llmResponseDiv.value = data.llm_response;
                     llmResponseDiv.scrollTop = llmResponseDiv.scrollHeight;
                     log(`LLM Response: ${data.llm_response}`);
+                }
+                if (data.tts_audio) {
+                    const audioSrc = 'data:audio/mp3;base64,' + data.tts_audio;
+                    ttsAudioDiv.src = audioSrc;
+                    log('Received TTS audio');
                 }
                 if (data.error) {
                     statusDiv.textContent = `Error: ${data.error}`;
