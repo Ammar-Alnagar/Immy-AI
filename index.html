@@ -200,8 +200,8 @@
                 
                 let silenceStart = null;
                 let isSpeaking = false;
-                const SILENCE_THRESHOLD = 0.01;
-                const MIN_SILENCE_LENGTH = 700; // ms
+                const SILENCE_THRESHOLD = 0.02;
+                const MIN_SILENCE_LENGTH = 1000; // ms
                 let chunkCounter = 0;
                 
                 processor.onaudioprocess = function(e) {
