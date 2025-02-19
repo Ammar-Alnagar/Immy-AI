@@ -139,7 +139,7 @@ class AudioStreamPlayer:
 # -------------------------------
 #en-US-AnaNeural
 #en-US-AvaMultilingualNeural
-async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 10) -> bytes:
+async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 6) -> bytes:
     if not text.strip():
         return None
     # Prepare rate and pitch strings (e.g. "+25%" and "+10Hz")
@@ -156,7 +156,7 @@ async def async_text_to_speech(text: str, voice: str = "en-US-AnaNeural", rate: 
     os.remove(tmp_path)
     return audio_data
 
-def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 10) -> bytes:
+def text_to_speech_sync(text: str, voice: str = "en-US-AnaNeural", rate: int = 25, pitch: int = 6) -> bytes:
     """Synchronous wrapper to run the async Edge-TTS conversion."""
     return asyncio.run(async_text_to_speech(text, voice, rate, pitch))
 
