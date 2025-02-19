@@ -9,7 +9,7 @@
             margin: 0 auto;
             padding: 20px;
         }
-        #transcription {
+        #transcription, #llm-response {
             margin-top: 20px;
             padding: 10px;
             border: 2px solid #4CAF50;
@@ -20,6 +20,9 @@
             line-height: 1.5;
             width: 100%;
             box-sizing: border-box;
+        }
+        #llm-response {
+            border-color: #2196F3;
         }
         .transcription-container {
             margin: 20px 0;
@@ -77,6 +80,9 @@
             font-weight: bold;
             color: #1976D2;
         }
+        .metric-section {
+            margin-left: 15px;
+        }
     </style>
 </head>
 <body>
@@ -87,6 +93,10 @@
     <div class="transcription-container">
         <div class="transcription-label">Transcription:</div>
         <textarea id="transcription" readonly></textarea>
+    </div>
+    <div class="transcription-container">
+        <div class="transcription-label">AI Response:</div>
+        <textarea id="llm-response" readonly></textarea>
     </div>
     <div id="metrics">
         <h3>Performance Metrics</h3>
@@ -99,6 +109,7 @@
         let mediaRecorder;
         let audioContext;
         const transcriptionDiv = document.getElementById('transcription');
+        const llmResponseDiv = document.getElementById('llm-response');
         const startBtn = document.getElementById('startBtn');
         const stopBtn = document.getElementById('stopBtn');
         const statusDiv = document.getElementById('status');
@@ -129,9 +140,12 @@
                     metricItem.className = 'metric-item';
                     metricItem.innerHTML = `
                         Chunk ${data.timing.chunk_id}:<br>
-                        Audio Processing: <span class="metric-time">${data.timing.audio_process_time}ms</span><br>
-                        API Call: <span class="metric-time">${data.timing.api_call_time}ms</span><br>
-                        Total Time: <span class="metric-time">${data.timing.total_time}ms</span>
+                        <div class="metric-section">
+                            Audio Processing: <span class="metric-time">${data.timing.audio_process_time}ms</span><br>
+                            Transcription: <span class="metric-time">${data.timing.transcribe_time}ms</span><br>
+                            LLM Processing: <span class="metric-time">${data.timing.llm_time}ms</span><br>
+                            Total Time: <span class="metric-time">${data.timing.total_time}ms</span>
+                        </div>
                     `;
                     metricsContent.appendChild(metricItem);
                     metricsContent.scrollTop = metricsContent.scrollHeight;
@@ -141,18 +155,20 @@
                     transcriptionDiv.value = data.final_transcription;
                 }
                 if (data.transcription) {
-                    // Append new transcription to existing text
                     transcriptionDiv.value = transcriptionDiv.value 
                         ? transcriptionDiv.value + ' ' + data.transcription
                         : data.transcription;
-                    // Scroll to bottom
                     transcriptionDiv.scrollTop = transcriptionDiv.scrollHeight;
                     log(`Transcription ${data.sequence}: ${data.transcription}`);
+                }
+                if (data.llm_response) {
+                    llmResponseDiv.value = data.llm_response;
+                    llmResponseDiv.scrollTop = llmResponseDiv.scrollHeight;
+                    log(`LLM Response: ${data.llm_response}`);
                 }
                 if (data.error) {
                     statusDiv.textContent = `Error: ${data.error}`;
                     log(`Error received: ${data.error}`);
-                    // If there's an error, re-enable the start button
                     startBtn.disabled = false;
                     stopBtn.disabled = true;
                 }
@@ -163,7 +179,6 @@
 
             ws.onclose = function(event) {
                 log('WebSocket connection closed');
-                // Re-enable start button on connection close
                 startBtn.disabled = false;
                 stopBtn.disabled = true;
             };
@@ -171,7 +186,6 @@
             ws.onerror = function(error) {
                 log(`WebSocket error: ${error}`);
                 statusDiv.textContent = `Connection error. Please try again.`;
-                // Re-enable start button on error
                 startBtn.disabled = false;
                 stopBtn.disabled = true;
             };
@@ -200,7 +214,7 @@
                 
                 let silenceStart = null;
                 let isSpeaking = false;
-                const SILENCE_THRESHOLD = 0.02;
+                const SILENCE_THRESHOLD = 0.03;
                 const MIN_SILENCE_LENGTH = 1000; // ms
                 let chunkCounter = 0;
                 

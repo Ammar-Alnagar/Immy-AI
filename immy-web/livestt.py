@@ -75,9 +75,53 @@ class TranscriptionService:
             except Exception as e:
                 print(f"Error cleaning up temporary files: {e}")
 
+class LLMService:
+    def __init__(self):
+        self.api_key = self._validate_api_key()
+        self.client = self._initialize_openai_client()
+        self.executor = ThreadPoolExecutor(max_workers=5)
+        self.role = "You are a helpful AI assistant that provides clear and concise answers."
+    
+    def _validate_api_key(self) -> str:
+        """Validate and return the OpenAI API key."""
+        api_key = os.getenv('OPENAI_API_KEY')
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+        return api_key
+    def _initialize_openai_client(self) -> OpenAI:
+        """Initialize and test OpenAI client."""
+        try:
+            client = OpenAI(api_key=self.api_key)
+            client.models.list()  # Test the API key
+            return client
+        except Exception as e:
+            raise ValueError(f"Invalid OpenAI API key: {str(e)}")
+        
+    async def answer(self, question: str) -> str:
+        """Answer question using OpenAI LLM API."""
+        def _answer():
+            request_client = OpenAI(api_key=self.api_key)
+            response = request_client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": self.role},
+                    {"role": "user", "content": question}
+                ]
+            )
+            return response.choices[0].message.content
+            
+        try:
+            answer = await asyncio.get_event_loop().run_in_executor(
+                self.executor, _answer
+            )
+            return answer
+        except Exception as e:
+            raise RuntimeError(f"Answer error: {str(e)}")
+
 class WebSocketManager:
-    def __init__(self, transcription_service: TranscriptionService):
+    def __init__(self, transcription_service: TranscriptionService, llm_service: LLMService):
         self.transcription_service = transcription_service
+        self.llm_service = llm_service
         self.pending_transcriptions: Dict[int, Dict[int, str]] = {}
         self.next_sequence: Dict[int, int] = {}
 
@@ -111,10 +155,17 @@ class WebSocketManager:
 
             # Transcribe audio
             await websocket.send_json({"debug": "Transcribing audio..."})
-            api_call_start = time.perf_counter()
+            transcribe_start = time.perf_counter()
             transcription_text = await self.transcription_service.transcribe_audio(temp_audio_path)
-            api_call_end = time.perf_counter()
-            api_call_time = api_call_end - api_call_start
+            transcribe_end = time.perf_counter()
+            transcribe_time = transcribe_end - transcribe_start
+
+            # Get LLM response
+            await websocket.send_json({"debug": "Getting AI response..."})
+            llm_start = time.perf_counter()
+            llm_response = await self.llm_service.answer(transcription_text)
+            llm_end = time.perf_counter()
+            llm_time = llm_end - llm_start
 
             if transcription_text.strip():
                 chunk_end_time = time.perf_counter()
@@ -127,14 +178,17 @@ class WebSocketManager:
                 
                 self.pending_transcriptions[session_id][sequence] = transcription_text
 
-                # Send timing information
+                # Send timing information and responses
                 await websocket.send_json({
                     "timing": {
                         "chunk_id": chunk_id,
                         "audio_process_time": round(audio_process_time * 1000, 2),
-                        "api_call_time": round(api_call_time * 1000, 2),
+                        "transcribe_time": round(transcribe_time * 1000, 2),
+                        "llm_time": round(llm_time * 1000, 2),
                         "total_time": round(total_time * 1000, 2)
-                    }
+                    },
+                    "transcription": transcription_text,
+                    "llm_response": llm_response
                 })
 
                 # Process transcriptions in order
@@ -163,7 +217,8 @@ class WebSocketManager:
 
 # Initialize services
 transcription_service = TranscriptionService()
-websocket_manager = WebSocketManager(transcription_service)
+llm_service = LLMService()
+websocket_manager = WebSocketManager(transcription_service,llm_service)
 
 @app.get("/")
 async def get():
