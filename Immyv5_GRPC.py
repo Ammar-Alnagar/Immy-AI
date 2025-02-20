@@ -112,18 +112,19 @@ def send_to_openai_streaming(user_input: str, text_queue: queue.Queue, conversat
         )
         answer_text = ""
         accumulated_text = ""
-        CHUNK_THRESHOLD = 20  # Adjust this threshold as needed (in characters)
+        CHUNK_WORD_THRESHOLD = 10  # Flush when this many words have accumulated.
         for chunk in stream:
             if chunk.choices[0].delta.content is not None:
                 content = chunk.choices[0].delta.content
                 answer_text += content
                 accumulated_text += content
-                # Flush when the accumulated text reaches the threshold or ends with punctuation.
-                if len(accumulated_text) >= CHUNK_THRESHOLD or (accumulated_text and accumulated_text[-1] in ".!?"):
+                # Check word count in the accumulated text.
+                if len(accumulated_text.strip().split()) >= CHUNK_WORD_THRESHOLD:
                     text_queue.put(accumulated_text)
                     sys.stdout.write(accumulated_text)
                     sys.stdout.flush()
                     accumulated_text = ""
+        # Flush any remaining text.
         if accumulated_text:
             text_queue.put(accumulated_text)
             sys.stdout.write(accumulated_text)
