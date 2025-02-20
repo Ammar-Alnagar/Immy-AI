@@ -17,9 +17,12 @@ from dotenv import load_dotenv
 import edge_tts
 from openai import OpenAI
 
+# Load environment variables and initialize OpenAI.
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+# Define wake and sleep words.
 WAKE_WORD = "hey "
 SLEEP_WORD = "good night"
 
@@ -89,20 +92,46 @@ def stream_to_edge_tts(text_queue: queue.Queue, audio_player: AudioStreamPlayer)
                     print(f"Error in text-to-speech: {e}")
         time.sleep(0.1)
 
-def send_to_openai_streaming(user_input: str, text_queue: queue.Queue):
-    messages = [{"role": "system", "content": "You are a friendly AI teddy bear."},
-                {"role": "user", "content": user_input}]
+def send_to_openai_streaming(user_input: str, text_queue: queue.Queue, conversation_history: list, history_lock: threading.Lock) -> None:
+    system_prompt = (
+        "You are Immy, a magical, AI-powered teddy bear who adores chatting with children. "
+        "You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. "
+        "You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. "
+        "Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. "
+        "Remember, you’re here to make every interaction magical—without using emojis. "
+        "Keep your answers short and friendly."
+    )
+    with history_lock:
+        conversation_history.append({"role": "user", "content": user_input})
+        messages = [{"role": "system", "content": system_prompt}] + conversation_history.copy()
     try:
         stream = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=messages,
             stream=True
         )
+        answer_text = ""
+        accumulated_text = ""
+        CHUNK_THRESHOLD = 20  # Adjust this threshold as needed (in characters)
         for chunk in stream:
-            if chunk.choices[0].delta.content:
-                text_queue.put(chunk.choices[0].delta.content)
+            if chunk.choices[0].delta.content is not None:
+                content = chunk.choices[0].delta.content
+                answer_text += content
+                accumulated_text += content
+                # Flush when the accumulated text reaches the threshold or ends with punctuation.
+                if len(accumulated_text) >= CHUNK_THRESHOLD or (accumulated_text and accumulated_text[-1] in ".!?"):
+                    text_queue.put(accumulated_text)
+                    sys.stdout.write(accumulated_text)
+                    sys.stdout.flush()
+                    accumulated_text = ""
+        if accumulated_text:
+            text_queue.put(accumulated_text)
+            sys.stdout.write(accumulated_text)
+            sys.stdout.flush()
+        with history_lock:
+            conversation_history.append({"role": "assistant", "content": answer_text})
     except Exception as e:
-        print(f"Error in OpenAI call: {e}")
+        print(f"Error in OpenAI API call: {e}")
 
 class ConversationSystem:
     def __init__(self):
@@ -111,6 +140,8 @@ class ConversationSystem:
         self.is_awake = False
         self.should_run = True
         self.recognizer = sr.Recognizer()
+        self.conversation_history = []
+        self.history_lock = threading.Lock()
         self.audio_thread = threading.Thread(target=self.audio_player.play_audio_stream, daemon=True)
         self.audio_thread.start()
         self.tts_thread = threading.Thread(target=stream_to_edge_tts, args=(self.text_queue, self.audio_player), daemon=True)
@@ -131,9 +162,13 @@ class ConversationSystem:
                         self.text_queue.put("Hi! I'm awake and ready to chat!")
                     elif self.is_awake and SLEEP_WORD in text:
                         self.is_awake = False
-                        self.text_queue.put("Good night!")
+                        self.text_queue.put("Good night! Say 'hey teddy' when you want to chat again!")
                     elif self.is_awake:
-                        openai_thread = threading.Thread(target=send_to_openai_streaming, args=(text, self.text_queue), daemon=True)
+                        openai_thread = threading.Thread(
+                            target=send_to_openai_streaming,
+                            args=(text, self.text_queue, self.conversation_history, self.history_lock),
+                            daemon=True
+                        )
                         openai_thread.start()
                 except sr.UnknownValueError:
                     continue
