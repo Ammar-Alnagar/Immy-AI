@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Immy AI Assistant (WebRTC)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 90%;
+            margin: 40px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .mic-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .mic-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .mic-button.recording {
+            background: #f44336;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .mic-icon {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .chat-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 80%;
+            transition: all 0.3s ease;
+        }
+
+        .user-message {
+            background: #E3F2FD;
+            margin-left: auto;
+            color: #1565C0;
+        }
+
+        .assistant-message {
+            background: #F5F5F5;
+            margin-right: auto;
+            color: #333;
+        }
+
+        .llm-response-streaming {
+            position: relative;
+            background: #F0F7FF !important;
+            border: 1px solid #BBDEFB;
+            animation: pulse-light 2s infinite;
+        }
+
+        .llm-response-streaming::after {
+            content: '...';
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            animation: ellipsis 1.5s infinite;
+            color: #1976D2;
+        }
+
+        @keyframes pulse-light {
+            0% { background-color: #F0F7FF; }
+            50% { background-color: #E3F2FD; }
+            100% { background-color: #F0F7FF; }
+        }
+
+        @keyframes ellipsis {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+            100% { content: '.'; }
+        }
+
+        .status {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+
+        #tts-audio {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .metrics {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .metrics h3 {
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .metrics-content {
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Segoe UI', monospace;
+            font-size: 0.9em;
+        }
+
+        .metric-item {
+            margin: 8px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .metric-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .metric-time {
+            font-weight: bold;
+            color: #1976D2;
+            background: #E3F2FD;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .connection-status {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .connection-status.connected {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .connection-status.connecting {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .connection-status.disconnected {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Immy AI Assistant</h1>
+            <div id="connectionStatus" class="connection-status">Initializing...</div>
+        </div>
+        
+        <button id="startBtn" class="mic-button">
+            <svg class="mic-icon" viewBox="0 0 24 24">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+        </button>
+        
+        <div class="status" id="status">Click the microphone to start</div>
+        
+        <div class="chat-container" id="chat-container">
+            <!-- Messages will be added here dynamically -->
+        </div>
+        
+        <audio id="tts-audio" controls class="hidden"></audio>
+
+        <div class="metrics">
+            <h3>Performance Metrics</h3>
+            <div id="metricsContent" class="metrics-content"></div>
+        </div>
+    </div>
+    <script src="./static/script.js"></script>
+</body>
+</html>
