@@ -18,9 +18,11 @@ from pydub import AudioSegment
 
 # For environment variables (used for Gemini API key)
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Import Gemini AI
+import google.generativeai as genai  # Changed to google.generativeai
 from google import genai
 from google.genai.types import (
     LiveConnectConfig,
@@ -30,6 +32,15 @@ from google.genai.types import (
     Content,
     Part,
 )
+# from google import genai
+# from google.genai.types import (
+#     LiveConnectConfig,
+#     PrebuiltVoiceConfig,
+#     SpeechConfig,
+#     VoiceConfig,
+#     Content,
+#     Part,
+# )
 
 # Retrieve the Gemini API key from environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -107,16 +118,13 @@ class GeminiHandler:
         self.output_sample_rate = 24000  # Gemini's default output sample rate
 
     async def start_session(self):
-        client = genai.Client(
-            api_key=GEMINI_API_KEY,
-            http_options={"api_version": "v1alpha"},
-        )
+        client = genai.GenerativeModel(model_name="gemini-2.0-flash-exp")
 
         # Wrap the system prompt in a Content object
         content_system_instruction = Content(parts=[Part.from_text(text=self.system_prompt)])
 
         config = LiveConnectConfig(
-            response_modalities=["AUDIO"],  
+            response_modalities=["AUDIO"],
             speech_config=SpeechConfig(
                 voice_config=VoiceConfig(
                     prebuilt_voice_config=PrebuiltVoiceConfig(
@@ -127,12 +135,9 @@ class GeminiHandler:
             system_instruction=content_system_instruction
         )
 
-        async with client.aio.live.connect(
-            model="gemini-2.0-flash-exp", 
-            config=config
-        ) as session:
-            async for audio in session.start_stream(
-                stream=self.stream(), mime_type="audio/pcm"
+        async with client.start_live_connect(config=config) as session:  # Changed to start_live_connect
+            async for audio in session.send_audio_stream(  # Changed to send_audio_stream
+                    stream=self.stream(), mime_type="audio/pcm"
             ):
                 if audio.data:
                     array = np.frombuffer(audio.data, dtype=np.int16)
@@ -176,7 +181,7 @@ class ConversationSystem:
 
         # Create Gemini handler
         self.gemini_handler = GeminiHandler()
-        
+
         # Start audio player thread
         self.audio_thread = threading.Thread(
             target=self.audio_player.play_audio_stream,
@@ -218,7 +223,7 @@ class ConversationSystem:
         """Async implementation of the listening loop"""
         # Start Gemini session
         await self.start_gemini_session()
-        
+
         with sr.Microphone() as source:
             print("\nListening...")
             self.recognizer.adjust_for_ambient_noise(source)
@@ -235,10 +240,10 @@ class ConversationSystem:
                 try:
                     print("\nSay something...")
                     audio = self.recognizer.listen(source, timeout=None, phrase_time_limit=5)
-                    
+
                     # Convert audio to numpy array for Gemini
                     audio_data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
-                    
+
                     try:
                         # For wake/sleep word detection, still use Google Speech Recognition
                         text = self.recognizer.recognize_google(audio).lower()
