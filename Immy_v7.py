@@ -21,9 +21,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Import Gemini AI
-import google.generativeai as genai
-from google.generativeai.types import (
+# Import Gemini AI with the correct imports
+from google import genai
+from google.genai.types import (
     LiveConnectConfig,
     PrebuiltVoiceConfig,
     SpeechConfig,
