@@ -1,27 +1,10 @@
 import os
-import sys
-import time
-import queue
-import threading
-import sounddevice as sd
-import speech_recognition as sr
-from io import BytesIO
-from typing import Optional, AsyncGenerator
-import numpy as np
 import asyncio
-import tempfile
+import numpy as np
+import sounddevice as sd
 import base64
-
-# For audio file handling
-import soundfile as sf
-from pydub import AudioSegment
-
-# For environment variables (used for Gemini API key)
+import subprocess
 from dotenv import load_dotenv
-
-load_dotenv()
-
-# Import Gemini AI with the correct imports
 from google import genai
 from google.genai.types import (
     LiveConnectConfig,
@@ -31,90 +14,86 @@ from google.genai.types import (
     Content,
     Part,
 )
+from scipy.signal import resample_poly  # For better quality resampling
 
-# Retrieve the Gemini API key from environment variables
+# Load environment variables from .env file
+load_dotenv()
+
+# Ensure the GEMINI_API_KEY is set in environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in environment variables. Please set it in your .env file.")
+    raise ValueError("GEMINI_API_KEY environment variable is not set")
 
-# Initialize the Gemini client
-genai.configure(api_key=GEMINI_API_KEY)
-
-# Define wake and sleep words
-WAKE_WORD = "hey teddy"  # Fixed wake word to match the print statement
-SLEEP_WORD = "good night"
-
+# Audio Configuration
+INPUT_SAMPLE_RATE = 16000   # Sample rate for microphone input
+OUTPUT_SAMPLE_RATE = 24000  # Expected sample rate for Gemini's response
+CHUNK_SIZE = 4096           # Chunk size for processing
+BUFFER_SIZE = 10            # Number of audio chunks to buffer
 
 def encode_audio(data: np.ndarray) -> str:
-    """Encode Audio data to send to Gemini"""
+    """Encode audio data to Base64 string for Gemini API"""
     return base64.b64encode(data.tobytes()).decode("UTF-8")
 
+def resample_audio(audio_data: np.ndarray, orig_sr: int, target_sr: int) -> np.ndarray:
+    """Resample audio data from orig_sr to target_sr using high-quality resampling"""
+    import math
+    gcd = math.gcd(target_sr, orig_sr)
+    up = target_sr // gcd
+    down = orig_sr // gcd
+    return resample_poly(audio_data, up, down).astype(np.int16)
 
-class AudioStreamPlayer:
-    def __init__(self):
-        self.audio_queue = queue.Queue()
-        self.is_playing = False
-        self.playback_finished_callback: Optional[callable] = None  # Callback after playback finishes
-
-    def add_audio_chunk(self, chunk):
-        if chunk is not None:
-            self.audio_queue.put(chunk)
-
-    def play_audio_array(self, sample_rate, samples):
-        try:
-            # Play the audio from numpy array
-            self.is_playing = True
-            sd.play(samples, sample_rate)
-            sd.wait()
-            self.is_playing = False
-
-            # Call the playback finished callback if set
-            if self.playback_finished_callback:
-                self.playback_finished_callback()
-
-        except Exception as e:
-            print(f"Error playing audio: {e}")
-            self.is_playing = False
-
-    def play_audio_stream(self):
-        while True:
-            if not self.audio_queue.empty():
-                try:
-                    audio_data = self.audio_queue.get()
-                    if isinstance(audio_data, tuple):
-                        # Tuple of (sample_rate, samples)
-                        sample_rate, samples = audio_data
-                        self.play_audio_array(sample_rate, samples)
-                except Exception as e:
-                    print(f"Error in audio playback: {e}")
-                    self.is_playing = False
-            time.sleep(0.1)
-
-
-class GeminiHandler:
-    """Handler for the Gemini API"""
-
-    def __init__(self, voice_name="Puck", system_prompt=None):
-        self.input_queue = asyncio.Queue()
-        self.output_queue = asyncio.Queue()
-        self.quit = asyncio.Event()
+class GeminiVoiceChat:
+    def __init__(self, voice_name="Puck", system_prompt="You are a helpful assistant."):
         self.voice_name = voice_name
-        self.system_prompt = system_prompt or (
-            "You are Immy, a magical, AI-powered teddy bear who adores chatting with children. "
-            "You're warm, funny, and full of wonder, always ready to share a story, answer curious questions, or offer gentle advice. "
-            "You speak with a playful and patient tone, using simple, child-friendly language that sparks joy and fuels imagination. "
-            "Your responses are short, sweet, and filled with kindness, designed to nurture curiosity and inspire learning. "
-            "Remember, you're here to make every interaction magical—without using emojis. "
-            "Keep your answers short and friendly."
+        self.system_prompt = system_prompt
+        self.client = genai.Client(
+            api_key=GEMINI_API_KEY,
+            http_options={"api_version": "v1alpha"},
         )
-        self.output_sample_rate = 24000  # Gemini's default output sample rate
-
-    async def start_session(self):
-        client = genai.GenerativeModel(model_name="gemini-2.0-flash-exp")
-
-        # Wrap the system prompt in a Content object
+        self.running = False
+        self.input_queue = asyncio.Queue(maxsize=BUFFER_SIZE)
+        self.audio_stream = None
+        
+    def audio_callback(self, indata, frames, time, status):
+        """Callback for audio input from the microphone"""
+        if status:
+            print(f"Input status: {status}")
+        # Copy the input data and convert to mono if needed
+        audio_data = indata.copy()
+        if audio_data.shape[1] > 1:
+            audio_data = np.mean(audio_data, axis=1)
+        # Normalize to int16
+        audio_data = (audio_data * 32767).astype(np.int16)
+        
+        if self.running:
+            try:
+                self.input_queue.put_nowait(audio_data)
+            except asyncio.QueueFull:
+                try:
+                    self.input_queue.get_nowait()
+                    self.input_queue.put_nowait(audio_data)
+                except Exception:
+                    pass
+    
+    async def process_audio_stream(self):
+        """Process the audio stream, send it to Gemini, and pipe Gemini's response directly to ffplay"""
+        print("Starting Gemini Voice Chat...")
+        print(f"Using voice: {self.voice_name}")
+        print("Speak into your microphone. Press Ctrl+C to exit.")
+        
+        # Start ffplay for direct audio playback.
+        # Ensure that ffplay (from ffmpeg) is installed.
+        player = subprocess.Popen(
+            ["ffplay", "-f", "s16le", "-ar", str(OUTPUT_SAMPLE_RATE), "-ac", "1", "-"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        
+        # Create the system instruction for Gemini
         content_system_instruction = Content(parts=[Part.from_text(text=self.system_prompt)])
-
+        
+        # Configure Gemini
         config = LiveConnectConfig(
             response_modalities=["AUDIO"],
             speech_config=SpeechConfig(
@@ -126,211 +105,79 @@ class GeminiHandler:
             ),
             system_instruction=content_system_instruction
         )
-
-        try:
-            async with client.start_live_connect(config=config) as session:
-                async for audio in session.send_audio_stream(
-                        stream=self.stream(), mime_type="audio/pcm"
-                ):
-                    if audio.data:
-                        array = np.frombuffer(audio.data, dtype=np.int16)
-                        await self.output_queue.put((self.output_sample_rate, array))
-        except Exception as e:
-            print(f"Error in Gemini session: {e}")
-            self.quit.set()
-
-    async def stream(self) -> AsyncGenerator[bytes, None]:
-        while not self.quit.is_set():
-            try:
-                audio = await asyncio.wait_for(self.input_queue.get(), 0.1)
-                yield audio
-            except (asyncio.TimeoutError, TimeoutError):
-                pass
-            except Exception as e:
-                print(f"Error in audio stream: {e}")
-                # Continue the stream despite errors
-                pass
-
-    async def add_audio(self, audio_array):
-        """Add audio data to the input queue"""
-        try:
-            audio_message = encode_audio(audio_array)
-            await self.input_queue.put(audio_message)
-        except Exception as e:
-            print(f"Error encoding or adding audio: {e}")
-
-    async def get_audio(self):
-        """Get audio data from the output queue"""
-        return await self.output_queue.get()
-
-
-# ------------------------------
-# Conversation System Class
-# ------------------------------
-class ConversationSystem:
-    def __init__(self):
-        self.audio_player = AudioStreamPlayer()
-        self.is_awake = False
-        self.should_run = True
-        self.recognizer = sr.Recognizer()
-
-        # Timestamp for when the last TTS utterance finished playing
-        self.last_tts_end = 0.0
-        # Minimum delay (in seconds) after TTS playback before processing microphone input
-        self.post_tts_cooldown = 1.0
-
-        # Set the callback so that when audio playback finishes, we update last_tts_end
-        self.audio_player.playback_finished_callback = self.audio_finished_callback
-
-        # Create Gemini handler
-        self.gemini_handler = GeminiHandler()
-
-        # Start audio player thread
-        self.audio_thread = threading.Thread(
-            target=self.audio_player.play_audio_stream,
-            daemon=True
-        )
-        self.audio_thread.start()
-
-        # Start the Gemini session
-        self.gemini_task = None
-
-    def audio_finished_callback(self):
-        self.last_tts_end = time.time()
-
-    async def process_gemini_output(self):
-        """Process output audio from Gemini and send to audio player"""
-        while self.should_run:
-            try:
-                if self.gemini_handler.quit.is_set():
-                    print("Gemini session has ended")
-                    break
-                    
-                audio_data = await self.gemini_handler.get_audio()
-                self.audio_player.add_audio_chunk(audio_data)
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                print(f"Error in Gemini output processing: {e}")
-                await asyncio.sleep(0.1)
-
-    async def start_gemini_session(self):
-        """Start the Gemini session and output processor"""
-        try:
-            self.gemini_task = asyncio.create_task(self.gemini_handler.start_session())
-            output_task = asyncio.create_task(self.process_gemini_output())
-            return output_task
-        except Exception as e:
-            print(f"Error starting Gemini session: {e}")
-            return None
-
-    async def send_audio_to_gemini(self, audio_data):
-        """Send audio data to Gemini"""
-        if not self.gemini_handler.quit.is_set():
-            await self.gemini_handler.add_audio(audio_data)
-
-    def listen_continuously(self):
-        """Main loop for listening to user input"""
-        # Start the asyncio event loop for Gemini
-        asyncio.run(self._listen_continuously())
-
-    async def _listen_continuously(self):
-        """Async implementation of the listening loop"""
-        # Start Gemini session
-        output_task = await self.start_gemini_session()
         
-        if not output_task:
-            print("Failed to start Gemini session, exiting")
-            return
-
-        with sr.Microphone() as source:
-            print("\nListening...")
-            self.recognizer.adjust_for_ambient_noise(source)
-
-            while self.should_run:
-                if self.audio_player.is_playing:
-                    await asyncio.sleep(0.1)
-                    continue
-
-                if time.time() - self.last_tts_end < self.post_tts_cooldown:
-                    await asyncio.sleep(0.1)
-                    continue
-
-                try:
-                    print("\nSay something...")
-                    audio = self.recognizer.listen(source, timeout=None, phrase_time_limit=5)
-
-                    # Convert audio to numpy array for Gemini
-                    audio_data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
-
+        # Connect to Gemini API
+        async with self.client.aio.live.connect(
+            model="gemini-2.0-flash-exp", 
+            config=config
+        ) as session:
+            async def audio_generator():
+                while self.running:
                     try:
-                        # For wake/sleep word detection, still use Google Speech Recognition
-                        text = self.recognizer.recognize_google(audio).lower()
-                        print(f"\nRecognized: {text}")
-
-                        # Wake word detection
-                        if not self.is_awake and WAKE_WORD in text:
-                            self.is_awake = True
-                            print("\n--- Teddy is now awake and ready to chat! ---")
-                            # Send the wake word audio to trigger response
-                            await self.send_audio_to_gemini(audio_data)
-
-                        # Sleep word detection
-                        elif self.is_awake and SLEEP_WORD in text:
-                            self.is_awake = False
-                            print("\n--- Teddy is now sleeping. Say 'hey teddy' to wake me up! ---")
-                            # Send sleep command audio to trigger response
-                            await self.send_audio_to_gemini(audio_data)
-
-                        # Process user input if awake
-                        elif self.is_awake:
-                            print("\nProcessing your request...")
-                            # Send the audio directly to Gemini
-                            await self.send_audio_to_gemini(audio_data)
-                        else:
-                            print("\nTeddy is sleeping. Say 'hey teddy' to wake me up!")
-
-                    except sr.UnknownValueError:
-                        print("\nCould not understand audio.")
+                        audio_data = await asyncio.wait_for(self.input_queue.get(), timeout=0.5)
+                        yield encode_audio(audio_data)
+                    except asyncio.TimeoutError:
                         continue
-                    except sr.RequestError as e:
-                        print(f"\nCould not request results from Google Speech Recognition service: {e}")
-                        continue
-
-                except KeyboardInterrupt:
-                    self.should_run = False
-                    break
-                except Exception as e:
-                    print(f"Error in audio processing: {e}")
-
-        # Clean up
-        print("\nCleaning up...")
-        self.gemini_handler.quit.set()
-        if self.gemini_task:
-            self.gemini_task.cancel()
-        if output_task:
-            output_task.cancel()
-
-    def run(self):
-        print("\nWelcome to Teddy Bear Chat!")
-        print(f"Say '{WAKE_WORD}' to wake me up")
-        print(f"Say '{SLEEP_WORD}' to put me to sleep")
-        print("Press Ctrl+C to exit")
-
+                    except Exception as e:
+                        print(f"Error in audio generator: {e}")
+                        break
+            
+            print("Connected to Gemini. You can start speaking now.")
+            
+            try:
+                async for response in session.start_stream(
+                    stream=audio_generator(), 
+                    mime_type="audio/pcm"
+                ):
+                    if response.data:
+                        # Write the raw PCM data directly to ffplay's stdin
+                        player.stdin.write(response.data)
+                        player.stdin.flush()
+            except Exception as e:
+                print(f"Error during streaming: {e}")
+            finally:
+                try:
+                    player.stdin.close()
+                except Exception:
+                    pass
+                player.wait()
+    
+    async def run(self):
+        """Run the voice chat application"""
+        self.running = True
+        
+        # Start the audio input stream
+        self.audio_stream = sd.InputStream(
+            samplerate=INPUT_SAMPLE_RATE,
+            channels=1,
+            callback=self.audio_callback,
+            blocksize=CHUNK_SIZE
+        )
+        
         try:
-            self.listen_continuously()
+            with self.audio_stream:
+                await self.process_audio_stream()
         except KeyboardInterrupt:
-            print("\nGoodbye! Thanks for chatting!")
-            self.should_run = False
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            self.should_run = False
+            print("\nExiting...")
+        finally:
+            self.running = False
+            if self.audio_stream:
+                self.audio_stream.close()
+            print("Voice chat ended. Goodbye!")
 
+async def main():
+    voice_chat = GeminiVoiceChat(
+        voice_name="Puck",  # Options: Puck, Charon, Kore, Fenrir, Aoede
+        system_prompt="You are a helpful assistant. Keep your responses concise and conversational."
+    )
+    await voice_chat.run()
 
 if __name__ == "__main__":
     try:
-        system = ConversationSystem()
-        system.run()
-    except Exception as e:
-        print(f"Error running conversation system: {e}")
-        sys.exit(1)
+        import sounddevice as sd
+    except ImportError:
+        print("The sounddevice library is required. Install it with:")
+        print("pip install sounddevice numpy")
+        exit(1)
+        
+    asyncio.run(main())
