@@ -22,9 +22,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import Gemini AI
-import google.generativeai as genai  # Changed to google.generativeai
-from google import genai
-from google.genai.types import (
+import google.generativeai as genai
+from google.generativeai.types import (
     LiveConnectConfig,
     PrebuiltVoiceConfig,
     SpeechConfig,
@@ -32,24 +31,17 @@ from google.genai.types import (
     Content,
     Part,
 )
-# from google import genai
-# from google.genai.types import (
-#     LiveConnectConfig,
-#     PrebuiltVoiceConfig,
-#     SpeechConfig,
-#     VoiceConfig,
-#     Content,
-#     Part,
-# )
 
 # Retrieve the Gemini API key from environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY not found in environment variables. Please set it in your .env file.")
 
 # Initialize the Gemini client
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Define wake and sleep words
-WAKE_WORD = "hey "
+WAKE_WORD = "hey teddy"  # Fixed wake word to match the print statement
 SLEEP_WORD = "good night"
 
 
@@ -86,7 +78,7 @@ class AudioStreamPlayer:
 
     def play_audio_stream(self):
         while True:
-            if not self.is_playing and not self.audio_queue.empty():
+            if not self.audio_queue.empty():
                 try:
                     audio_data = self.audio_queue.get()
                     if isinstance(audio_data, tuple):
@@ -135,13 +127,17 @@ class GeminiHandler:
             system_instruction=content_system_instruction
         )
 
-        async with client.start_live_connect(config=config) as session:  # Changed to start_live_connect
-            async for audio in session.send_audio_stream(  # Changed to send_audio_stream
-                    stream=self.stream(), mime_type="audio/pcm"
-            ):
-                if audio.data:
-                    array = np.frombuffer(audio.data, dtype=np.int16)
-                    await self.output_queue.put((self.output_sample_rate, array))
+        try:
+            async with client.start_live_connect(config=config) as session:
+                async for audio in session.send_audio_stream(
+                        stream=self.stream(), mime_type="audio/pcm"
+                ):
+                    if audio.data:
+                        array = np.frombuffer(audio.data, dtype=np.int16)
+                        await self.output_queue.put((self.output_sample_rate, array))
+        except Exception as e:
+            print(f"Error in Gemini session: {e}")
+            self.quit.set()
 
     async def stream(self) -> AsyncGenerator[bytes, None]:
         while not self.quit.is_set():
@@ -150,11 +146,18 @@ class GeminiHandler:
                 yield audio
             except (asyncio.TimeoutError, TimeoutError):
                 pass
+            except Exception as e:
+                print(f"Error in audio stream: {e}")
+                # Continue the stream despite errors
+                pass
 
     async def add_audio(self, audio_array):
         """Add audio data to the input queue"""
-        audio_message = encode_audio(audio_array)
-        await self.input_queue.put(audio_message)
+        try:
+            audio_message = encode_audio(audio_array)
+            await self.input_queue.put(audio_message)
+        except Exception as e:
+            print(f"Error encoding or adding audio: {e}")
 
     async def get_audio(self):
         """Get audio data from the output queue"""
@@ -199,20 +202,32 @@ class ConversationSystem:
         """Process output audio from Gemini and send to audio player"""
         while self.should_run:
             try:
+                if self.gemini_handler.quit.is_set():
+                    print("Gemini session has ended")
+                    break
+                    
                 audio_data = await self.gemini_handler.get_audio()
                 self.audio_player.add_audio_chunk(audio_data)
+            except asyncio.CancelledError:
+                break
             except Exception as e:
                 print(f"Error in Gemini output processing: {e}")
                 await asyncio.sleep(0.1)
 
     async def start_gemini_session(self):
         """Start the Gemini session and output processor"""
-        self.gemini_task = asyncio.create_task(self.gemini_handler.start_session())
-        asyncio.create_task(self.process_gemini_output())
+        try:
+            self.gemini_task = asyncio.create_task(self.gemini_handler.start_session())
+            output_task = asyncio.create_task(self.process_gemini_output())
+            return output_task
+        except Exception as e:
+            print(f"Error starting Gemini session: {e}")
+            return None
 
     async def send_audio_to_gemini(self, audio_data):
         """Send audio data to Gemini"""
-        await self.gemini_handler.add_audio(audio_data)
+        if not self.gemini_handler.quit.is_set():
+            await self.gemini_handler.add_audio(audio_data)
 
     def listen_continuously(self):
         """Main loop for listening to user input"""
@@ -222,7 +237,11 @@ class ConversationSystem:
     async def _listen_continuously(self):
         """Async implementation of the listening loop"""
         # Start Gemini session
-        await self.start_gemini_session()
+        output_task = await self.start_gemini_session()
+        
+        if not output_task:
+            print("Failed to start Gemini session, exiting")
+            return
 
         with sr.Microphone() as source:
             print("\nListening...")
@@ -253,21 +272,23 @@ class ConversationSystem:
                         if not self.is_awake and WAKE_WORD in text:
                             self.is_awake = True
                             print("\n--- Teddy is now awake and ready to chat! ---")
-                            # Create a welcome message in text form (this will be synthesized by Gemini)
-                            welcome_text = "Hi! I'm awake and ready to chat!"
-                            await self.send_audio_to_gemini(audio_data)  # Send the wake word audio to trigger response
+                            # Send the wake word audio to trigger response
+                            await self.send_audio_to_gemini(audio_data)
 
                         # Sleep word detection
                         elif self.is_awake and SLEEP_WORD in text:
                             self.is_awake = False
                             print("\n--- Teddy is now sleeping. Say 'hey teddy' to wake me up! ---")
-                            await self.send_audio_to_gemini(audio_data)  # Send sleep command audio to trigger response
+                            # Send sleep command audio to trigger response
+                            await self.send_audio_to_gemini(audio_data)
 
                         # Process user input if awake
                         elif self.is_awake:
                             print("\nProcessing your request...")
                             # Send the audio directly to Gemini
                             await self.send_audio_to_gemini(audio_data)
+                        else:
+                            print("\nTeddy is sleeping. Say 'hey teddy' to wake me up!")
 
                     except sr.UnknownValueError:
                         print("\nCould not understand audio.")
@@ -283,9 +304,12 @@ class ConversationSystem:
                     print(f"Error in audio processing: {e}")
 
         # Clean up
+        print("\nCleaning up...")
         self.gemini_handler.quit.set()
         if self.gemini_task:
             self.gemini_task.cancel()
+        if output_task:
+            output_task.cancel()
 
     def run(self):
         print("\nWelcome to Teddy Bear Chat!")
@@ -298,8 +322,15 @@ class ConversationSystem:
         except KeyboardInterrupt:
             print("\nGoodbye! Thanks for chatting!")
             self.should_run = False
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            self.should_run = False
 
 
 if __name__ == "__main__":
-    system = ConversationSystem()
-    system.run()
+    try:
+        system = ConversationSystem()
+        system.run()
+    except Exception as e:
+        print(f"Error running conversation system: {e}")
+        sys.exit(1)
