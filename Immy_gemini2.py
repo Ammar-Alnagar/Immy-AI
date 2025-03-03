@@ -63,9 +63,9 @@ INPUT_SAMPLE_RATE = 24000   # Sample rate for microphone input
 OUTPUT_SAMPLE_RATE = 24000  # Expected sample rate for Gemini's response
 CHUNK_SIZE = 4096           # Chunk size for processing
 BUFFER_SIZE = 10            # Number of audio chunks to buffer
-SILENCE_THRESHOLD = 300     # Threshold for silence detection
-MIN_SPEECH_FRAMES = 3       # Minimum frames needed to consider as speech
-COOLDOWN_PERIOD = 2.0       # Cooldown period after response (seconds)
+SILENCE_THRESHOLD = 150     # Threshold for silence detection (lowered)
+MIN_SPEECH_FRAMES = 2       # Minimum frames needed to consider as speech (lowered)
+COOLDOWN_PERIOD = 1.0       # Cooldown period after response (shortened)
 
 def encode_audio(data: np.ndarray) -> str:
     """Encode audio data to Base64 string for Gemini API"""
@@ -115,16 +115,23 @@ class GeminiVoiceChat:
         # Detect if audio contains speech or is silent
         rms = np.sqrt(np.mean(audio_data**2))
         
+        # Print audio level for debugging
+        if self.running and time.time() % 5 < 0.1:  # Print every ~5 seconds
+            print(f"Audio level: {rms:.2f}")
+        
         if rms < SILENCE_THRESHOLD:
             self.consecutive_silent_frames += 1
             self.consecutive_speech_frames = 0
         else:
             self.consecutive_speech_frames += 1
             if self.consecutive_speech_frames >= MIN_SPEECH_FRAMES:
+                print(f"Speech detected! Level: {rms:.2f}")
                 self.consecutive_silent_frames = 0
         
-        # Only queue audio if we're actually detecting speech and not in speaking mode
-        if (self.consecutive_speech_frames >= MIN_SPEECH_FRAMES and 
+        # Only queue audio if we're not in speaking mode and we have speech OR we're in always-listen mode
+        # Less restrictive: we'll queue audio even without speech detection if we've gone too long without input
+        if ((self.consecutive_speech_frames >= MIN_SPEECH_FRAMES or 
+             time.time() - self.last_response_time > 15.0) and  # Queue after 15s of silence anyway
             not self.is_speaking and 
             self.running):
             try:
@@ -178,26 +185,28 @@ class GeminiVoiceChat:
                 
                 while self.running:
                     try:
-                        audio_data = await asyncio.wait_for(self.input_queue.get(), timeout=0.5)
+                        audio_data = await asyncio.wait_for(self.input_queue.get(), timeout=0.3)  # Shorter timeout
                         buffer.append(audio_data)
                         
                         # Reset silence counter when we get new audio
                         silence_counter = 0
                         
                         # If we have enough audio built up, yield it
-                        if len(buffer) >= 5:  # Adjust as needed
+                        if len(buffer) >= 3:  # Reduced from 5 to 3
                             combined_audio = np.concatenate(buffer)
                             buffer = []
                             yield encode_audio(combined_audio)
+                            print("Sending audio to Gemini...")  # Debug message
                             
                     except asyncio.TimeoutError:
                         silence_counter += 1
                         
                         # If we have accumulated audio and hit silence, send what we have
-                        if buffer and silence_counter >= 3:  # Adjust silence threshold as needed
+                        if buffer and silence_counter >= 2:  # Reduced from 3 to 2
                             combined_audio = np.concatenate(buffer)
                             buffer = []
                             yield encode_audio(combined_audio)
+                            print("Sending audio to Gemini after silence...")  # Debug message
                             
                             # Reset for next utterance
                             await asyncio.sleep(0.1)
@@ -218,6 +227,7 @@ class GeminiVoiceChat:
                     if response.data:
                         # Set speaking flag to true
                         self.is_speaking = True
+                        print("Immy is speaking...")
                         
                         # Write the raw PCM data directly to ffplay's stdin
                         player.stdin.write(response.data)
@@ -229,6 +239,7 @@ class GeminiVoiceChat:
                         # Reset speaking flag after a short delay
                         await asyncio.sleep(0.1)
                         self.is_speaking = False
+                        print("Immy finished speaking.")
             except Exception as e:
                 print(f"Error during streaming: {e}")
             finally:
