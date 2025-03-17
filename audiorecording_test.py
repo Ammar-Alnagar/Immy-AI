@@ -12,7 +12,6 @@ from google.genai.types import LiveConnectConfig, HttpOptions, Modality
 # For voice configuration:
 from google.genai.types import SpeechConfig, VoiceConfig, PrebuiltVoiceConfig, Content, Part
 from dotenv import load_dotenv
-import speech_recognition as sr  # For real-time audio transcription
 
 # Suppress ALSA warnings (set log level to 0)
 os.environ["ALSA_LOGLEVEL"] = "0"
@@ -101,11 +100,10 @@ def speak_announcement(text):
         print("Available voices:")
         for i, voice in enumerate(voices):
             print(f"Voice {i}: {voice.name} - {voice.id}")
-        # Change the index below to select a different voice.
-        # For example, if index 1 sounds better, use that; otherwise try 0 or 2.
-        desired_index = 23 if len(voices) > 23 else 0
+        # Change the index below to select a different voice if desired.
+        desired_index = 1 if len(voices) > 1 else 0
         engine.setProperty("voice", voices[desired_index].id)
-        engine.setProperty("rate", 170)
+        engine.setProperty("rate", 150)
         engine.setProperty("volume", 1.0)
         engine.say(text)
         engine.runAndWait()  # Blocks until speech is done
@@ -123,7 +121,7 @@ class AudioLoop:
 
         # Variables to prevent self-listening
         self.last_playback_end = 0.0
-        self.playback_cooldown = 0.3  # Seconds to wait after playback before processing mic
+        self.playback_cooldown = 0.5  # Seconds to wait after playback before processing mic
 
         # Initialize WebRTC Audio Processing (AEC/NS/VAD)
         self.ap = None
@@ -137,10 +135,6 @@ class AudioLoop:
                 print(f"Error initializing audio processing: {e}")
         else:
             print("No WebRTC AudioProcessing module available; echo cancellation disabled.")
-
-        # For accumulating microphone audio for transcription.
-        self.transcription_buffer = bytearray()
-        self.transcription_lock = asyncio.Lock()
 
     async def listen_mic_audio(self):
         async def open_mic_stream():
@@ -175,11 +169,7 @@ class AudioLoop:
                 print(f"Error reading from microphone: {e}")
                 continue
 
-            # Queue data for Gemini processing.
             await self.out_queue.put({"data": data, "mime_type": "audio/pcm"})
-            # Also accumulate audio for transcription.
-            async with self.transcription_lock:
-                self.transcription_buffer.extend(data)
 
     async def listen_reverse_audio(self):
         try:
@@ -251,33 +241,6 @@ class AudioLoop:
             except Exception as e:
                 print(f"Error writing to output device: {e}")
 
-    async def transcribe_audio(self):
-        """
-        Accumulates mic audio from self.transcription_buffer,
-        transcribes it every 5 seconds using Google's recognizer,
-        and appends the transcription with a timestamp to a log file.
-        """
-        recognizer = sr.Recognizer()
-        while True:
-            await asyncio.sleep(5)  # Adjust the interval as needed
-            async with self.transcription_lock:
-                if len(self.transcription_buffer) == 0:
-                    continue
-                # Copy and clear the buffer
-                audio_bytes = bytes(self.transcription_buffer)
-                self.transcription_buffer = bytearray()
-            try:
-                # Convert raw PCM bytes into an AudioData instance.
-                audio_data = sr.AudioData(audio_bytes, sample_rate=SEND_SAMPLE_RATE, sample_width=2)
-                transcription = await asyncio.to_thread(recognizer.recognize_google, audio_data)
-            except Exception as e:
-                transcription = f"[Transcription error: {e}]"
-            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            log_line = f"{timestamp} - {transcription}\n"
-            with open("transcription_log.txt", "a", encoding="utf-8") as f:
-                f.write(log_line)
-            print(f"Transcription: {transcription}")
-
     async def run(self):
         try:
             async with client.aio.live.connect(model=MODEL, config=CONFIG) as session:
@@ -291,7 +254,6 @@ class AudioLoop:
                 mic_task = asyncio.create_task(self.listen_mic_audio())
                 reverse_task = asyncio.create_task(self.listen_reverse_audio())
                 playback_task = asyncio.create_task(self.play_audio())
-                transcription_task = asyncio.create_task(self.transcribe_audio())
 
                 async def audio_generator():
                     while True:
@@ -302,20 +264,27 @@ class AudioLoop:
                             print(f"Error in audio generator: {e}")
                             break
 
+                # Process Gemini responses and log them.
                 async for response in session.start_stream(
                     stream=audio_generator(),
                     mime_type="audio/pcm"
                 ):
                     if response.data:
                         print(f"Received {len(response.data)} bytes from Gemini")
+                        # Optionally, store raw PCM data to a file (append mode)
+                        with open("gemini_audio_log.raw", "ab") as audio_log:
+                            audio_log.write(response.data)
                         await self.audio_in_queue.put(response.data)
                     if response.text:
+                        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+                        log_line = f"[{timestamp}] Gemini: {response.text}\n"
+                        with open("conversation_log.txt", "a") as text_log:
+                            text_log.write(log_line)
                         print("Gemini:", response.text, end="")
 
                 mic_task.cancel()
                 reverse_task.cancel()
                 playback_task.cancel()
-                transcription_task.cancel()
 
         except asyncio.CancelledError:
             pass
@@ -348,17 +317,24 @@ class GeminiVoiceChat(AudioLoop):
             system_instruction=Content(parts=[Part.from_text(text=self.system_prompt)])
         )
 
+# Global flag to ensure the announcement is only spoken once.
+announcement_done = False
+
 def main():
-    announcement_text = "chat is ready"
-    print("Announcement:", announcement_text)
-    speak_announcement(announcement_text)
-    print("Announcement complete. Starting Gemini session.")
+    global announcement_done, pya
+    if not announcement_done:
+        announcement_text = "The chat system is now ready to chat."
+        print("Announcement:", announcement_text)
+        speak_announcement(announcement_text)
+        print("Announcement complete.")
+        announcement_done = True
+    else:
+        print("Announcement already done. Starting Gemini session.")
     
     # Allow a brief pause for audio resources to settle
     time.sleep(5)
     
     # Reinitialize PyAudio to ensure it is free for the Gemini session.
-    global pya
     pya.terminate()
     pya = pyaudio.PyAudio()
     
